@@ -10,4 +10,5 @@ import { User } from '../entities/user.entity';
 export interface AuthDataSource {
   login(loginUserDto: LoginUserDto): Promise<User>
   register(registerUserDto: RegisterUserDto): Promise<User>
+  getUsers(): Promise<User[]>
 }
