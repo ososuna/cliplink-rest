@@ -1,7 +1,7 @@
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 
 export class ShortIdAdapter {
   static generateShortId(): string {
-    return nanoid(8);
+    return uuidv4().slice(0, 8);
   }
 }
