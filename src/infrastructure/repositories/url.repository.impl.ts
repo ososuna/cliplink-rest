@@ -1,13 +1,13 @@
-import { CreateUrlDto, Url, UrlRepository } from '../../domain';
+import { CreateUrlDto, Url, UrlRepository, UrlDataSource } from '../../domain';
 
 export class UrlRepositoryImpl implements UrlRepository {
 
   constructor(
-    private readonly urlRepository: UrlRepository
+    private readonly urlDataSource: UrlDataSource
   ) {}
 
   create(createUrlDto: CreateUrlDto): Promise<Url> {
-    return this.urlRepository.create(createUrlDto);
+    return this.urlDataSource.create(createUrlDto);
   }
 
 }

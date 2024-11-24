@@ -1,3 +1,4 @@
+import { CreateUrlDto, UrlRepository } from '../..';
 interface Url {
   id: string,
   name?: string,
@@ -5,8 +6,18 @@ interface Url {
   shortId: string
 }
 
-interface CreateUrl {
-  execute(): Promise<Url>
+interface CreateUrlUseCase {
+  execute(createUrlDto: CreateUrlDto): Promise<Url>
 }
 
-// todo: use case implementation
+export class CreateUrl implements CreateUrlUseCase {
+
+  constructor(
+    private readonly urlRepository: UrlRepository
+  ) {}
+  
+  async execute(createUrlDto: CreateUrlDto): Promise<Url> {
+    const url = await this.urlRepository.create(createUrlDto);
+    return url;
+  }
+}

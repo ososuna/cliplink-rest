@@ -10,6 +10,6 @@ export class UrlMapper {
     if ( !originalUrl ) throw CustomError.badRequest('missing original URL');
     if ( !shortId ) throw CustomError.badRequest('missing short id');
 
-    return new Url(_id || id, name, originalUrl, shortId);
+    return new Url(_id || id, shortId, originalUrl, name);
   }
 }
