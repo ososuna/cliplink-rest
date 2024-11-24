@@ -1,3 +1,4 @@
+import { isValidObjectId } from 'mongoose';
 import { UserModel } from '../../data/mongodb';
 import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User } from '../../domain';
 import { BcryptAdapter } from '../../config';
@@ -61,6 +62,20 @@ export class AuthDataSourceImpl implements AuthDataSource {
     try {
       const users = await UserModel.find();
       return users.map(user => UserMapper.userEntityFromObject(user));
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async getUser(userId: string): Promise<User> {
+    try {
+      if ( !isValidObjectId(userId) ) throw CustomError.badRequest('user not found');
+      const user = await UserModel.findById(userId);
+      if ( !user ) throw CustomError.badRequest('user not found');
+      return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;

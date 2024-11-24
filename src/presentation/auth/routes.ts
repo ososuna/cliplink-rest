@@ -19,7 +19,7 @@ export class AuthRoutes {
 
     router.get('/', AuthMiddleware.validateJWT, controller.getUsers);
 
-    router.get('/', AuthMiddleware.validateJWT, controller.getUser)
+    router.get('/:id', AuthMiddleware.validateJWT, controller.getUser);
 
     return router;
   }

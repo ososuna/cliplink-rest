@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthRepository, CustomError, LoginUserDto, LoginUser, RegisterUser, RegisterUserDto, GetUsers } from '../../domain';
+import { AuthRepository, CustomError, LoginUserDto, LoginUser, RegisterUser, RegisterUserDto, GetUsers, GetUser } from '../../domain';
 
 export class AuthController {
 
@@ -50,7 +50,11 @@ export class AuthController {
   }
 
   getUser = (req: Request, res: Response) => {
-
+    const userId = req.params.id;
+    new GetUser(this.authRepository)
+      .execute(userId)
+      .then( data => res.json(data) )
+      .catch( error => this.handleError(error, res) )
   }
 
 }

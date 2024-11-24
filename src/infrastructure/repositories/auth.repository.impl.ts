@@ -19,4 +19,8 @@ export class AuthRepositoryImpl implements AuthRepository {
   getUsers() {
     return this.authDataSource.getUsers();
   }
+
+  getUser(userId: string) {
+    return this.authDataSource.getUser(userId);
+  }
 }

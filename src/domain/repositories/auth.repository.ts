@@ -8,4 +8,5 @@ export interface AuthRepository {
   login(loginUserDto: LoginUserDto): Promise<User>
   register(registerUserDto: RegisterUserDto): Promise<User>
   getUsers(): Promise<User[]>
+  getUser(userId: string): Promise<User>
 }
