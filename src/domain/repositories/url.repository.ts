@@ -1,5 +1,5 @@
-import { Url } from '..';
+import { CreateUrlDto, Url } from '..';
 
 export interface UrlRepository {
-  create(name: string, originalUrl: string): Promise<Url>
+  create(createUrlDto: CreateUrlDto): Promise<Url>
 }

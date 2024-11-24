@@ -25,6 +25,7 @@
     "env-var": "^7.5.0",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.1"
+    "mongoose": "^8.8.1",
+    "nanoid": "^5.0.8"
   }
 }
