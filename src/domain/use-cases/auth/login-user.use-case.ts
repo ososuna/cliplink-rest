@@ -14,7 +14,7 @@ interface UserToken {
 }
 
 interface LoginUserUseCase {
-  execute(loginUserDto: LoginUserDto): Promise<any>
+  execute(loginUserDto: LoginUserDto): Promise<UserToken>
 }
 
 type SignToken = (payload: Object, duration?: string) => Promise<string | null>;
