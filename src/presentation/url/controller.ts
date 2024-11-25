@@ -17,7 +17,12 @@ export class UrlController {
   }
 
   createUrl = (req: Request, res: Response) => {
-    const [error, createUrlDto] = CreateUrlDto.create(req.body);
+    const createParams = {
+      name: req.body.name,
+      originalUrl: req.body.originalUrl,
+      userId: req.body.user.id,
+    };
+    const [error, createUrlDto] = CreateUrlDto.create(createParams);
     if (error) {
       res.status(400).json({ error });
       return;

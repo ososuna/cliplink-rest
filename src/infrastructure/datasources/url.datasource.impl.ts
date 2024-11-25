@@ -1,6 +1,7 @@
+import mongoose from 'mongoose';
 import { CreateUrlDto, CustomError, Url, UrlDataSource } from '../../domain';
 import { ShortIdAdapter } from '../../config';
-import { UrlModel } from '../../data/mongodb';
+import { UrlModel, UserModel } from '../../data/mongodb';
 import { UrlMapper } from '../mappers/url.mapper';
 
 type ShortIdGenerator = () => string;
@@ -13,9 +14,12 @@ export class UrlDataSourceImpl implements UrlDataSource {
 
   async create(createUrlDto: CreateUrlDto): Promise<Url> {
     try {
-      const { name: baseName, originalUrl } = createUrlDto;
-      const shortId = this.shortIdGenerator();
+      const { name: baseName, originalUrl, userId } = createUrlDto;
 
+      const user = await UserModel.findById(userId);
+      if ( !user ) throw CustomError.badRequest('user not found');
+
+      const shortId = this.shortIdGenerator();
       let name = baseName;
       let counter = 1;
       // Loop until we find a unique name
@@ -28,7 +32,12 @@ export class UrlDataSourceImpl implements UrlDataSource {
         name = `${baseName} (${counter})`;
       }
       
-      const url = await UrlModel.create({ name, originalUrl, shortId });
+      const url = await UrlModel.create({
+        name,
+        originalUrl,
+        shortId,
+        user: user._id,
+      });
 
       await url.save();
 
