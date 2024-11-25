@@ -23,7 +23,7 @@ export class UrlDataSourceImpl implements UrlDataSource {
       let counter = 1;
       // Loop until we find a unique name
       while (true) {
-        const existingUrl = await UrlModel.findOne({ name });
+        const existingUrl = await UrlModel.findOne({ name, user: user._id });
         if (!existingUrl) {
           break;
         }
