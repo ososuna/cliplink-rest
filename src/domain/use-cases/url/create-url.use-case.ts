@@ -7,7 +7,7 @@ interface Url {
 }
 
 interface CreateUrlUseCase {
-  execute(createUrlDto: CreateUrlDto): Promise<Url>
+  execute(createUrlDto: CreateUrlDto): Promise<Url>;
 }
 
 export class CreateUrl implements CreateUrlUseCase {

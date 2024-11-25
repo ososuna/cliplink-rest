@@ -20,3 +20,4 @@ export * from './use-cases/auth/get-user.use-case';
 
 export * from './use-cases/url/create-url.use-case';
 export * from './use-cases/url/get-urls.use-case';
+export * from './use-cases/url/delete-url.use-case';
