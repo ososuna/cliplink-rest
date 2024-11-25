@@ -13,8 +13,20 @@ export class UrlDataSourceImpl implements UrlDataSource {
 
   async create(createUrlDto: CreateUrlDto): Promise<Url> {
     try {
-      const { name, originalUrl } = createUrlDto;
+      const { name: baseName, originalUrl } = createUrlDto;
       const shortId = this.shortIdGenerator();
+
+      let name = baseName;
+      let counter = 1;
+      // Loop until we find a unique name
+      while (true) {
+        const existingUrl = await UrlModel.findOne({ name });
+        if (!existingUrl) {
+          break;
+        }
+        counter++;
+        name = `${baseName} (${counter})`;
+      }
       
       const url = await UrlModel.create({ name, originalUrl, shortId });
 
