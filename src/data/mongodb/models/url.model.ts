@@ -18,6 +18,11 @@ const urlSchema = new Schema({
     ref: 'User',
     required: true,
   },
+  active: {
+    type: Boolean,
+    required: true,
+    default: true
+  }
 });
 
 export const UrlModel = mongoose.model('Url', urlSchema);

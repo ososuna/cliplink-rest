@@ -21,6 +21,11 @@ const userSchema = new Schema({
     type: [String],
     default: ['USER_ROLE'],
     enum: ['USER_ROLE', 'ADMIN_ROLE']
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: true
   }
 });
 
