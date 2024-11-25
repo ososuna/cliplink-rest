@@ -8,7 +8,7 @@ interface Url {
 }
 
 interface GetUrlsUseCase {
-  execute(): Promise<Url[]>;
+  execute(userId: string): Promise<Url[]>;
 }
 
 export class GetUrls implements GetUrlsUseCase {
@@ -17,8 +17,8 @@ export class GetUrls implements GetUrlsUseCase {
     private readonly urlRepository: UrlRepository
   ) {}
 
-  async execute(): Promise<Url[]> {
-    return await this.urlRepository.getUrls();
+  async execute(userId: string): Promise<Url[]> {
+    return await this.urlRepository.getUrls(userId);
   }
 
 }

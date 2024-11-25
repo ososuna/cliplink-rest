@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { CreateUrlDto, CustomError, Url, UrlDataSource } from '../../domain';
 import { ShortIdAdapter } from '../../config';
 import { UrlModel, UserModel } from '../../data/mongodb';
@@ -42,6 +41,21 @@ export class UrlDataSourceImpl implements UrlDataSource {
       await url.save();
 
       return UrlMapper.urlEntityFromObject(url);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async getUrls(userId: string): Promise<Url[]> {
+    try {
+      const user = await UserModel.findById(userId);
+      if ( !user ) throw CustomError.badRequest('user not found');
+
+      const urls = await UrlModel.find({ user: user._id });
+      return urls.map(url => UrlMapper.urlEntityFromObject(url));
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;

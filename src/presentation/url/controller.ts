@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UrlRepository, CreateUrl, CreateUrlDto, CustomError } from '../../domain';
+import { UrlRepository, CreateUrl, CreateUrlDto, CustomError, GetUrls } from '../../domain';
 
 export class UrlController {
 
@@ -30,6 +30,14 @@ export class UrlController {
     // create use case instance
     new CreateUrl(this.urlRepository)
       .execute(createUrlDto!)
+      .then( data => res.json(data) )
+      .catch( error => this.handleError(error, res) );
+  }
+
+  getUrls = (req: Request, res: Response) => {
+    const userId = req.body.user.id;
+    new GetUrls(this.urlRepository)
+      .execute(userId)
       .then( data => res.json(data) )
       .catch( error => this.handleError(error, res) );
   }
