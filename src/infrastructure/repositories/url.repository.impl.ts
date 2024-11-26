@@ -18,4 +18,8 @@ export class UrlRepositoryImpl implements UrlRepository {
     return this.urlDataSource.delete(urlId);    
   }
 
+  getUrl(urlId: string): Promise<Url> {
+    return this.urlDataSource.getUrl(urlId);
+  }
+
 }

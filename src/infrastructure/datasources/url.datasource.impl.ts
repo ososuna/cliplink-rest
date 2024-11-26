@@ -81,4 +81,17 @@ export class UrlDataSourceImpl implements UrlDataSource {
     }
   }
 
+  async getUrl(urlId: string): Promise<Url> {
+    try {
+      const url = await UrlModel.findById(urlId);
+      if ( !url ) throw CustomError.notFound('url not found');
+      return UrlMapper.urlEntityFromObject(url);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
 }
