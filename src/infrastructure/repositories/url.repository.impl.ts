@@ -14,4 +14,8 @@ export class UrlRepositoryImpl implements UrlRepository {
     return this.urlDataSource.getUrls(userId);
   }
 
+  delete(urlId: string): Promise<Url> {
+    return this.urlDataSource.delete(urlId);    
+  }
+
 }
