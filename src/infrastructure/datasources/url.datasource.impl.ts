@@ -1,4 +1,5 @@
-import { CreateUrlDto, CustomError, Url, UrlDataSource } from '../../domain';
+import { Types } from 'mongoose';
+import { CreateUrlDto, CustomError, UpdateUrlDto, Url, UrlDataSource } from '../../domain';
 import { ShortIdAdapter } from '../../config';
 import { UrlModel, UserModel } from '../../data/mongodb';
 import { UrlMapper } from '../mappers/url.mapper';
@@ -11,6 +12,19 @@ export class UrlDataSourceImpl implements UrlDataSource {
     private readonly shortIdGenerator: ShortIdGenerator = ShortIdAdapter.generateShortId
   ) {}  
 
+  private async getUniqueName(baseName: string, userId: string, urlId?: string): Promise<string> {
+    let name = baseName;
+    let counter = 1;
+    // Loop until we find a unique name
+    while (true) {
+      const existingUrl = await UrlModel.findOne({ name, user: new Types.ObjectId(userId), active: true });
+      if (!existingUrl || existingUrl.id === urlId) break;
+      counter++;
+      name = `${baseName} (${counter})`;
+    }
+    return name;
+  }
+
   async create(createUrlDto: CreateUrlDto): Promise<Url> {
     try {
       const { name: baseName, originalUrl, userId } = createUrlDto;
@@ -19,18 +33,8 @@ export class UrlDataSourceImpl implements UrlDataSource {
       if ( !user ) throw CustomError.notFound('user not found');
 
       const shortId = this.shortIdGenerator();
-      let name = baseName;
-      let counter = 1;
-      // Loop until we find a unique name
-      while (true) {
-        const existingUrl = await UrlModel.findOne({ name, user: user._id, active: true });
-        if (!existingUrl) {
-          break;
-        }
-        counter++;
-        name = `${baseName} (${counter})`;
-      }
-      
+      const name = await this.getUniqueName(baseName, userId);
+
       const url = await UrlModel.create({
         name,
         originalUrl,
@@ -85,6 +89,23 @@ export class UrlDataSourceImpl implements UrlDataSource {
     try {
       const url = await UrlModel.findById(urlId);
       if ( !url ) throw CustomError.notFound('url not found');
+      return UrlMapper.urlEntityFromObject(url);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async update(urlId: string, userId: string, updateUrlDto: UpdateUrlDto): Promise<Url> {
+    try {
+      const { name } = updateUrlDto;
+      if (name) {
+        updateUrlDto.name = await this.getUniqueName(name, userId, urlId);
+      }
+      const url = await UrlModel.findByIdAndUpdate(urlId, updateUrlDto, { new: true });
+      if (!url) throw CustomError.notFound('url not found');
       return UrlMapper.urlEntityFromObject(url);
     } catch (error) {
       if (error instanceof CustomError) {

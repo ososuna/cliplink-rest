@@ -17,6 +17,7 @@ export class UrlRoutes {
     router.get('/', AuthMiddleware.validateJWT, controller.getUrls);
     router.get('/:id', AuthMiddleware.validateJWT, controller.getUrl);
     router.delete('/:id', AuthMiddleware.validateJWT, controller.deleteUrl);
+    router.put('/:id', AuthMiddleware.validateJWT, controller.updateUrl);
 
     return router;
   }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UrlRepository, CreateUrl, CreateUrlDto, CustomError, GetUrls, DeleteUrl, GetUrl } from '../../domain';
+import { UrlRepository, CreateUrl, CreateUrlDto, CustomError, GetUrls, DeleteUrl, GetUrl, UpdateUrl, UpdateUrlDto } from '../../domain';
 
 export class UrlController {
 
@@ -54,6 +54,20 @@ export class UrlController {
     const urlId = req.params.id;
     new GetUrl(this.urlRepository)
       .execute(urlId)
+      .then( data => res.json(data) )
+      .catch( error => this.handleError(error, res) );
+  }
+
+  updateUrl = (req: Request, res: Response) => {
+    const [error, updateUrlDto] = UpdateUrlDto.create(req.body);
+    if (error) {
+      res.status(400).json({ error });
+      return;
+    }
+    const urlId = req.params.id;
+    const userId = req.body.user.id;
+    new UpdateUrl(this.urlRepository)
+      .execute(urlId, userId, updateUrlDto!)
       .then( data => res.json(data) )
       .catch( error => this.handleError(error, res) );
   }
