@@ -65,4 +65,8 @@ export class AuthController {
       .catch( error => this.handleError(error, res) )
   }
 
+  logout = (req: Request, res: Response) => {
+    res.clearCookie('access_token').json({ message: 'logout successful' })
+  }
+
 }

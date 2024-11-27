@@ -14,11 +14,9 @@ export class AuthRoutes {
     
     // Define main routes
     router.post('/login', controller.loginUser);
-
+    router.post('/logout', controller.logout);
     router.post('/register', controller.registerUser);
-
     router.get('/', AuthMiddleware.validateJWT, controller.getUsers);
-
     router.get('/:id', AuthMiddleware.validateJWT, controller.getUser);
 
     return router;

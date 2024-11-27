@@ -12,5 +12,4 @@ export interface AuthDataSource {
   register(registerUserDto: RegisterUserDto): Promise<User>
   getUsers(): Promise<User[]>
   getUser(userId: string): Promise<User>
-  logout(): Promise<string>
 }
