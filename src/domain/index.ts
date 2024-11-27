@@ -19,6 +19,7 @@ export * from './use-cases/auth/register-user.use-case';
 export * from './use-cases/auth/login-user.use-case';
 export * from './use-cases/auth/get-users.use-case';
 export * from './use-cases/auth/get-user.use-case';
+export * from './use-cases/auth/logout-user.use-case';
 
 export * from './use-cases/url/create-url.use-case';
 export * from './use-cases/url/get-urls.use-case';
