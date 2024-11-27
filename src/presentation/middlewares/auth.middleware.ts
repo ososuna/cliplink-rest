@@ -5,26 +5,15 @@ import { UserModel } from '../../data/mongodb';
 export class AuthMiddleware {
 
   static validateJWT = async (req: Request, res: Response, next: NextFunction) => {
-    const authorization = req.header('Authorization');
-    if (!authorization) {
-      res.status(401).json({ error: 'no token provided' });
-      return;
-    }
-    if (!authorization.startsWith('Bearer')) {
-      res.status(401).json({ error: 'invalid bearer token' });
-      return;
-    }
-
-    const token = authorization.split(' ').at(1) || '';
-    
+    const token = req.cookies.access_token;
     try {
       const payload = await JwtAdapter.validateToken<{ id: string }>(token);
-      if (!payload) {
+      if ( !payload ) {
         res.status(401).json({ error: 'invalid token' });
         return;
       }
       const user = await UserModel.findById(payload.id);
-      if (!user) {
+      if ( !user ) {
         res.status(401).json({ error: 'invalid token - user not found' });
         return;
       }

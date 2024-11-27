@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import cookieParser from 'cookie-parser';
 
 interface Options {
   port?: number;
@@ -21,6 +22,7 @@ export class Server {
 
     // middlewares
     this.app.use(express.json());
+    this.app.use(cookieParser());
     // this.app.use(express.urlencoded({ extended: true })); // x-www-formurlencoder
 
     this.app.use(this.routes);

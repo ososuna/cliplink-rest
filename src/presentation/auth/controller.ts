@@ -25,7 +25,7 @@ export class AuthController {
     // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
-      .then( data => res.json(data) )
+      .then( data => res.json(data.user) )
       .catch( error => this.handleError(error, res) );
   }
 
@@ -38,7 +38,15 @@ export class AuthController {
     // create use case instance
     new LoginUser(this.authRepository)
       .execute(loginUserDto!)
-      .then( data => res.json(data) )
+      .then( data => {
+        res.cookie('access_token', data.token, {
+          httpOnly: true, // cookie can be only accessed in the server
+          secure: process.env.NODE_ENV === 'production', // only https access
+          sameSite: 'strict', // only in the same domain
+          maxAge: 1000 * 60 * 60 // valid 1 hour
+        })
+        .send(data.user);
+      })
       .catch( error => this.handleError(error, res) )
   }
 
