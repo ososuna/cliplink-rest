@@ -17,10 +17,16 @@ export class UrlController {
   }
 
   createUrl = (req: Request, res: Response) => {
+
+    let userId;
+    if ( req.body.user ) {
+      userId = req.body.user.id;
+    }
+
     const createParams = {
       name: req.body.name,
       originalUrl: req.body.originalUrl,
-      userId: req.body.user.id,
+      userId
     };
     const [error, createUrlDto] = CreateUrlDto.create(createParams);
     if (error) {

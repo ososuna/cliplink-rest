@@ -12,7 +12,7 @@ export class UrlDataSourceImpl implements UrlDataSource {
     private readonly shortIdGenerator: ShortIdGenerator = ShortIdAdapter.generateShortId
   ) {}  
 
-  private async getUniqueName(baseName: string, userId: string, urlId?: string): Promise<string> {
+  private async getUniqueName(baseName: string, userId?: string, urlId?: string): Promise<string> {
     let name = baseName;
     let counter = 1;
     // Loop until we find a unique name
@@ -29,17 +29,24 @@ export class UrlDataSourceImpl implements UrlDataSource {
     try {
       const { name: baseName, originalUrl, userId } = createUrlDto;
 
-      const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.notFound('user not found');
+      let user;
+      if ( userId ) {
+        user = await UserModel.findById(userId);
+        if ( !user ) throw CustomError.notFound('user not found');
+      }
+      
+      let name = baseName;
+      if ( baseName ) {
+        name = await this.getUniqueName(baseName, userId);
+      }
 
       const shortId = this.shortIdGenerator();
-      const name = await this.getUniqueName(baseName, userId);
 
       const url = await UrlModel.create({
         name,
         originalUrl,
         shortId,
-        user: user._id,
+        user: user?._id,
       });
 
       await url.save();

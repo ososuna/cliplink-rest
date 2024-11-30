@@ -13,7 +13,7 @@ export class UrlRoutes {
     const controller = new UrlController(urlRepository);
 
     // Define main routes
-    router.post('/', AuthMiddleware.validateJWT, controller.createUrl);
+    router.post('/', controller.createUrl);
     router.get('/', AuthMiddleware.validateJWT, controller.getUrls);
     router.get('/:id', AuthMiddleware.validateJWT, controller.getUrl);
     router.delete('/:id', AuthMiddleware.validateJWT, controller.deleteUrl);
