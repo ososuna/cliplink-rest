@@ -25,3 +25,5 @@ export * from './use-cases/url/get-urls.use-case';
 export * from './use-cases/url/delete-url.use-case';
 export * from './use-cases/url/get-url.use-case';
 export * from './use-cases/url/update-url.use-case';
+
+export * from './use-cases/shortener/redirect-url.use-case';

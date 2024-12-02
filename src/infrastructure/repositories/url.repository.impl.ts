@@ -26,4 +26,8 @@ export class UrlRepositoryImpl implements UrlRepository {
     return this.urlDataSource.update(urlId, userId, updateUrlDto);
   }
 
+  getUrlByShortId(shortId: string): Promise<Url> {
+    return this.urlDataSource.getUrlByShortId(shortId);
+  }
+
 }

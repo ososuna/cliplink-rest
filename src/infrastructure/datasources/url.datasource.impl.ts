@@ -10,7 +10,7 @@ export class UrlDataSourceImpl implements UrlDataSource {
 
   constructor(
     private readonly shortIdGenerator: ShortIdGenerator = ShortIdAdapter.generateShortId
-  ) {}  
+  ) {}
 
   private async getUniqueName(baseName: string, userId?: string, urlId?: string): Promise<string> {
     let name = baseName;
@@ -113,6 +113,19 @@ export class UrlDataSourceImpl implements UrlDataSource {
       }
       const url = await UrlModel.findByIdAndUpdate(urlId, updateUrlDto, { new: true });
       if (!url) throw CustomError.notFound('url not found');
+      return UrlMapper.urlEntityFromObject(url);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async getUrlByShortId(shortId: string): Promise<Url> {
+    try {
+      const url = await UrlModel.findOne({ shortId });
+      if ( !url ) throw CustomError.notFound('url not found');
       return UrlMapper.urlEntityFromObject(url);
     } catch (error) {
       if (error instanceof CustomError) {
