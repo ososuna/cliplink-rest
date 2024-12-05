@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthRepository, CustomError, LoginUserDto, LoginUser, RegisterUser, RegisterUserDto, GetUsers, GetUser } from '../../domain';
+import { UserMapper } from '../../infrastructure';
 
 export class AuthController {
 
@@ -67,6 +68,10 @@ export class AuthController {
 
   logout = (req: Request, res: Response) => {
     res.clearCookie('access_token').json({ message: 'logout successful' })
+  }
+
+  checkToken = (req: Request, res: Response) => {
+    res.json(UserMapper.userEntityFromObject(req.body.user));
   }
 
 }
