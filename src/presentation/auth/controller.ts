@@ -2,6 +2,12 @@ import { Request, Response } from 'express';
 import { AuthRepository, CustomError, LoginUserDto, LoginUser, RegisterUser, RegisterUserDto, GetUsers, GetUser } from '../../domain';
 import { UserMapper } from '../../infrastructure';
 
+interface LoggedUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export class AuthController {
 
   // dependency injection 💉
@@ -43,7 +49,7 @@ export class AuthController {
         res.cookie('access_token', data.token, {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'strict', // only in the same domain
+          sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         })
         .send(data.user);
@@ -71,7 +77,8 @@ export class AuthController {
   }
 
   checkToken = (req: Request, res: Response) => {
-    res.json(UserMapper.userEntityFromObject(req.body.user));
+    const { id, name, email } = req.body.user;
+    res.json({ id, name, email });
   }
 
 }

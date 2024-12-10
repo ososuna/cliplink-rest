@@ -15,7 +15,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
-    const { name, email, password } = registerUserDto;
+    const { name, lastName, email, password } = registerUserDto;
 
     try {
       const exists = await UserModel.findOne({ email });
@@ -23,6 +23,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
       const user = await UserModel.create({
         name: name,
+        lastName: lastName,
         email: email,
         password: this.hashPassword(password)
       });

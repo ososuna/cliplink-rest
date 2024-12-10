@@ -22,7 +22,10 @@ export class Server {
   async start() {
 
     // middlewares
-    this.app.use(cors());
+    this.app.use(cors({
+      origin: 'http://localhost:4321', // Frontend URL
+      credentials: true, // Allow cookies to be sent
+    }));
     this.app.use(express.json());
     this.app.use(cookieParser());
     // this.app.use(express.urlencoded({ extended: true })); // x-www-formurlencoder
