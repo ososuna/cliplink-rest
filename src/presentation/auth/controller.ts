@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthRepository, CustomError, LoginUserDto, LoginUser, RegisterUser, RegisterUserDto, GetUsers, GetUser } from '../../domain';
-import { UserMapper } from '../../infrastructure';
+import { AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto } from '../../domain';
 
 interface LoggedUser {
   id: string;
@@ -32,7 +31,15 @@ export class AuthController {
     // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
-      .then( data => res.json(data.user) )
+      .then( data => {
+        res.cookie('access_token', data.token, {
+          httpOnly: true, // cookie can be only accessed in the server
+          secure: process.env.NODE_ENV === 'production', // only https access
+          sameSite: 'lax', // only in the same domain
+          maxAge: 1000 * 60 * 60 // valid 1 hour
+        })
+        .send(data.user);
+      })
       .catch( error => this.handleError(error, res) );
   }
 
@@ -77,8 +84,8 @@ export class AuthController {
   }
 
   checkToken = (req: Request, res: Response) => {
-    const { id, name, email } = req.body.user;
-    res.json({ id, name, email });
+    const { id, name, lastName, email } = req.body.user;
+    res.json({ id, name, lastName, email });
   }
 
 }
