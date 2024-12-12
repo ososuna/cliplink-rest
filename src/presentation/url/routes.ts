@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { UrlController } from './controller';
 import { UrlDataSourceImpl, UrlRepositoryImpl } from '../../infrastructure';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { CreateUrlMiddleware } from '../middlewares/create-url.middleware';
 
 export class UrlRoutes {
   static get routes(): Router {
@@ -13,7 +14,7 @@ export class UrlRoutes {
     const controller = new UrlController(urlRepository);
 
     // Define main routes
-    router.post('/', controller.createUrl);
+    router.post('/', CreateUrlMiddleware.validateJWT, controller.createUrl);
     router.get('/', AuthMiddleware.validateJWT, controller.getUrls);
     router.get('/:id', AuthMiddleware.validateJWT, controller.getUrl);
     router.delete('/:id', AuthMiddleware.validateJWT, controller.deleteUrl);

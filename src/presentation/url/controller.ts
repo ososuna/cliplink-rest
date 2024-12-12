@@ -44,7 +44,9 @@ export class UrlController {
     const userId = req.body.user.id;
     new GetUrls(this.urlRepository)
       .execute(userId)
-      .then( data => res.json(data) )
+      .then( data => {
+        return res.json(data)
+      })
       .catch( error => this.handleError(error, res) );
   }
 
