@@ -1,5 +1,12 @@
 import { Types } from 'mongoose';
-import { CreateUrlDto, CustomError, UpdateUrlDto, Url, UrlDataSource } from '../../domain';
+import {
+  CreateUrlDto,
+  CustomError,
+  Page,
+  UpdateUrlDto,
+  Url,
+  UrlDataSource,
+} from '../../domain';
 import { ShortIdAdapter } from '../../config';
 import { UrlModel, UserModel } from '../../data/mongodb';
 import { UrlMapper } from '../mappers/url.mapper';
@@ -17,7 +24,11 @@ export class UrlDataSourceImpl implements UrlDataSource {
     let counter = 1;
     // Loop until we find a unique name
     while (true) {
-      const existingUrl = await UrlModel.findOne({ name, user: new Types.ObjectId(userId), active: true });
+      const existingUrl = await UrlModel.findOne({
+        name,
+        user: new Types.ObjectId(userId),
+        active: true,
+      });
       if (!existingUrl || existingUrl.id === urlId) break;
       counter++;
       name = `${baseName} (${counter})`;
@@ -30,13 +41,13 @@ export class UrlDataSourceImpl implements UrlDataSource {
       const { name: baseName, originalUrl, userId } = createUrlDto;
 
       let user;
-      if ( userId ) {
+      if (userId) {
         user = await UserModel.findById(userId);
-        if ( !user ) throw CustomError.notFound('user not found');
+        if (!user) throw CustomError.notFound("user not found");
       }
-      
+
       let name = baseName;
-      if ( baseName ) {
+      if (baseName) {
         name = await this.getUniqueName(baseName, userId);
       }
 
@@ -60,13 +71,30 @@ export class UrlDataSourceImpl implements UrlDataSource {
     }
   }
 
-  async getUrls(userId: string): Promise<Url[]> {
+  async getUrls(userId: string, page: number = 1, limit: number = 10): Promise<Page<Url>> {
     try {
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.notFound('user not found');
+      if (!user) throw CustomError.notFound("User not found");
 
-      const urls = await UrlModel.find({ user: user._id, active: true });
-      return urls.map(url => UrlMapper.urlEntityFromObject(url));
+      const skip = (page - 1) * limit;
+
+      const query = { user: user._id, active: true };
+
+      // Fetch items and total count
+      const [urls, total] = await Promise.all([
+        UrlModel.find(query).skip(skip).limit(limit),
+        UrlModel.countDocuments(query),
+      ]);
+
+      const totalPages = Math.ceil(total / limit);
+
+      return {
+        page,
+        limit,
+        total,
+        totalPages,
+        items: urls.map((url) => UrlMapper.urlEntityFromObject(url)),
+      };
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -78,7 +106,7 @@ export class UrlDataSourceImpl implements UrlDataSource {
   async delete(urlId: string): Promise<Url> {
     try {
       const url = await UrlModel.findById(urlId);
-      if ( !url ) throw CustomError.notFound('url not found');
+      if (!url) throw CustomError.notFound("url not found");
 
       url.active = false;
       await url.save();
@@ -95,7 +123,7 @@ export class UrlDataSourceImpl implements UrlDataSource {
   async getUrl(urlId: string): Promise<Url> {
     try {
       const url = await UrlModel.findById(urlId);
-      if ( !url ) throw CustomError.notFound('url not found');
+      if (!url) throw CustomError.notFound("url not found");
       return UrlMapper.urlEntityFromObject(url);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -111,8 +139,10 @@ export class UrlDataSourceImpl implements UrlDataSource {
       if (name) {
         updateUrlDto.name = await this.getUniqueName(name, userId, urlId);
       }
-      const url = await UrlModel.findByIdAndUpdate(urlId, updateUrlDto, { new: true });
-      if (!url) throw CustomError.notFound('url not found');
+      const url = await UrlModel.findByIdAndUpdate(urlId, updateUrlDto, {
+        new: true,
+      });
+      if (!url) throw CustomError.notFound("url not found");
       return UrlMapper.urlEntityFromObject(url);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -125,7 +155,7 @@ export class UrlDataSourceImpl implements UrlDataSource {
   async getUrlByShortId(shortId: string): Promise<Url> {
     try {
       const url = await UrlModel.findOne({ shortId });
-      if ( !url ) throw CustomError.notFound('url not found');
+      if (!url) throw CustomError.notFound("url not found");
       return UrlMapper.urlEntityFromObject(url);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -134,5 +164,4 @@ export class UrlDataSourceImpl implements UrlDataSource {
       throw CustomError.internalServer();
     }
   }
-
 }

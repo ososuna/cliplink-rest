@@ -41,12 +41,14 @@ export class UrlController {
   }
 
   getUrls = (req: Request, res: Response) => {
+ 
     const userId = req.body.user.id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    
     new GetUrls(this.urlRepository)
-      .execute(userId)
-      .then( data => {
-        return res.json(data)
-      })
+      .execute(userId, page, limit)
+      .then( data => res.json(data))
       .catch( error => this.handleError(error, res) );
   }
 

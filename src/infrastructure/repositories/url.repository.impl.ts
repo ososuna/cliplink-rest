@@ -1,4 +1,4 @@
-import { CreateUrlDto, Url, UrlRepository, UrlDataSource, UpdateUrlDto } from '../../domain';
+import { CreateUrlDto, Url, UrlRepository, UrlDataSource, UpdateUrlDto, Page } from '../../domain';
 
 export class UrlRepositoryImpl implements UrlRepository {
 
@@ -10,8 +10,8 @@ export class UrlRepositoryImpl implements UrlRepository {
     return this.urlDataSource.create(createUrlDto);
   }
 
-  getUrls(userId: string): Promise<Url[]> {
-    return this.urlDataSource.getUrls(userId);
+  getUrls(userId: string, page: number, limit: number): Promise<Page<Url>> {
+    return this.urlDataSource.getUrls(userId, page, limit);
   }
 
   delete(urlId: string): Promise<Url> {
