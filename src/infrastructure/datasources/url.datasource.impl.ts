@@ -71,14 +71,25 @@ export class UrlDataSourceImpl implements UrlDataSource {
     }
   }
 
-  async getUrls(userId: string, page: number = 1, limit: number = 10): Promise<Page<Url>> {
+  async getUrls(userId: string, page: number = 1, limit: number = 9, search: string): Promise<Page<Url>> {
     try {
       const user = await UserModel.findById(userId);
       if (!user) throw CustomError.notFound("User not found");
 
       const skip = (page - 1) * limit;
 
-      const query = { user: user._id, active: true };
+      // Apply search filter
+      const query = {
+        user: user._id,
+        active: true,
+        $or: search
+          ? [
+              { name: { $regex: search, $options: "i" } },
+              { shortId: { $regex: search, $options: "i" } },
+              { originalUrl: { $regex: search, $options: "i" } },
+            ]
+          : [],
+      };
 
       // Fetch items and total count
       const [urls, total] = await Promise.all([

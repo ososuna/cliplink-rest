@@ -10,8 +10,8 @@ export class UrlRepositoryImpl implements UrlRepository {
     return this.urlDataSource.create(createUrlDto);
   }
 
-  getUrls(userId: string, page: number, limit: number): Promise<Page<Url>> {
-    return this.urlDataSource.getUrls(userId, page, limit);
+  getUrls(userId: string, page: number, limit: number, search: string): Promise<Page<Url>> {
+    return this.urlDataSource.getUrls(userId, page, limit, search);
   }
 
   delete(urlId: string): Promise<Url> {
