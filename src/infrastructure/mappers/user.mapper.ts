@@ -9,7 +9,6 @@ export class UserMapper {
     if ( !_id || !id ) throw CustomError.badRequest('missing id');
     if ( !name ) throw CustomError.badRequest('missing name');
     if ( !name ) throw CustomError.badRequest('Missing last name');
-    if ( !password ) throw CustomError.badRequest('missing password');
     if ( !roles ) throw CustomError.badRequest('missing roles');
 
     return new User(_id || id, name, lastName, email, roles, password);
