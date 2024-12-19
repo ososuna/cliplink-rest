@@ -27,4 +27,8 @@ export class AuthRepositoryImpl implements AuthRepository {
   updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     return this.authDataSource.updateUser(userId, updateUserDto);
   }
+
+  authGithub(code: string): Promise<User> {
+    return this.authDataSource.authGithub(code);
+  }
 }

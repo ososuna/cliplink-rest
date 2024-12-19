@@ -1,12 +1,6 @@
 import { Request, Response } from 'express';
-import { AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
-
-interface LoggedUser {
-  id: string;
-  name: string;
-  email: string;
-}
-
+import { AuthGithub, AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
+import { envs } from '../../config';
 export class AuthController {
 
   // dependency injection 💉
@@ -84,8 +78,8 @@ export class AuthController {
   }
 
   checkToken = (req: Request, res: Response) => {
-    const { id, name, lastName, email } = req.body.user;
-    res.json({ id, name, lastName, email });
+    const { id, name, lastName, email, githubId } = req.body.user;
+    res.json({ id, name, lastName, email, githubId });
   }
 
   updateUser = (req: Request, res: Response) => {
@@ -99,6 +93,27 @@ export class AuthController {
       .execute(userId, updateUserDto!)
       .then(data => res.json(data))
       .catch( error => this.handleError(error, res) )
+  }
+
+  loginGithub = (req: Request, res: Response) => {
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${envs.GITHUB_CLIENT_ID}&redirect_uri=${envs.GITHUB_CALLBACK_URL}`;
+    res.redirect(githubAuthUrl);
+  }
+
+  loginGithubCallback = (req: Request, res: Response) => {
+    const code = req.query.code as string;
+    if ( !code ) CustomError.badRequest('Missing Github Auth code');
+    new AuthGithub(this.authRepository)
+      .execute(code)
+      .then( data => {
+        res.cookie('access_token', data.token, {
+          httpOnly: true, // cookie can be only accessed in the server
+          secure: process.env.NODE_ENV === 'production', // only https access
+          sameSite: 'lax', // only in the same domain
+          maxAge: 1000 * 60 * 60 // valid 1 hour
+        });
+        res.redirect('http://localhost:4321/dashboard');
+      });
   }
 
 }

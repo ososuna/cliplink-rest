@@ -21,6 +21,7 @@ export * from './use-cases/auth/login-user.use-case';
 export * from './use-cases/auth/get-users.use-case';
 export * from './use-cases/auth/get-user.use-case';
 export * from './use-cases/auth/update-user.use-case';
+export * from './use-cases/auth/auth-github.use-case';
 
 export * from './use-cases/url/create-url.use-case';
 export * from './use-cases/url/get-urls.use-case';
@@ -31,3 +32,4 @@ export * from './use-cases/url/update-url.use-case';
 export * from './use-cases/shortener/redirect-url.use-case';
 
 export * from './interfaces/page';
+export * from './interfaces/github-user';

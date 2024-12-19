@@ -6,8 +6,7 @@ const userSchema = new Schema({
     required: [true, 'name is required']
   },
   lastName: {
-    type: String,
-    required: [true, 'Last name is required']
+    type: String
   },
   email: {
     type: String,
@@ -16,7 +15,6 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, 'password is required']
   },
   img: {
     type: String
@@ -30,6 +28,12 @@ const userSchema = new Schema({
     type: Boolean,
     required: true,
     default: true
+  },
+  githubId: {
+    type: String,
+  },
+  googleId: {
+    type: String,
   }
 });
 
