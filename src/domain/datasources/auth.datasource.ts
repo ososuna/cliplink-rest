@@ -1,5 +1,4 @@
-import { LoginUserDto, RegisterUserDto } from '..';
-import { User } from '../entities/user.entity';
+import { LoginUserDto, RegisterUserDto, UpdateUserDto, User } from '..';
 
 /**
 * Abstract business rules to implement.
@@ -12,4 +11,5 @@ export interface AuthDataSource {
   register(registerUserDto: RegisterUserDto): Promise<User>
   getUsers(): Promise<User[]>
   getUser(userId: string): Promise<User>
+  updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User>
 }

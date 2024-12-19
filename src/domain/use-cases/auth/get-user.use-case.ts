@@ -3,9 +3,8 @@ import { AuthRepository } from '../../repositories/auth.repository';
 interface User {
   id: string,
   name: string,
+  lastName: string,
   email: string,
-  role: string[],
-  img?: string,
 }
 
 interface GetUserUseCase {
@@ -20,7 +19,12 @@ export class GetUser implements GetUserUseCase {
 
   async execute(userId: string): Promise<User> {
     const user = await this.authRepository.getUser(userId);
-    return user;
+    return {
+      id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+    }
   }
 
 }

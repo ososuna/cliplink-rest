@@ -19,6 +19,7 @@ export class AuthRoutes {
     router.post('/register', controller.registerUser);
     router.get('/', AuthMiddleware.validateJWT, controller.getUsers);
     router.get('/:id', AuthMiddleware.validateJWT, controller.getUser);
+    router.put('/', AuthMiddleware.validateJWT, controller.updateUser);
 
     return router;
   }

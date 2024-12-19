@@ -1,4 +1,4 @@
-import { AuthDataSource, AuthRepository, LoginUserDto, RegisterUserDto, User } from '../../domain';
+import { AuthDataSource, AuthRepository, LoginUserDto, RegisterUserDto, UpdateUserDto, User } from '../../domain';
 
 export class AuthRepositoryImpl implements AuthRepository {
   // dependency injection 💉
@@ -22,5 +22,9 @@ export class AuthRepositoryImpl implements AuthRepository {
 
   getUser(userId: string) {
     return this.authDataSource.getUser(userId);
+  }
+
+  updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+    return this.authDataSource.updateUser(userId, updateUserDto);
   }
 }

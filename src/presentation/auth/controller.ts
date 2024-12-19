@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto } from '../../domain';
+import { AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
 
 interface LoggedUser {
   id: string;
@@ -86,6 +86,19 @@ export class AuthController {
   checkToken = (req: Request, res: Response) => {
     const { id, name, lastName, email } = req.body.user;
     res.json({ id, name, lastName, email });
+  }
+
+  updateUser = (req: Request, res: Response) => {
+    const userId = req.body.user.id;
+    const [error, updateUserDto] = UpdateUserDto.create(req.body);
+    if (error) {
+      res.status(400).json({ error });
+      return;
+    }
+    new UpdateUser(this.authRepository)
+      .execute(userId, updateUserDto!)
+      .then(data => res.json(data))
+      .catch( error => this.handleError(error, res) )
   }
 
 }

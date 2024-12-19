@@ -1,6 +1,6 @@
 import { isValidObjectId } from 'mongoose';
 import { UserModel } from '../../data/mongodb';
-import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User } from '../../domain';
+import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto } from '../../domain';
 import { BcryptAdapter } from '../../config';
 import { UserMapper } from '../mappers/user.mapper';
 
@@ -76,6 +76,25 @@ export class AuthDataSourceImpl implements AuthDataSource {
       if ( !isValidObjectId(userId) ) throw CustomError.badRequest('user not found');
       const user = await UserModel.findById(userId);
       if ( !user ) throw CustomError.badRequest('user not found');
+      return UserMapper.userEntityFromObject(user);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+    try {
+      if (updateUserDto.email) {
+        const exists = await UserModel.findOne({ email: updateUserDto.email });
+        if (exists) throw CustomError.badRequest('Invalid email');
+      }
+      const user = await UserModel.findByIdAndUpdate(userId, updateUserDto, {
+        new: true,
+      });
+      if (!user) throw CustomError.notFound('User not found');
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
