@@ -7,3 +7,4 @@ export * from './repositories/url.repository.impl';
 export * from './mappers/url.mapper';
 export * from './mappers/user.mapper';
 export * from './mappers/user-github.mapper';
+export * from './mappers/user-google.mapper';

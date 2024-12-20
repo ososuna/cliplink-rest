@@ -31,4 +31,8 @@ export class AuthRepositoryImpl implements AuthRepository {
   authGithub(code: string): Promise<User> {
     return this.authDataSource.authGithub(code);
   }
+
+  authGoogle(code: string): Promise<User> {
+    return this.authDataSource.authGoogle(code);
+  }
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthGithub, AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
+import { AuthGithub, AuthGoogle, AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
 import { envs } from '../../config';
 export class AuthController {
 
@@ -104,6 +104,36 @@ export class AuthController {
     const code = req.query.code as string;
     if ( !code ) CustomError.badRequest('Missing Github Auth code');
     new AuthGithub(this.authRepository)
+      .execute(code)
+      .then( data => {
+        res.cookie('access_token', data.token, {
+          httpOnly: true, // cookie can be only accessed in the server
+          secure: process.env.NODE_ENV === 'production', // only https access
+          sameSite: 'lax', // only in the same domain
+          maxAge: 1000 * 60 * 60 // valid 1 hour
+        });
+        res.redirect('http://localhost:4321/dashboard');
+      })
+      .catch(error => {
+        const url = new URL('http://localhost:4321/auth/login');        
+        let errorMsg = 'internal server error';
+        if (error instanceof CustomError) {
+          errorMsg = error.message;
+        }
+        url.searchParams.set('error', errorMsg);
+        res.redirect(url.toString());
+      });
+  }
+
+  loginGoogle = (req: Request, res: Response) => {
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${envs.GOOGLE_CLIENT_ID}&redirect_uri=${envs.GOOGLE_CALLBACK_URL}&scope=openid%20email%20profile`;
+    res.redirect(googleAuthUrl);
+  };
+
+  loginGoogleCallback = (req: Request, res: Response) => {
+    const code = req.query.code as string;
+    if ( !code ) CustomError.badRequest('Missing Google Auth code');
+    new AuthGoogle(this.authRepository)
       .execute(code)
       .then( data => {
         res.cookie('access_token', data.token, {

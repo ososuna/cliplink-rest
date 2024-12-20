@@ -16,4 +16,7 @@ export const envs = {
   GITHUB_CALLBACK_URL: get('GITHUB_CALLBACK_URL').required().asString(),
   AUTH_TRUST_HOST: get('AUTH_TRUST_HOST').required().asBool(),
   AUTH_SECRET: get('AUTH_SECRET').required().asString(),
+  GOOGLE_CLIENT_ID: get('GOOGLE_CLIENT_ID').required().asString(),
+  GOOGLE_CLIENT_SECRET: get('GOOGLE_CLIENT_SECRET').required().asString(),
+  GOOGLE_CALLBACK_URL: get('GOOGLE_CALLBACK_URL').required().asString(),
 }

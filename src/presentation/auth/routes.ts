@@ -16,6 +16,8 @@ export class AuthRoutes {
     router.post('/login', controller.loginUser);
     router.get('/github', controller.loginGithub);
     router.get('/github/callback', controller.loginGithubCallback);
+    router.get('/google', controller.loginGoogle);
+    router.get('/google/callback', controller.loginGoogleCallback);
     router.get('/token', AuthMiddleware.validateJWT, controller.checkToken);
     router.get('/logout', controller.logout);
     router.post('/register', controller.registerUser);

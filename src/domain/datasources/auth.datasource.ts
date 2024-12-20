@@ -13,4 +13,5 @@ export interface AuthDataSource {
   getUser(userId: string): Promise<User>
   updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User>
   authGithub(code: string): Promise<User>
+  authGoogle(code: string): Promise<User>
 }

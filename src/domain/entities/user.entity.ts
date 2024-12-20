@@ -8,6 +8,7 @@ export class User {
     public password?: string,
     public img?: string,
     public githubId?: string,
+    public googleId?: string,
   ) {}
 
 }

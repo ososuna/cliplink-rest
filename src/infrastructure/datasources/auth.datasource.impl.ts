@@ -1,7 +1,7 @@
 import { isValidObjectId } from 'mongoose';
-import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser } from '../../domain';
+import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser } from '../../domain';
 import { BcryptAdapter, envs } from '../../config';
-import { UserMapper, UserGithubMapper } from '../';
+import { UserMapper, UserGithubMapper, UserGoogleMapper } from '../';
 import { UserModel } from '../../data/mongodb';
 
 type HashFunction = (password: string) => string;
@@ -165,4 +165,68 @@ export class AuthDataSourceImpl implements AuthDataSource {
     }
   }
 
+  async authGoogle(code: string): Promise<User> {
+    try {
+      // Exchange the authorization code for an access token and ID token
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        body: new URLSearchParams({
+          code: code,
+          client_id: envs.GOOGLE_CLIENT_ID,
+          client_secret: envs.GOOGLE_CLIENT_SECRET,
+          redirect_uri: envs.GOOGLE_CALLBACK_URL,
+          grant_type: 'authorization_code',
+        }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+  
+      if (!tokenResponse.ok) {
+        const errorDetails = await tokenResponse.text();
+        console.error('Google Token Exchange Error:', errorDetails);
+        throw CustomError.internalServer('Failed to fetch Google access token');
+      }
+  
+      const { access_token: accessToken, id_token: idToken } = await tokenResponse.json();
+  
+      // Fetch the authenticated user's information
+      const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      if (!userResponse.ok) {
+        throw CustomError.internalServer('Failed to fetch Google user data');
+      }
+  
+      const googleUser: GoogleUser = await userResponse.json();
+  
+      // Check if user is already registered
+      const user = await UserModel.findOne({ googleId: googleUser.sub });
+      if (user) {
+        // Login
+        return UserGoogleMapper.userEntityFromObject(user);
+      } else {
+        // Register
+        const exists = await UserModel.findOne({ email: googleUser.email });
+        if (exists) throw CustomError.badRequest('An account with this email is already registered');
+        const userToSave = await UserModel.create({
+          name: googleUser.given_name,
+          lastName: googleUser.family_name,
+          email: googleUser.email,
+          googleId: googleUser.sub,
+        });
+  
+        await userToSave.save();
+        return UserGoogleMapper.userEntityFromObject(userToSave);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
 }
