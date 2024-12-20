@@ -78,8 +78,8 @@ export class AuthController {
   }
 
   checkToken = (req: Request, res: Response) => {
-    const { id, name, lastName, email, githubId } = req.body.user;
-    res.json({ id, name, lastName, email, githubId });
+    const { id, name, lastName, email, githubId, googleId } = req.body.user;
+    res.json({ id, name, lastName, email, githubId, googleId });
   }
 
   updateUser = (req: Request, res: Response) => {
