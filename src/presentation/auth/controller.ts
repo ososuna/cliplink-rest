@@ -113,6 +113,15 @@ export class AuthController {
           maxAge: 1000 * 60 * 60 // valid 1 hour
         });
         res.redirect('http://localhost:4321/dashboard');
+      })
+      .catch(error => {
+        const url = new URL('http://localhost:4321/auth/login');        
+        let errorMsg = 'internal server error';
+        if (error instanceof CustomError) {
+          errorMsg = error.message;
+        }
+        url.searchParams.set('error', errorMsg);
+        res.redirect(url.toString());
       });
   }
 

@@ -45,7 +45,9 @@ export class AuthDataSourceImpl implements AuthDataSource {
     try {
       const user = await UserModel.findOne({ email });
       if ( !user ) throw CustomError.badRequest('bad credentials');
-
+      
+      if ( !user.password ) throw CustomError.badRequest('Invalid email');
+      
       const isValidPassword = this.comparePassword(password, user.password!);
       if ( !isValidPassword ) throw CustomError.badRequest('bad credentials');
 
@@ -146,7 +148,6 @@ export class AuthDataSourceImpl implements AuthDataSource {
         // register
         const exists = await UserModel.findOne({ email: githubUser.email });
         if (exists) throw CustomError.badRequest('An account with this email is already registered');
-  
         const userToSave = await UserModel.create({
           name: githubUser.name,
           email: githubUser.email,
