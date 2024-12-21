@@ -46,7 +46,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       const user = await UserModel.findOne({ email, active: true });
       if ( !user ) throw CustomError.badRequest('bad credentials');
       
-      if ( !user.password ) throw CustomError.badRequest('Invalid email');
+      if ( !user.password ) throw CustomError.badRequest('bad credentials');
       
       const isValidPassword = this.comparePassword(password, user.password!);
       if ( !isValidPassword ) throw CustomError.badRequest('bad credentials');
