@@ -19,7 +19,7 @@ export class Server {
     this.routes = routes;
   }
 
-  async start() {
+  start() {
 
     // middlewares
     this.app.use(cors({
@@ -35,5 +35,7 @@ export class Server {
     this.app.listen(this.port, () => {
       console.log(`server running on port ${ this.port }`);
     });
+
+    return this.app;
   }
 }
