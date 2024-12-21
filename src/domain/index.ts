@@ -23,6 +23,7 @@ export * from './use-cases/auth/get-user.use-case';
 export * from './use-cases/auth/update-user.use-case';
 export * from './use-cases/auth/auth-github.use-case';
 export * from './use-cases/auth/auth-google.use-case';
+export * from './use-cases/auth/delete-account.use-case';
 
 export * from './use-cases/url/create-url.use-case';
 export * from './use-cases/url/get-urls.use-case';

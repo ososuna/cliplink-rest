@@ -24,6 +24,7 @@ export class AuthRoutes {
     router.get('/', AuthMiddleware.validateJWT, controller.getUsers);
     router.get('/:id', AuthMiddleware.validateJWT, controller.getUser);
     router.put('/', AuthMiddleware.validateJWT, controller.updateUser);
+    router.delete('/', AuthMiddleware.validateJWT, controller.deleteAccount);
 
     return router;
   }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthGithub, AuthGoogle, AuthRepository, CustomError, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
+import { AuthGithub, AuthGoogle, AuthRepository, CustomError, DeleteAccount, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
 import { envs } from '../../config';
 export class AuthController {
 
@@ -153,6 +153,16 @@ export class AuthController {
         url.searchParams.set('error', errorMsg);
         res.redirect(url.toString());
       });
+  }
+
+  deleteAccount = (req: Request, res: Response) => {
+    const userId = req.body.user.id;
+    new DeleteAccount(this.authRepository)
+      .execute(userId)
+      .then( data => {
+        res.clearCookie('access_token').json(data);
+      })
+      .catch( error => this.handleError(error, res) )
   }
 
 }

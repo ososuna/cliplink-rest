@@ -35,4 +35,8 @@ export class AuthRepositoryImpl implements AuthRepository {
   authGoogle(code: string): Promise<User> {
     return this.authDataSource.authGoogle(code);
   }
+
+  deleteAccount(userId: string): Promise<User> {
+    return this.authDataSource.deleteAccount(userId);
+  }
 }

@@ -2,7 +2,7 @@ import { isValidObjectId } from 'mongoose';
 import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser } from '../../domain';
 import { BcryptAdapter, envs } from '../../config';
 import { UserMapper, UserGithubMapper, UserGoogleMapper } from '../';
-import { UserModel } from '../../data/mongodb';
+import { UrlModel, UserModel } from '../../data/mongodb';
 
 type HashFunction = (password: string) => string;
 type CompareFunction = (password: string, hashed: string) => boolean;
@@ -43,7 +43,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
     const { email, password } = loginUserDto;
 
     try {
-      const user = await UserModel.findOne({ email });
+      const user = await UserModel.findOne({ email, active: true });
       if ( !user ) throw CustomError.badRequest('bad credentials');
       
       if ( !user.password ) throw CustomError.badRequest('Invalid email');
@@ -140,13 +140,13 @@ export class AuthDataSourceImpl implements AuthDataSource {
       const githubUser: GithubUser = await userResponse.json();
 
       // check if user is already registered
-      const user = await UserModel.findOne({ githubId: githubUser.id });
+      const user = await UserModel.findOne({ githubId: githubUser.id, active: true });
       if (user) {
         // login
         return UserGithubMapper.userEntityFromObject(user);
       } else {
         // register
-        const exists = await UserModel.findOne({ email: githubUser.email });
+        const exists = await UserModel.findOne({ email: githubUser.email, active: true });
         if (exists) throw CustomError.badRequest('An account with this email is already registered');
         const userToSave = await UserModel.create({
           name: githubUser.name,
@@ -188,7 +188,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
         throw CustomError.internalServer('Failed to fetch Google access token');
       }
   
-      const { access_token: accessToken, id_token: idToken } = await tokenResponse.json();
+      const { access_token: accessToken } = await tokenResponse.json();
   
       // Fetch the authenticated user's information
       const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -204,13 +204,13 @@ export class AuthDataSourceImpl implements AuthDataSource {
       const googleUser: GoogleUser = await userResponse.json();
   
       // Check if user is already registered
-      const user = await UserModel.findOne({ googleId: googleUser.sub });
+      const user = await UserModel.findOne({ googleId: googleUser.sub, active: true });
       if (user) {
         // Login
         return UserGoogleMapper.userEntityFromObject(user);
       } else {
         // Register
-        const exists = await UserModel.findOne({ email: googleUser.email });
+        const exists = await UserModel.findOne({ email: googleUser.email, active: true });
         if (exists) throw CustomError.badRequest('An account with this email is already registered');
         const userToSave = await UserModel.create({
           name: googleUser.given_name,
@@ -222,6 +222,23 @@ export class AuthDataSourceImpl implements AuthDataSource {
         await userToSave.save();
         return UserGoogleMapper.userEntityFromObject(userToSave);
       }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async deleteAccount(userId: string): Promise<User> {
+    try {
+      const user = await UserModel.findById(userId);
+      if ( !user ) throw CustomError.notFound('user not found');
+      
+      await UrlModel.updateMany({ user: user._id }, { $set: { active: false } });
+      await UserModel.findByIdAndDelete(userId);
+      
+      return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
