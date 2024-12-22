@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUrlDto = void 0;
-class CreateUrlDto {
+export class CreateUrlDto {
     constructor(name, originalUrl, userId) {
         this.name = name;
         this.originalUrl = originalUrl;
@@ -14,5 +11,4 @@ class CreateUrlDto {
         return [undefined, new CreateUrlDto(name, originalUrl, userId)];
     }
 }
-exports.CreateUrlDto = CreateUrlDto;
 //# sourceMappingURL=create-url.dto.js.map

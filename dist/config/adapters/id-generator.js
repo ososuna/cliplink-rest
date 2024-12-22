@@ -1,11 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdAdapter = void 0;
-const uuid_1 = require("uuid");
-class IdAdapter {
+import { v4 as uuidv4 } from 'uuid';
+export class IdAdapter {
     static generateId() {
-        return (0, uuid_1.v4)();
+        return uuidv4();
     }
 }
-exports.IdAdapter = IdAdapter;
 //# sourceMappingURL=id-generator.js.map

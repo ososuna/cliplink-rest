@@ -1,188 +1,161 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UrlDataSourceImpl = void 0;
-const mongoose_1 = require("mongoose");
-const domain_1 = require("../../domain");
-const config_1 = require("../../config");
-const mongodb_1 = require("../../data/mongodb");
-const url_mapper_1 = require("../mappers/url.mapper");
-class UrlDataSourceImpl {
-    constructor(shortIdGenerator = config_1.ShortIdAdapter.generateShortId) {
+import { Types } from 'mongoose';
+import { CustomError, } from '../../domain';
+import { ShortIdAdapter } from '../../config';
+import { UrlModel, UserModel } from '../../data/mongodb';
+import { UrlMapper } from '../mappers/url.mapper';
+export class UrlDataSourceImpl {
+    constructor(shortIdGenerator = ShortIdAdapter.generateShortId) {
         this.shortIdGenerator = shortIdGenerator;
     }
-    getUniqueName(baseName, userId, urlId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let name = baseName;
-            let counter = 1;
-            // Loop until we find a unique name
-            while (true) {
-                const existingUrl = yield mongodb_1.UrlModel.findOne({
-                    name,
-                    user: new mongoose_1.Types.ObjectId(userId),
-                    active: true,
-                });
-                if (!existingUrl || existingUrl.id === urlId)
-                    break;
-                counter++;
-                name = `${baseName} (${counter})`;
-            }
-            return name;
-        });
+    async getUniqueName(baseName, userId, urlId) {
+        let name = baseName;
+        let counter = 1;
+        // Loop until we find a unique name
+        while (true) {
+            const existingUrl = await UrlModel.findOne({
+                name,
+                user: new Types.ObjectId(userId),
+                active: true,
+            });
+            if (!existingUrl || existingUrl.id === urlId)
+                break;
+            counter++;
+            name = `${baseName} (${counter})`;
+        }
+        return name;
     }
-    create(createUrlDto) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { name: baseName, originalUrl, userId } = createUrlDto;
-                let user;
-                if (userId) {
-                    user = yield mongodb_1.UserModel.findById(userId);
-                    if (!user)
-                        throw domain_1.CustomError.notFound("user not found");
-                }
-                let name = baseName;
-                if (baseName) {
-                    name = yield this.getUniqueName(baseName, userId);
-                }
-                const shortId = this.shortIdGenerator();
-                const url = yield mongodb_1.UrlModel.create({
-                    name,
-                    originalUrl,
-                    shortId,
-                    user: user === null || user === void 0 ? void 0 : user._id,
-                });
-                yield url.save();
-                return url_mapper_1.UrlMapper.urlEntityFromObject(url);
-            }
-            catch (error) {
-                if (error instanceof domain_1.CustomError) {
-                    throw error;
-                }
-                throw domain_1.CustomError.internalServer();
-            }
-        });
-    }
-    getUrls(userId_1) {
-        return __awaiter(this, arguments, void 0, function* (userId, page = 1, limit = 9, search) {
-            try {
-                const user = yield mongodb_1.UserModel.findById(userId);
+    async create(createUrlDto) {
+        try {
+            const { name: baseName, originalUrl, userId } = createUrlDto;
+            let user;
+            if (userId) {
+                user = await UserModel.findById(userId);
                 if (!user)
-                    throw domain_1.CustomError.notFound("User not found");
-                const skip = (page - 1) * limit;
-                // Apply search filter
-                const query = {
-                    user: user._id,
-                    active: true,
-                    $or: search
-                        ? [
-                            { name: { $regex: search, $options: "i" } },
-                            { shortId: { $regex: search, $options: "i" } },
-                            { originalUrl: { $regex: search, $options: "i" } },
-                        ]
-                        : [],
-                };
-                // Fetch items and total count
-                const [urls, total] = yield Promise.all([
-                    mongodb_1.UrlModel.find(query).skip(skip).limit(limit),
-                    mongodb_1.UrlModel.countDocuments(query),
-                ]);
-                const totalPages = Math.ceil(total / limit);
-                return {
-                    page,
-                    limit,
-                    total,
-                    totalPages,
-                    items: urls.map((url) => url_mapper_1.UrlMapper.urlEntityFromObject(url)),
-                };
+                    throw CustomError.notFound("user not found");
             }
-            catch (error) {
-                if (error instanceof domain_1.CustomError) {
-                    throw error;
-                }
-                throw domain_1.CustomError.internalServer();
+            let name = baseName;
+            if (baseName) {
+                name = await this.getUniqueName(baseName, userId);
             }
-        });
+            const shortId = this.shortIdGenerator();
+            const url = await UrlModel.create({
+                name,
+                originalUrl,
+                shortId,
+                user: user === null || user === void 0 ? void 0 : user._id,
+            });
+            await url.save();
+            return UrlMapper.urlEntityFromObject(url);
+        }
+        catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw CustomError.internalServer();
+        }
     }
-    delete(urlId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const url = yield mongodb_1.UrlModel.findById(urlId);
-                if (!url)
-                    throw domain_1.CustomError.notFound("url not found");
-                url.active = false;
-                yield url.save();
-                return url_mapper_1.UrlMapper.urlEntityFromObject(url);
+    async getUrls(userId, page = 1, limit = 9, search) {
+        try {
+            const user = await UserModel.findById(userId);
+            if (!user)
+                throw CustomError.notFound("User not found");
+            const skip = (page - 1) * limit;
+            // Apply search filter
+            const query = {
+                user: user._id,
+                active: true,
+                $or: search
+                    ? [
+                        { name: { $regex: search, $options: "i" } },
+                        { shortId: { $regex: search, $options: "i" } },
+                        { originalUrl: { $regex: search, $options: "i" } },
+                    ]
+                    : [],
+            };
+            // Fetch items and total count
+            const [urls, total] = await Promise.all([
+                UrlModel.find(query).skip(skip).limit(limit),
+                UrlModel.countDocuments(query),
+            ]);
+            const totalPages = Math.ceil(total / limit);
+            return {
+                page,
+                limit,
+                total,
+                totalPages,
+                items: urls.map((url) => UrlMapper.urlEntityFromObject(url)),
+            };
+        }
+        catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
             }
-            catch (error) {
-                if (error instanceof domain_1.CustomError) {
-                    throw error;
-                }
-                throw domain_1.CustomError.internalServer();
-            }
-        });
+            throw CustomError.internalServer();
+        }
     }
-    getUrl(urlId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const url = yield mongodb_1.UrlModel.findById(urlId);
-                if (!url)
-                    throw domain_1.CustomError.notFound("url not found");
-                return url_mapper_1.UrlMapper.urlEntityFromObject(url);
+    async delete(urlId) {
+        try {
+            const url = await UrlModel.findById(urlId);
+            if (!url)
+                throw CustomError.notFound("url not found");
+            url.active = false;
+            await url.save();
+            return UrlMapper.urlEntityFromObject(url);
+        }
+        catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
             }
-            catch (error) {
-                if (error instanceof domain_1.CustomError) {
-                    throw error;
-                }
-                throw domain_1.CustomError.internalServer();
-            }
-        });
+            throw CustomError.internalServer();
+        }
     }
-    update(urlId, userId, updateUrlDto) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { name } = updateUrlDto;
-                if (name) {
-                    updateUrlDto.name = yield this.getUniqueName(name, userId, urlId);
-                }
-                const url = yield mongodb_1.UrlModel.findByIdAndUpdate(urlId, updateUrlDto, {
-                    new: true,
-                });
-                if (!url)
-                    throw domain_1.CustomError.notFound("url not found");
-                return url_mapper_1.UrlMapper.urlEntityFromObject(url);
+    async getUrl(urlId) {
+        try {
+            const url = await UrlModel.findById(urlId);
+            if (!url)
+                throw CustomError.notFound("url not found");
+            return UrlMapper.urlEntityFromObject(url);
+        }
+        catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
             }
-            catch (error) {
-                if (error instanceof domain_1.CustomError) {
-                    throw error;
-                }
-                throw domain_1.CustomError.internalServer();
-            }
-        });
+            throw CustomError.internalServer();
+        }
     }
-    getUrlByShortId(shortId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const url = yield mongodb_1.UrlModel.findOne({ shortId });
-                if (!url)
-                    throw domain_1.CustomError.notFound("url not found");
-                return url_mapper_1.UrlMapper.urlEntityFromObject(url);
+    async update(urlId, userId, updateUrlDto) {
+        try {
+            const { name } = updateUrlDto;
+            if (name) {
+                updateUrlDto.name = await this.getUniqueName(name, userId, urlId);
             }
-            catch (error) {
-                if (error instanceof domain_1.CustomError) {
-                    throw error;
-                }
-                throw domain_1.CustomError.internalServer();
+            const url = await UrlModel.findByIdAndUpdate(urlId, updateUrlDto, {
+                new: true,
+            });
+            if (!url)
+                throw CustomError.notFound("url not found");
+            return UrlMapper.urlEntityFromObject(url);
+        }
+        catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
             }
-        });
+            throw CustomError.internalServer();
+        }
+    }
+    async getUrlByShortId(shortId) {
+        try {
+            const url = await UrlModel.findOne({ shortId });
+            if (!url)
+                throw CustomError.notFound("url not found");
+            return UrlMapper.urlEntityFromObject(url);
+        }
+        catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw CustomError.internalServer();
+        }
     }
 }
-exports.UrlDataSourceImpl = UrlDataSourceImpl;
 //# sourceMappingURL=url.datasource.impl.js.map

@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthRepositoryImpl = void 0;
-class AuthRepositoryImpl {
+export class AuthRepositoryImpl {
     // dependency injection 💉
     // this implementation can use any data source
     // can be mongo, postgres, oracle, etc.
@@ -45,5 +42,4 @@ class AuthRepositoryImpl {
         return this.authDataSource.updatePassword(token, password);
     }
 }
-exports.AuthRepositoryImpl = AuthRepositoryImpl;
 //# sourceMappingURL=auth.repository.impl.js.map

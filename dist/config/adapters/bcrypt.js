@@ -1,15 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BcryptAdapter = void 0;
-const bcryptjs_1 = require("bcryptjs");
+import { compareSync, hashSync } from 'bcryptjs';
 // Adapter pattern
-class BcryptAdapter {
+export class BcryptAdapter {
     static hash(password) {
-        return (0, bcryptjs_1.hashSync)(password);
+        return hashSync(password);
     }
     static compare(password, hashed) {
-        return (0, bcryptjs_1.compareSync)(password, hashed);
+        return compareSync(password, hashed);
     }
 }
-exports.BcryptAdapter = BcryptAdapter;
 //# sourceMappingURL=bcrypt.js.map

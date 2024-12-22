@@ -1,40 +1,20 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
+import { envs } from './config';
+import { MongoDatabase } from './data/mongodb';
+import { AppRoutes } from './presentation/routes';
+import { Server } from './presentation/server';
+let serverInstance = null;
+async function main() {
+    console.log('Testing env variables:', envs.MONGO_DB_NAME);
+    await MongoDatabase.connect({
+        dbName: envs.MONGO_DB_NAME,
+        mongoUrl: envs.MONGO_URL,
     });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = require("./config");
-const mongodb_1 = require("./data/mongodb");
-const routes_1 = require("./presentation/routes");
-const server_1 = require("./presentation/server");
-let serverApp; // Placeholder for the Express app
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log('Testing env variables:', config_1.envs.MONGO_DB_NAME);
-        yield mongodb_1.MongoDatabase.connect({
-            dbName: config_1.envs.MONGO_DB_NAME,
-            mongoUrl: config_1.envs.MONGO_URL
-        });
-        const server = new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes });
-        yield server.start();
-        serverApp = server.app; // Set the Express app instance
-    });
+    const server = new Server({ port: envs.PORT, routes: AppRoutes.routes });
+    await server.start();
+    serverInstance = server; // Store the server instance
+    return server.app; // Return the Express app
 }
-// Immediately start the app
-main().catch((error) => {
-    console.error('Error initializing server:', error);
-});
-exports.default = (req, res) => {
-    if (!serverApp) {
-        res.status(503).send('Server is not ready yet');
-        return;
-    }
-    return serverApp(req, res);
-};
+// Immediately start the server and export the Express app
+const serverApp = await main();
+export default serverApp;
 //# sourceMappingURL=app.js.map

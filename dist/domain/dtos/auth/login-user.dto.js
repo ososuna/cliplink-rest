@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginUserDto = void 0;
-const config_1 = require("./../../../config");
-class LoginUserDto {
+import { Validators } from './../../../config';
+export class LoginUserDto {
     constructor(email, password) {
         this.email = email;
         this.password = password;
@@ -11,7 +8,7 @@ class LoginUserDto {
         const { email, password } = object;
         if (!email)
             return ['missing email', undefined];
-        if (!config_1.Validators.email.test(email))
+        if (!Validators.email.test(email))
             return ['email is not valid'];
         if (!password)
             return ['missing password', undefined];
@@ -20,5 +17,4 @@ class LoginUserDto {
         return [undefined, new LoginUserDto(email, password)];
     }
 }
-exports.LoginUserDto = LoginUserDto;
 //# sourceMappingURL=login-user.dto.js.map

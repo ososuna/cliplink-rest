@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Url = void 0;
-class Url {
+export class Url {
     constructor(id, shortId, originalUrl, user, name) {
         this.id = id;
         this.shortId = shortId;
@@ -10,5 +7,4 @@ class Url {
         this.name = name;
     }
 }
-exports.Url = Url;
 //# sourceMappingURL=url.entity.js.map
