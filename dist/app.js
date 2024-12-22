@@ -13,6 +13,7 @@ const config_1 = require("./config");
 const mongodb_1 = require("./data/mongodb");
 const routes_1 = require("./presentation/routes");
 const server_1 = require("./presentation/server");
+let serverApp; // Placeholder for the Express app
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('Testing env variables:', config_1.envs.MONGO_DB_NAME);
@@ -20,11 +21,20 @@ function main() {
             dbName: config_1.envs.MONGO_DB_NAME,
             mongoUrl: config_1.envs.MONGO_URL
         });
-        return new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes }).start();
+        const server = new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes });
+        yield server.start();
+        serverApp = server.app; // Set the Express app instance
     });
 }
-const server = main()
-    .then((app) => app);
-console.log('exported server:', server);
-exports.default = server;
+// Immediately start the app
+main().catch((error) => {
+    console.error('Error initializing server:', error);
+});
+exports.default = (req, res) => {
+    if (!serverApp) {
+        res.status(503).send('Server is not ready yet');
+        return;
+    }
+    return serverApp(req, res);
+};
 //# sourceMappingURL=app.js.map
