@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+import path from 'path';
 import { Resend } from 'resend';
 import { IdAdapter, envs } from '../../../config';
 import { AuthRepository, CustomError } from '../../';
@@ -21,13 +23,18 @@ export class ForgotPassword implements ForgotPasswordUseCase {
 
     const resetPasswordToken = await this.authRepository.saveResetPasswordToken(user.id, token);
     const url = envs.WEB_APP_URL + '/auth/reset-password/' + resetPasswordToken.token;
-    const resend = new Resend(envs.RESEND_API_KEY);
     
+    // Load the email template
+    const templatePath = path.resolve(__dirname, '../../../assets/templates/reset-password.template.html');
+    let emailHtml = await fs.readFile(templatePath, 'utf-8');
+    emailHtml = emailHtml.replace('{{resetLink}}', url);
+    
+    const resend = new Resend(envs.RESEND_API_KEY);
     const resp = await resend.emails.send({
       from: 'send@cliplink.app',
       to: user.email,
       subject: 'Password Reset',
-      html: `<p>Reset your <strong>password</strong>:</p> <p>${ url }</p>`
+      html: emailHtml
     });
     
     if (resp.error) throw CustomError.internalServer('Error sending email');
