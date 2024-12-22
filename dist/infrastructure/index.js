@@ -22,3 +22,5 @@ __exportStar(require("./mappers/url.mapper"), exports);
 __exportStar(require("./mappers/user.mapper"), exports);
 __exportStar(require("./mappers/user-github.mapper"), exports);
 __exportStar(require("./mappers/user-google.mapper"), exports);
+__exportStar(require("./mappers/reset-password-token.mapper"), exports);
+//# sourceMappingURL=index.js.map

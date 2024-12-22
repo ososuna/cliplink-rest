@@ -19,3 +19,4 @@ class UserGithubMapper {
     }
 }
 exports.UserGithubMapper = UserGithubMapper;
+//# sourceMappingURL=user-github.mapper.js.map

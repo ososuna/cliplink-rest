@@ -24,7 +24,7 @@ class AuthDataSourceImpl {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, lastName, email, password } = registerUserDto;
             try {
-                const exists = yield mongodb_1.UserModel.findOne({ email });
+                const exists = yield mongodb_1.UserModel.findOne({ email, active: true });
                 if (exists)
                     throw domain_1.CustomError.badRequest('user aleady exists');
                 const user = yield mongodb_1.UserModel.create({
@@ -259,5 +259,91 @@ class AuthDataSourceImpl {
             }
         });
     }
+    getUserByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield mongodb_1.UserModel.findOne({ email, active: true });
+                if (!user)
+                    throw domain_1.CustomError.badRequest('bad credentials');
+                if (user.googleId || user.githubId)
+                    throw domain_1.CustomError.badRequest('bad credentials');
+                return __1.UserMapper.userEntityFromObject(user);
+            }
+            catch (error) {
+                if (error instanceof domain_1.CustomError) {
+                    throw error;
+                }
+                throw domain_1.CustomError.internalServer();
+            }
+        });
+    }
+    saveResetPasswordToken(userId, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield mongodb_1.UserModel.findById(userId);
+                if (!user)
+                    throw domain_1.CustomError.notFound('user not found');
+                const resetPasswordToken = yield mongodb_1.ResetPasswordTokenModel.create({
+                    user: user._id,
+                    token: token,
+                    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 1) // 1 hour 
+                });
+                yield resetPasswordToken.save();
+                return __1.ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
+            }
+            catch (error) {
+                if (error instanceof domain_1.CustomError) {
+                    throw error;
+                }
+                throw domain_1.CustomError.internalServer();
+            }
+        });
+    }
+    isValidPasswordToken(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const resetPasswordToken = yield mongodb_1.ResetPasswordTokenModel.findOne({ token, active: true });
+                if (!resetPasswordToken)
+                    throw domain_1.CustomError.badRequest('invalid token');
+                const now = config_1.DateAdapter.now();
+                if (resetPasswordToken.expiresAt < now)
+                    throw domain_1.CustomError.badRequest('expired token');
+                return __1.ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
+            }
+            catch (error) {
+                if (error instanceof domain_1.CustomError) {
+                    throw error;
+                }
+                throw domain_1.CustomError.internalServer();
+            }
+        });
+    }
+    updatePassword(token, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const resetPasswordToken = yield mongodb_1.ResetPasswordTokenModel.findOne({ token, active: true });
+                if (!resetPasswordToken)
+                    throw domain_1.CustomError.badRequest('invalid token');
+                const now = config_1.DateAdapter.now();
+                if (resetPasswordToken.expiresAt < now)
+                    throw domain_1.CustomError.badRequest('expired token');
+                const user = yield mongodb_1.UserModel.findById(resetPasswordToken.user);
+                if (!user)
+                    throw domain_1.CustomError.notFound('user not found');
+                user.password = this.hashPassword(password);
+                yield user.save();
+                resetPasswordToken.active = false;
+                yield resetPasswordToken.save();
+                return __1.UserMapper.userEntityFromObject(user);
+            }
+            catch (error) {
+                if (error instanceof domain_1.CustomError) {
+                    throw error;
+                }
+                throw domain_1.CustomError.internalServer();
+            }
+        });
+    }
 }
 exports.AuthDataSourceImpl = AuthDataSourceImpl;
+//# sourceMappingURL=auth.datasource.impl.js.map

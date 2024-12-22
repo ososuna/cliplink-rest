@@ -20,6 +20,10 @@ class ShortenerController {
                 .then(data => res.redirect(data.originalUrl))
                 .catch(error => this.handleError(error, res));
         };
+        this.welcome = (req, res) => {
+            res.send('Welcome to the amazing and powerful ClipLink API!');
+        };
     }
 }
 exports.ShortenerController = ShortenerController;
+//# sourceMappingURL=controller.js.map

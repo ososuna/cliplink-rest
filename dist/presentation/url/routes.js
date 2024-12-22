@@ -22,3 +22,4 @@ class UrlRoutes {
     }
 }
 exports.UrlRoutes = UrlRoutes;
+//# sourceMappingURL=routes.js.map

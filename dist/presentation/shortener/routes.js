@@ -11,7 +11,9 @@ class ShortenerRoutes {
         const urlRepository = new infrastructure_1.UrlRepositoryImpl(dataSource);
         const controller = new controller_1.ShortenerController(urlRepository);
         router.get('/:shortId', controller.shorten);
+        router.get('/', controller.welcome);
         return router;
     }
 }
 exports.ShortenerRoutes = ShortenerRoutes;
+//# sourceMappingURL=routes.js.map

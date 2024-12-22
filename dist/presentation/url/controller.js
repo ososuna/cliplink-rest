@@ -74,3 +74,4 @@ class UrlController {
     }
 }
 exports.UrlController = UrlController;
+//# sourceMappingURL=controller.js.map

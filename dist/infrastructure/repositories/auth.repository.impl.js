@@ -32,5 +32,18 @@ class AuthRepositoryImpl {
     deleteAccount(userId) {
         return this.authDataSource.deleteAccount(userId);
     }
+    getUserByEmail(email) {
+        return this.authDataSource.getUserByEmail(email);
+    }
+    saveResetPasswordToken(userId, token) {
+        return this.authDataSource.saveResetPasswordToken(userId, token);
+    }
+    isValidPasswordToken(token) {
+        return this.authDataSource.isValidPasswordToken(token);
+    }
+    updatePassword(token, password) {
+        return this.authDataSource.updatePassword(token, password);
+    }
 }
 exports.AuthRepositoryImpl = AuthRepositoryImpl;
+//# sourceMappingURL=auth.repository.impl.js.map

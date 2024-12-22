@@ -19,3 +19,4 @@ class UserGoogleMapper {
     }
 }
 exports.UserGoogleMapper = UserGoogleMapper;
+//# sourceMappingURL=user-google.mapper.js.map

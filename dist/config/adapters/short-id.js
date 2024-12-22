@@ -8,3 +8,4 @@ class ShortIdAdapter {
     }
 }
 exports.ShortIdAdapter = ShortIdAdapter;
+//# sourceMappingURL=short-id.js.map

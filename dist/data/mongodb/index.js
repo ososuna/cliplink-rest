@@ -17,3 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./mongo-database"), exports);
 __exportStar(require("./models/url.model"), exports);
 __exportStar(require("./models/user.model"), exports);
+__exportStar(require("./models/reset-password-token.model"), exports);
+//# sourceMappingURL=index.js.map

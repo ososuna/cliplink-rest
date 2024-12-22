@@ -15,3 +15,4 @@ class User {
     }
 }
 exports.User = User;
+//# sourceMappingURL=user.entity.js.map

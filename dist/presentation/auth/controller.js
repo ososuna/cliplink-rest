@@ -153,6 +153,54 @@ class AuthController {
             })
                 .catch(error => this.handleError(error, res));
         };
+        this.forgotPassword = (req, res) => {
+            const email = req.body.email;
+            if (!email) {
+                res.status(400).json({ error: 'Missing email' });
+                return;
+            }
+            new domain_1.ForgotPassword(this.authRepository)
+                .execute(email)
+                .then(() => res.json({ message: 'Email sent successfully' }))
+                .catch(error => this.handleError(error, res));
+        };
+        this.checkResetPasswordToken = (req, res) => {
+            const token = req.params.token;
+            if (!token) {
+                res.status(400).json({ error: 'missing token' });
+                return;
+            }
+            new domain_1.CheckPasswordToken(this.authRepository)
+                .execute(token)
+                .then(data => res.json(data))
+                .catch(error => this.handleError(error, res));
+        };
+        this.updatePassword = (req, res) => {
+            const token = req.body.token;
+            const password = req.body.password;
+            if (!token) {
+                res.status(400).json({ error: 'missing token' });
+                return;
+            }
+            ;
+            if (!password) {
+                res.status(400).json({ error: 'missing password' });
+                return;
+            }
+            new domain_1.UpdatePassword(this.authRepository)
+                .execute(token, password)
+                .then(data => {
+                res.cookie('access_token', data.token, {
+                    httpOnly: true, // cookie can be only accessed in the server
+                    secure: process.env.NODE_ENV === 'production', // only https access
+                    sameSite: 'lax', // only in the same domain
+                    maxAge: 1000 * 60 * 60 // valid 1 hour
+                })
+                    .send(data.user);
+            })
+                .catch(error => this.handleError(error, res));
+        };
     }
 }
 exports.AuthController = AuthController;
+//# sourceMappingURL=controller.js.map

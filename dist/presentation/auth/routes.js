@@ -20,11 +20,15 @@ class AuthRoutes {
         router.get('/token', auth_middleware_1.AuthMiddleware.validateJWT, controller.checkToken);
         router.get('/logout', controller.logout);
         router.post('/register', controller.registerUser);
-        router.get('/', auth_middleware_1.AuthMiddleware.validateJWT, controller.getUsers);
-        router.get('/:id', auth_middleware_1.AuthMiddleware.validateJWT, controller.getUser);
+        router.get('/users', auth_middleware_1.AuthMiddleware.validateJWT, controller.getUsers);
+        router.get('/user/:id', auth_middleware_1.AuthMiddleware.validateJWT, controller.getUser);
         router.put('/', auth_middleware_1.AuthMiddleware.validateJWT, controller.updateUser);
         router.delete('/', auth_middleware_1.AuthMiddleware.validateJWT, controller.deleteAccount);
+        router.post('/forgot-password', controller.forgotPassword);
+        router.get('/password-token/:token', controller.checkResetPasswordToken);
+        router.put('/update-password', controller.updatePassword);
         return router;
     }
 }
 exports.AuthRoutes = AuthRoutes;
+//# sourceMappingURL=routes.js.map

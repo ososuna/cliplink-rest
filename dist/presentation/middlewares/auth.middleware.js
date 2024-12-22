@@ -38,3 +38,4 @@ AuthMiddleware.validateJWT = (req, res, next) => __awaiter(void 0, void 0, void 
         res.status(500).json({ error: 'internal server error' });
     }
 });
+//# sourceMappingURL=auth.middleware.js.map

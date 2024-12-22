@@ -25,3 +25,4 @@ function main() {
         new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes }).start();
     });
 }
+//# sourceMappingURL=app.js.map

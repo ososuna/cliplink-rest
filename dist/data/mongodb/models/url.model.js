@@ -59,3 +59,4 @@ const urlSchema = new mongoose_1.Schema({
     }
 });
 exports.UrlModel = mongoose_1.default.model('Url', urlSchema);
+//# sourceMappingURL=url.model.js.map
