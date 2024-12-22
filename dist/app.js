@@ -22,7 +22,7 @@ function main() {
             dbName: config_1.envs.MONGO_DB_NAME,
             mongoUrl: config_1.envs.MONGO_URL
         });
-        new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes }).start();
+        return yield new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes }).start();
     });
 }
 //# sourceMappingURL=app.js.map
