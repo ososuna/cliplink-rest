@@ -9,13 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = handler;
 const config_1 = require("./config");
 const mongodb_1 = require("./data/mongodb");
 const routes_1 = require("./presentation/routes");
 const server_1 = require("./presentation/server");
-(() => {
-    main();
-})();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield mongodb_1.MongoDatabase.connect({
@@ -23,6 +21,13 @@ function main() {
             mongoUrl: config_1.envs.MONGO_URL
         });
         return yield new server_1.Server({ port: config_1.envs.PORT, routes: routes_1.AppRoutes.routes }).start();
+    });
+}
+// Export the main function for Vercel
+function handler(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const server = yield main();
+        server(req, res); // Delegate handling to Express
     });
 }
 //# sourceMappingURL=app.js.map
