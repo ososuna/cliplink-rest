@@ -1,8 +1,8 @@
 import { isValidObjectId } from 'mongoose';
-import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser } from '../../domain';
+import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser, ResetPasswordToken } from '../../domain';
 import { BcryptAdapter, envs } from '../../config';
-import { UserMapper, UserGithubMapper, UserGoogleMapper } from '../';
-import { UrlModel, UserModel } from '../../data/mongodb';
+import { UserMapper, UserGithubMapper, UserGoogleMapper, ResetPasswordTokenMapper } from '../';
+import { ResetPasswordTokenModel, UrlModel, UserModel } from '../../data/mongodb';
 
 type HashFunction = (password: string) => string;
 type CompareFunction = (password: string, hashed: string) => boolean;
@@ -18,7 +18,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
     const { name, lastName, email, password } = registerUserDto;
 
     try {
-      const exists = await UserModel.findOne({ email });
+      const exists = await UserModel.findOne({ email, active: true });
       if (exists) throw CustomError.badRequest('user aleady exists');
 
       const user = await UserModel.create({
@@ -239,6 +239,42 @@ export class AuthDataSourceImpl implements AuthDataSource {
       await UserModel.findByIdAndDelete(userId);
       
       return UserMapper.userEntityFromObject(user);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    try {
+      const user = await UserModel.findOne({ email, active: true });
+      if ( !user ) throw CustomError.badRequest('bad credentials');
+      if (user.googleId || user.githubId) throw CustomError.badRequest('bad credentials');
+      return UserMapper.userEntityFromObject(user);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken> {
+    try {
+      const user = await UserModel.findById(userId);
+      if ( !user ) throw CustomError.notFound('user not found');
+      
+      const resetPasswordToken = await ResetPasswordTokenModel.create({
+        user: user._id,
+        token: token,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 1) // 1 hour 
+      });
+
+      await resetPasswordToken.save();
+
+      return ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;

@@ -21,10 +21,11 @@ export class AuthRoutes {
     router.get('/token', AuthMiddleware.validateJWT, controller.checkToken);
     router.get('/logout', controller.logout);
     router.post('/register', controller.registerUser);
-    router.get('/', AuthMiddleware.validateJWT, controller.getUsers);
-    router.get('/:id', AuthMiddleware.validateJWT, controller.getUser);
+    router.get('/users', AuthMiddleware.validateJWT, controller.getUsers);
+    router.get('/user/:id', AuthMiddleware.validateJWT, controller.getUser);
     router.put('/', AuthMiddleware.validateJWT, controller.updateUser);
     router.delete('/', AuthMiddleware.validateJWT, controller.deleteAccount);
+    router.get('/forgot-password', controller.forgotPassword);
 
     return router;
   }

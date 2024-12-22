@@ -9,6 +9,7 @@ export * from './errors/custom.error';
 
 export * from './entities/user.entity';
 export * from './entities/url.entity';
+export * from './entities/reset-password-token.entity';
 
 export * from './datasources/auth.datasource';
 export * from './datasources/url.datasource';
@@ -24,6 +25,7 @@ export * from './use-cases/auth/update-user.use-case';
 export * from './use-cases/auth/auth-github.use-case';
 export * from './use-cases/auth/auth-google.use-case';
 export * from './use-cases/auth/delete-account.use-case';
+export * from './use-cases/auth/forgot-password.use-case';
 
 export * from './use-cases/url/create-url.use-case';
 export * from './use-cases/url/get-urls.use-case';

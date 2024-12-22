@@ -1,4 +1,4 @@
-import { LoginUserDto, RegisterUserDto, UpdateUserDto, User } from '..';
+import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '..';
 
 /**
 * Abstract business rules to implement.
@@ -15,4 +15,6 @@ export interface AuthDataSource {
   authGithub(code: string): Promise<User>
   authGoogle(code: string): Promise<User>
   deleteAccount(userId: string): Promise<User>
+  getUserByEmail(email: string): Promise<User>
+  saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken>
 }

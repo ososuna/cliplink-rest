@@ -1,4 +1,4 @@
-import { AuthDataSource, AuthRepository, LoginUserDto, RegisterUserDto, UpdateUserDto, User } from '../../domain';
+import { AuthDataSource, AuthRepository, LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '../../domain';
 
 export class AuthRepositoryImpl implements AuthRepository {
   // dependency injection 💉
@@ -38,5 +38,13 @@ export class AuthRepositoryImpl implements AuthRepository {
 
   deleteAccount(userId: string): Promise<User> {
     return this.authDataSource.deleteAccount(userId);
+  }
+
+  getUserByEmail(email: string): Promise<User> {
+    return this.authDataSource.getUserByEmail(email);
+  }
+
+  saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken> {
+    return this.authDataSource.saveResetPasswordToken(userId, token);
   }
 }

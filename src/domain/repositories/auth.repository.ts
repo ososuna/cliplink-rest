@@ -1,4 +1,4 @@
-import { LoginUserDto, RegisterUserDto, UpdateUserDto, User } from '..';
+import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '..';
 
 /**
 * We can implement this interface with any data source
@@ -12,4 +12,6 @@ export interface AuthRepository {
   authGithub(code: string): Promise<User>
   authGoogle(code: string): Promise<User>
   deleteAccount(userId: string): Promise<User>
+  getUserByEmail(email: string): Promise<User>
+  saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken>
 }

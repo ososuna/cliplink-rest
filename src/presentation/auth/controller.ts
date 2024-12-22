@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthGithub, AuthGoogle, AuthRepository, CustomError, DeleteAccount, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
+import { AuthGithub, AuthGoogle, AuthRepository, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
 import { envs } from '../../config';
 export class AuthController {
 
@@ -163,6 +163,18 @@ export class AuthController {
         res.clearCookie('access_token').json(data);
       })
       .catch( error => this.handleError(error, res) )
+  }
+
+  forgotPassword = (req: Request, res: Response) => {
+    const email = req.body.email;
+    if (!email) {
+      res.status(400).json({ error: 'Missing email' });
+      return;
+    }
+    new ForgotPassword(this.authRepository)
+      .execute(email)
+      .then( () => res.json({ message: 'Email sent successfully' }))
+      .catch( error => this.handleError(error, res) );
   }
 
 }
