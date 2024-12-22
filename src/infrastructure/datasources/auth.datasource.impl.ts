@@ -300,4 +300,31 @@ export class AuthDataSourceImpl implements AuthDataSource {
       throw CustomError.internalServer();
     }
   }
+
+  async updatePassword(token: string, password: string): Promise<User> {
+    try {
+      const resetPasswordToken = await ResetPasswordTokenModel.findOne({ token, active: true });
+      if ( !resetPasswordToken ) throw CustomError.badRequest('invalid token');
+
+      const now = DateAdapter.now();
+      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest('expired token');
+
+      const user = await UserModel.findById(resetPasswordToken.user);
+      if ( !user ) throw CustomError.notFound('user not found');
+
+      user.password = this.hashPassword(password);
+      await user.save();
+
+      resetPasswordToken.active = false;
+      await resetPasswordToken.save();
+
+      return UserMapper.userEntityFromObject(user);
+
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    } 
+  }
 }

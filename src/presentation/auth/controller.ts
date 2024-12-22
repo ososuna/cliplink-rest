@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthGithub, AuthGoogle, AuthRepository, CheckPasswordToken, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdateUser, UpdateUserDto } from '../../domain';
+import { AuthGithub, AuthGoogle, AuthRepository, CheckPasswordToken, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdatePassword, UpdateUser, UpdateUserDto } from '../../domain';
 import { envs } from '../../config';
 export class AuthController {
 
@@ -186,6 +186,32 @@ export class AuthController {
     new CheckPasswordToken(this.authRepository)
       .execute(token)
       .then( data => res.json(data) )
+      .catch( error => this.handleError(error, res) );
+  }
+
+  updatePassword = (req: Request, res: Response) => {
+    const token = req.body.token;
+    const password = req.body.password;
+    if ( !token ) {
+      res.status(400).json({ error: 'missing token' });
+      return;
+    };
+    if (!password){
+      res.status(400).json({ error: 'missing password' });  
+      return
+    }
+    
+    new UpdatePassword(this.authRepository)
+      .execute(token, password)
+      .then( data => {
+        res.cookie('access_token', data.token, {
+          httpOnly: true, // cookie can be only accessed in the server
+          secure: process.env.NODE_ENV === 'production', // only https access
+          sameSite: 'lax', // only in the same domain
+          maxAge: 1000 * 60 * 60 // valid 1 hour
+        })
+        .send(data.user);
+      })
       .catch( error => this.handleError(error, res) );
   }
 

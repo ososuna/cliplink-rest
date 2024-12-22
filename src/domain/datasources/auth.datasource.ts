@@ -18,4 +18,5 @@ export interface AuthDataSource {
   getUserByEmail(email: string): Promise<User>
   saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken>
   isValidPasswordToken(token: string): Promise<ResetPasswordToken>
+  updatePassword(token: string, password: string): Promise<User>
 }

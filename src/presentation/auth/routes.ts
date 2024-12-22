@@ -27,6 +27,7 @@ export class AuthRoutes {
     router.delete('/', AuthMiddleware.validateJWT, controller.deleteAccount);
     router.get('/forgot-password', controller.forgotPassword);
     router.get('/password-token/:token', controller.checkResetPasswordToken);
+    router.put('/update-password', controller.updatePassword);
 
     return router;
   }
