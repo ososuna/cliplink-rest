@@ -24,4 +24,8 @@ export class ShortenerController {
     .catch( error => this.handleError(error, res) );
   }
 
+  welcome = (req: Request, res: Response) => {
+    res.send('Welcome to the amazing and powerful ClipLink API!');
+  }
+
 }

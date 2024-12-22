@@ -12,6 +12,7 @@ export class ShortenerRoutes {
     const controller = new ShortenerController(urlRepository);
 
     router.get('/:shortId', controller.shorten);
+    router.get('/', controller.welcome);
 
     return router;
   }
