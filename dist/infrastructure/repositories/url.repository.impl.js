@@ -1,4 +1,7 @@
-export class UrlRepositoryImpl {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UrlRepositoryImpl = void 0;
+class UrlRepositoryImpl {
     constructor(urlDataSource) {
         this.urlDataSource = urlDataSource;
     }
@@ -21,4 +24,5 @@ export class UrlRepositoryImpl {
         return this.urlDataSource.getUrlByShortId(shortId);
     }
 }
+exports.UrlRepositoryImpl = UrlRepositoryImpl;
 //# sourceMappingURL=url.repository.impl.js.map

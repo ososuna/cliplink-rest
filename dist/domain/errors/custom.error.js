@@ -1,4 +1,7 @@
-export class CustomError extends Error {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CustomError = void 0;
+class CustomError extends Error {
     constructor(statusCode, message) {
         super(message);
         this.statusCode = statusCode;
@@ -20,4 +23,5 @@ export class CustomError extends Error {
         return new CustomError(500, message);
     }
 }
+exports.CustomError = CustomError;
 //# sourceMappingURL=custom.error.js.map

@@ -1,10 +1,13 @@
-import { CustomError } from '../../domain';
-import { RedirectUrl } from '../../domain';
-export class ShortenerController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ShortenerController = void 0;
+const domain_1 = require("../../domain");
+const domain_2 = require("../../domain");
+class ShortenerController {
     constructor(urlRepository) {
         this.urlRepository = urlRepository;
         this.handleError = (error, res) => {
-            if (error instanceof CustomError) {
+            if (error instanceof domain_1.CustomError) {
                 return res.status(error.statusCode).json({ message: error.message });
             }
             console.log(error); // winston logger
@@ -12,7 +15,7 @@ export class ShortenerController {
         };
         this.shorten = (req, res) => {
             const shortId = req.params.shortId;
-            new RedirectUrl(this.urlRepository)
+            new domain_2.RedirectUrl(this.urlRepository)
                 .execute(shortId)
                 .then(data => res.redirect(data.originalUrl))
                 .catch(error => this.handleError(error, res));
@@ -22,4 +25,5 @@ export class ShortenerController {
         };
     }
 }
+exports.ShortenerController = ShortenerController;
 //# sourceMappingURL=controller.js.map

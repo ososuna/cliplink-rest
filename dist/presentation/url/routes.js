@@ -1,21 +1,25 @@
-import { Router } from 'express';
-import { UrlController } from './controller';
-import { UrlDataSourceImpl, UrlRepositoryImpl } from '../../infrastructure';
-import { AuthMiddleware } from '../middlewares/auth.middleware';
-import { CreateUrlMiddleware } from '../middlewares/create-url.middleware';
-export class UrlRoutes {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UrlRoutes = void 0;
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const infrastructure_1 = require("../../infrastructure");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const create_url_middleware_1 = require("../middlewares/create-url.middleware");
+class UrlRoutes {
     static get routes() {
-        const router = Router();
-        const dataSource = new UrlDataSourceImpl();
-        const urlRepository = new UrlRepositoryImpl(dataSource);
-        const controller = new UrlController(urlRepository);
+        const router = (0, express_1.Router)();
+        const dataSource = new infrastructure_1.UrlDataSourceImpl();
+        const urlRepository = new infrastructure_1.UrlRepositoryImpl(dataSource);
+        const controller = new controller_1.UrlController(urlRepository);
         // Define main routes
-        router.post('/', CreateUrlMiddleware.validateJWT, controller.createUrl);
-        router.get('/', AuthMiddleware.validateJWT, controller.getUrls);
-        router.get('/:id', AuthMiddleware.validateJWT, controller.getUrl);
-        router.delete('/:id', AuthMiddleware.validateJWT, controller.deleteUrl);
-        router.put('/:id', AuthMiddleware.validateJWT, controller.updateUrl);
+        router.post('/', create_url_middleware_1.CreateUrlMiddleware.validateJWT, controller.createUrl);
+        router.get('/', auth_middleware_1.AuthMiddleware.validateJWT, controller.getUrls);
+        router.get('/:id', auth_middleware_1.AuthMiddleware.validateJWT, controller.getUrl);
+        router.delete('/:id', auth_middleware_1.AuthMiddleware.validateJWT, controller.deleteUrl);
+        router.put('/:id', auth_middleware_1.AuthMiddleware.validateJWT, controller.updateUrl);
         return router;
     }
 }
+exports.UrlRoutes = UrlRoutes;
 //# sourceMappingURL=routes.js.map

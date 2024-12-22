@@ -1,24 +1,27 @@
-import { AuthGithub, AuthGoogle, CheckPasswordToken, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdatePassword, UpdateUser, UpdateUserDto } from '../../domain';
-import { envs } from '../../config';
-export class AuthController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthController = void 0;
+const domain_1 = require("../../domain");
+const config_1 = require("../../config");
+class AuthController {
     // dependency injection 💉
     constructor(authRepository) {
         this.authRepository = authRepository;
         this.handleError = (error, res) => {
-            if (error instanceof CustomError) {
+            if (error instanceof domain_1.CustomError) {
                 return res.status(error.statusCode).json({ message: error.message });
             }
             console.log(error); // winston logger
             return res.status(500).json({ error: 'internal server error' });
         };
         this.registerUser = (req, res) => {
-            const [error, registerUserDto] = RegisterUserDto.create(req.body);
+            const [error, registerUserDto] = domain_1.RegisterUserDto.create(req.body);
             if (error) {
                 res.status(400).json({ error });
                 return;
             }
             // create use case instance
-            new RegisterUser(this.authRepository)
+            new domain_1.RegisterUser(this.authRepository)
                 .execute(registerUserDto)
                 .then(data => {
                 res.cookie('access_token', data.token, {
@@ -32,13 +35,13 @@ export class AuthController {
                 .catch(error => this.handleError(error, res));
         };
         this.loginUser = (req, res) => {
-            const [error, loginUserDto] = LoginUserDto.create(req.body);
+            const [error, loginUserDto] = domain_1.LoginUserDto.create(req.body);
             if (error) {
                 res.status(400).json({ error });
                 return;
             }
             // create use case instance
-            new LoginUser(this.authRepository)
+            new domain_1.LoginUser(this.authRepository)
                 .execute(loginUserDto)
                 .then(data => {
                 res.cookie('access_token', data.token, {
@@ -52,14 +55,14 @@ export class AuthController {
                 .catch(error => this.handleError(error, res));
         };
         this.getUsers = (req, res) => {
-            new GetUsers(this.authRepository)
+            new domain_1.GetUsers(this.authRepository)
                 .execute()
                 .then(data => res.json(data))
                 .catch(error => this.handleError(error, res));
         };
         this.getUser = (req, res) => {
             const userId = req.params.id;
-            new GetUser(this.authRepository)
+            new domain_1.GetUser(this.authRepository)
                 .execute(userId)
                 .then(data => res.json(data))
                 .catch(error => this.handleError(error, res));
@@ -73,25 +76,25 @@ export class AuthController {
         };
         this.updateUser = (req, res) => {
             const userId = req.body.user.id;
-            const [error, updateUserDto] = UpdateUserDto.create(req.body);
+            const [error, updateUserDto] = domain_1.UpdateUserDto.create(req.body);
             if (error) {
                 res.status(400).json({ error });
                 return;
             }
-            new UpdateUser(this.authRepository)
+            new domain_1.UpdateUser(this.authRepository)
                 .execute(userId, updateUserDto)
                 .then(data => res.json(data))
                 .catch(error => this.handleError(error, res));
         };
         this.loginGithub = (req, res) => {
-            const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${envs.GITHUB_CLIENT_ID}&redirect_uri=${envs.GITHUB_CALLBACK_URL}`;
+            const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${config_1.envs.GITHUB_CLIENT_ID}&redirect_uri=${config_1.envs.GITHUB_CALLBACK_URL}`;
             res.redirect(githubAuthUrl);
         };
         this.loginGithubCallback = (req, res) => {
             const code = req.query.code;
             if (!code)
-                CustomError.badRequest('Missing Github Auth code');
-            new AuthGithub(this.authRepository)
+                domain_1.CustomError.badRequest('Missing Github Auth code');
+            new domain_1.AuthGithub(this.authRepository)
                 .execute(code)
                 .then(data => {
                 res.cookie('access_token', data.token, {
@@ -105,7 +108,7 @@ export class AuthController {
                 .catch(error => {
                 const url = new URL('http://localhost:4321/auth/login');
                 let errorMsg = 'internal server error';
-                if (error instanceof CustomError) {
+                if (error instanceof domain_1.CustomError) {
                     errorMsg = error.message;
                 }
                 url.searchParams.set('error', errorMsg);
@@ -113,14 +116,14 @@ export class AuthController {
             });
         };
         this.loginGoogle = (req, res) => {
-            const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${envs.GOOGLE_CLIENT_ID}&redirect_uri=${envs.GOOGLE_CALLBACK_URL}&scope=openid%20email%20profile`;
+            const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${config_1.envs.GOOGLE_CLIENT_ID}&redirect_uri=${config_1.envs.GOOGLE_CALLBACK_URL}&scope=openid%20email%20profile`;
             res.redirect(googleAuthUrl);
         };
         this.loginGoogleCallback = (req, res) => {
             const code = req.query.code;
             if (!code)
-                CustomError.badRequest('Missing Google Auth code');
-            new AuthGoogle(this.authRepository)
+                domain_1.CustomError.badRequest('Missing Google Auth code');
+            new domain_1.AuthGoogle(this.authRepository)
                 .execute(code)
                 .then(data => {
                 res.cookie('access_token', data.token, {
@@ -134,7 +137,7 @@ export class AuthController {
                 .catch(error => {
                 const url = new URL('http://localhost:4321/auth/login');
                 let errorMsg = 'internal server error';
-                if (error instanceof CustomError) {
+                if (error instanceof domain_1.CustomError) {
                     errorMsg = error.message;
                 }
                 url.searchParams.set('error', errorMsg);
@@ -143,7 +146,7 @@ export class AuthController {
         };
         this.deleteAccount = (req, res) => {
             const userId = req.body.user.id;
-            new DeleteAccount(this.authRepository)
+            new domain_1.DeleteAccount(this.authRepository)
                 .execute(userId)
                 .then(data => {
                 res.clearCookie('access_token').json(data);
@@ -156,7 +159,7 @@ export class AuthController {
                 res.status(400).json({ error: 'Missing email' });
                 return;
             }
-            new ForgotPassword(this.authRepository)
+            new domain_1.ForgotPassword(this.authRepository)
                 .execute(email)
                 .then(() => res.json({ message: 'Email sent successfully' }))
                 .catch(error => this.handleError(error, res));
@@ -167,7 +170,7 @@ export class AuthController {
                 res.status(400).json({ error: 'missing token' });
                 return;
             }
-            new CheckPasswordToken(this.authRepository)
+            new domain_1.CheckPasswordToken(this.authRepository)
                 .execute(token)
                 .then(data => res.json(data))
                 .catch(error => this.handleError(error, res));
@@ -184,7 +187,7 @@ export class AuthController {
                 res.status(400).json({ error: 'missing password' });
                 return;
             }
-            new UpdatePassword(this.authRepository)
+            new domain_1.UpdatePassword(this.authRepository)
                 .execute(token, password)
                 .then(data => {
                 res.cookie('access_token', data.token, {
@@ -199,4 +202,5 @@ export class AuthController {
         };
     }
 }
+exports.AuthController = AuthController;
 //# sourceMappingURL=controller.js.map

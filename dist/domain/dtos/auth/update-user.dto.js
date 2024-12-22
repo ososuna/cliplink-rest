@@ -1,4 +1,7 @@
-export class UpdateUserDto {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UpdateUserDto = void 0;
+class UpdateUserDto {
     constructor(name, lastName, email) {
         this.name = name;
         this.lastName = lastName;
@@ -12,4 +15,5 @@ export class UpdateUserDto {
         ];
     }
 }
+exports.UpdateUserDto = UpdateUserDto;
 //# sourceMappingURL=update-user.dto.js.map

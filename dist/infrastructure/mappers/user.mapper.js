@@ -1,16 +1,20 @@
-import { CustomError, User } from '../../domain';
-export class UserMapper {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserMapper = void 0;
+const domain_1 = require("../../domain");
+class UserMapper {
     static userEntityFromObject(object) {
         const { id, _id, name, lastName, email, password, roles } = object;
         if (!_id || !id)
-            throw CustomError.badRequest('missing id');
+            throw domain_1.CustomError.badRequest('missing id');
         if (!name)
-            throw CustomError.badRequest('missing name');
+            throw domain_1.CustomError.badRequest('missing name');
         if (!name)
-            throw CustomError.badRequest('Missing last name');
+            throw domain_1.CustomError.badRequest('Missing last name');
         if (!roles)
-            throw CustomError.badRequest('missing roles');
-        return new User(_id || id, name, lastName, email, roles, password);
+            throw domain_1.CustomError.badRequest('missing roles');
+        return new domain_1.User(_id || id, name, lastName, email, roles, password);
     }
 }
+exports.UserMapper = UserMapper;
 //# sourceMappingURL=user.mapper.js.map

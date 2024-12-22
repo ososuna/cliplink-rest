@@ -1,4 +1,7 @@
-export class User {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.User = void 0;
+class User {
     constructor(id, name, lastName, email, role, password, img, githubId, googleId) {
         this.id = id;
         this.name = name;
@@ -11,4 +14,5 @@ export class User {
         this.googleId = googleId;
     }
 }
+exports.User = User;
 //# sourceMappingURL=user.entity.js.map
