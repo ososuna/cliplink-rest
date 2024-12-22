@@ -47,4 +47,8 @@ export class AuthRepositoryImpl implements AuthRepository {
   saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken> {
     return this.authDataSource.saveResetPasswordToken(userId, token);
   }
+
+  isValidPasswordToken(token: string): Promise<ResetPasswordToken> {
+    return this.authDataSource.isValidPasswordToken(token);
+  }
 }

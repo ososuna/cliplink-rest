@@ -14,4 +14,5 @@ export interface AuthRepository {
   deleteAccount(userId: string): Promise<User>
   getUserByEmail(email: string): Promise<User>
   saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken>
+  isValidPasswordToken(token: string): Promise<ResetPasswordToken>
 }

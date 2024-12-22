@@ -1,6 +1,6 @@
 import { isValidObjectId } from 'mongoose';
 import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser, ResetPasswordToken } from '../../domain';
-import { BcryptAdapter, envs } from '../../config';
+import { BcryptAdapter, DateAdapter, envs } from '../../config';
 import { UserMapper, UserGithubMapper, UserGoogleMapper, ResetPasswordTokenMapper } from '../';
 import { ResetPasswordTokenModel, UrlModel, UserModel } from '../../data/mongodb';
 
@@ -275,6 +275,24 @@ export class AuthDataSourceImpl implements AuthDataSource {
       await resetPasswordToken.save();
 
       return ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
+  async isValidPasswordToken(token: string): Promise<ResetPasswordToken> {
+    try {
+      const resetPasswordToken = await ResetPasswordTokenModel.findOne({ token, active: true });
+      if ( !resetPasswordToken ) throw CustomError.badRequest('invalid token');
+
+      const now = DateAdapter.now();
+      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest('expired token');
+
+      return ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
+
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
