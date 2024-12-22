@@ -25,5 +25,6 @@ function main() {
 }
 const server = main()
     .then((app) => app);
+console.log('exported server:', server);
 exports.default = server;
 //# sourceMappingURL=app.js.map

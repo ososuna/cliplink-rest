@@ -18,4 +18,5 @@ async function main() {
 const server = main()
   .then((app) => app);
 
+console.log('exported server:' , server);
 export default server;
