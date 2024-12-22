@@ -15,6 +15,7 @@ const routes_1 = require("./presentation/routes");
 const server_1 = require("./presentation/server");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('Testing env variables:', config_1.envs.MONGO_DB_NAME);
         yield mongodb_1.MongoDatabase.connect({
             dbName: config_1.envs.MONGO_DB_NAME,
             mongoUrl: config_1.envs.MONGO_URL

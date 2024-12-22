@@ -4,6 +4,8 @@ import { AppRoutes } from './presentation/routes';
 import { Server } from './presentation/server';
 
 async function main() {
+
+  console.log('Testing env variables:', envs.MONGO_DB_NAME);
   
   await MongoDatabase.connect({
     dbName: envs.MONGO_DB_NAME,
