@@ -3,9 +3,6 @@ import { MongoDatabase } from './data/mongodb';
 import { AppRoutes } from './presentation/routes';
 import { Server } from './presentation/server';
 
-(() => {
-  main();
-})();
 
 async function main() {
   
@@ -15,4 +12,10 @@ async function main() {
   });
 
   return await new Server({ port: envs.PORT, routes: AppRoutes.routes }).start();
+}
+
+// Export the main function for Vercel
+export default async function handler(req: any, res: any) {
+  const server = await main();
+  server(req, res); // Delegate handling to Express
 }
