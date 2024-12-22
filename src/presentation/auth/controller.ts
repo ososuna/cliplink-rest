@@ -115,7 +115,7 @@ export class AuthController {
         res.redirect('http://localhost:4321/dashboard');
       })
       .catch(error => {
-        const url = new URL('http://localhost:4321/auth/login');        
+        const url = new URL('http://localhost:4321/auth/login');
         let errorMsg = 'internal server error';
         if (error instanceof CustomError) {
           errorMsg = error.message;
