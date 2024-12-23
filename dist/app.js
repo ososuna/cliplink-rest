@@ -28,26 +28,26 @@ const cors_1 = __importDefault(require("cors"));
 //   });
 //   new Server({ port: envs.PORT, routes: AppRoutes.routes }).start();
 // }
-function main() {
+function dbConnection() {
     return __awaiter(this, void 0, void 0, function* () {
         yield mongodb_1.MongoDatabase.connect({
             dbName: config_1.envs.MONGO_DB_NAME,
             mongoUrl: config_1.envs.MONGO_URL
         });
-        const app = (0, express_1.default)();
-        // middlewares
-        app.use((0, cors_1.default)({
-            origin: 'http://localhost:4321', // Frontend URL
-            credentials: true, // Allow cookies to be sent
-        }));
-        app.use(express_1.default.json());
-        app.use((0, cookie_parser_1.default)());
-        app.use(routes_1.AppRoutes.routes);
-        app.listen(config_1.envs.PORT, () => {
-            console.log(`server running on port ${config_1.envs.PORT}`);
-        });
-        return app;
     });
 }
-exports.default = await main();
+dbConnection();
+const app = (0, express_1.default)();
+// middlewares
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:4321', // Frontend URL
+    credentials: true, // Allow cookies to be sent
+}));
+app.use(express_1.default.json());
+app.use((0, cookie_parser_1.default)());
+app.use(routes_1.AppRoutes.routes);
+app.listen(config_1.envs.PORT, () => {
+    console.log(`server running on port ${config_1.envs.PORT}`);
+});
+exports.default = app;
 //# sourceMappingURL=app.js.map

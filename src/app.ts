@@ -20,28 +20,29 @@ import cors from 'cors';
 //   new Server({ port: envs.PORT, routes: AppRoutes.routes }).start();
 // }
 
-async function main() {
+
+async function dbConnection() {
   await MongoDatabase.connect({
     dbName: envs.MONGO_DB_NAME,
     mongoUrl: envs.MONGO_URL
   });
-
-  const app = express();
-    // middlewares
-    app.use(cors({
-      origin: 'http://localhost:4321', // Frontend URL
-      credentials: true, // Allow cookies to be sent
-    }));
-    app.use(express.json());
-    app.use(cookieParser());
-
-    app.use(AppRoutes.routes);
-
-    app.listen(envs.PORT, () => {
-      console.log(`server running on port ${ envs.PORT }`);
-    });
-
-    return app;
 }
 
-export default await main();
+dbConnection();
+
+const app = express();
+// middlewares
+app.use(cors({
+  origin: 'http://localhost:4321', // Frontend URL
+  credentials: true, // Allow cookies to be sent
+}));
+app.use(express.json());
+app.use(cookieParser());
+
+app.use(AppRoutes.routes);
+
+app.listen(envs.PORT, () => {
+  console.log(`server running on port ${ envs.PORT }`);
+});
+
+export default app;
