@@ -55,7 +55,6 @@ export class AuthController {
           maxAge: 1000 * 60 * 60 // valid 1 hour
         })
         .send(data.user);
-        console.log('🍪 Cookie sent:', res.cookie);
       })
       .catch( error => this.handleError(error, res) )
   }

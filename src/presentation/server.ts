@@ -25,6 +25,8 @@ export class Server {
     // middlewares
     this.app.use(cors({
       origin: envs.WEB_APP_URL, // Frontend URL
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow relevant HTTP methods
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Allow specific headers
       credentials: true, // Allow cookies to be sent
     }));
     this.app.use(express.json());
