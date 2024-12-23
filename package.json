@@ -6,9 +6,8 @@
   "scripts": {
     "dev": "tsnd --respawn --clear --env-file=.env src/app.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "pnpm run build && node dist/app.js",
-    "ts.check": "tsc --project tsconfig.json",
-    "add-build": "git add dist"
+    "start": "node dist/app.js",
+    "ts.check": "tsc --project tsconfig.json"
   },
   "pre-commit": [
     "ts.check",
