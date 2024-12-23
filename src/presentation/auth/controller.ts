@@ -72,7 +72,7 @@ export class AuthController {
   logout = (req: Request, res: Response) => {
     res.clearCookie(
       'access_token',
-      CookieAdapter.authCookieOptions(undefined)
+      CookieAdapter.authClearCookieOptions()
     ).json({ message: 'Logout successful' });
   }
 
