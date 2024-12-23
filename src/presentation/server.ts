@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { envs } from '../config';
 
 interface Options {
   port?: number;
@@ -23,7 +24,7 @@ export class Server {
 
     // middlewares
     this.app.use(cors({
-      origin: 'http://localhost:4321', // Frontend URL
+      origin: envs.WEB_APP_URL, // Frontend URL
       credentials: true, // Allow cookies to be sent
     }));
     this.app.use(express.json());

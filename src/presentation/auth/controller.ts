@@ -112,10 +112,10 @@ export class AuthController {
           sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         });
-        res.redirect('http://localhost:4321/dashboard');
+        res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
       .catch(error => {
-        const url = new URL('http://localhost:4321/auth/login');
+        const url = new URL(`${envs.WEB_APP_URL}/auth/login`);
         let errorMsg = 'internal server error';
         if (error instanceof CustomError) {
           errorMsg = error.message;
@@ -142,10 +142,10 @@ export class AuthController {
           sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         });
-        res.redirect('http://localhost:4321/dashboard');
+        res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
       .catch(error => {
-        const url = new URL('http://localhost:4321/auth/login');        
+        const url = new URL(`${envs.WEB_APP_URL}/auth/login`);        
         let errorMsg = 'internal server error';
         if (error instanceof CustomError) {
           errorMsg = error.message;
