@@ -29,7 +29,6 @@ export class AuthController {
         res.cookie('access_token', data.token, {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         })
         .send(data.user);
@@ -50,7 +49,6 @@ export class AuthController {
         res.cookie('access_token', data.token, {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         })
         .send(data.user);
@@ -109,7 +107,6 @@ export class AuthController {
         res.cookie('access_token', data.token, {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         });
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
@@ -139,7 +136,6 @@ export class AuthController {
         res.cookie('access_token', data.token, {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         });
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
@@ -207,7 +203,6 @@ export class AuthController {
         res.cookie('access_token', data.token, {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'lax', // only in the same domain
           maxAge: 1000 * 60 * 60 // valid 1 hour
         })
         .send(data.user);
