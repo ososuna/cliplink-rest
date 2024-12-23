@@ -20,6 +20,7 @@ class MongoDatabase {
             const { dbName, mongoUrl } = options;
             try {
                 console.log('connecting to mongo...');
+                console.log(dbName);
                 const conection = yield mongoose_1.default.connect(mongoUrl, { dbName });
                 console.log(conection);
                 console.log('mongo connection succesful ✅');
