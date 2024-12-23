@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthGithub, AuthGoogle, AuthRepository, CheckPasswordToken, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdatePassword, UpdateUser, UpdateUserDto } from '../../domain';
-import { envs } from '../../config';
+import { CookieAdapter, envs } from '../../config';
 export class AuthController {
 
   // dependency injection 💉
@@ -26,13 +26,11 @@ export class AuthController {
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
       .then( data => {
-        res.cookie('access_token', data.token, {
-          httpOnly: true, // cookie can be only accessed in the server
-          secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'none', // allow cross-site cookies
-          maxAge: 1000 * 60 * 60 // valid 1 hour
-        })
-        .send(data.user);
+        res.cookie(
+          'access_token',
+          data.token,
+          CookieAdapter.authCookieOptions()
+        ).send(data.user);
       })
       .catch( error => this.handleError(error, res) );
   }
@@ -47,14 +45,11 @@ export class AuthController {
     new LoginUser(this.authRepository)
       .execute(loginUserDto!)
       .then( data => {
-        res.cookie('access_token', data.token, {
-          httpOnly: true, // cookie can be only accessed in the server
-          secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'none', // allow cross-site cookies
-          domain: process.env.NODE_ENV === 'production' ? '.cliplink.app' : undefined,
-          maxAge: 1000 * 60 * 60 // valid 1 hour
-        })
-        .send(data.user);
+        res.cookie(
+          'access_token',
+          data.token,
+          CookieAdapter.authCookieOptions()
+        ).send(data.user);
       })
       .catch( error => this.handleError(error, res) )
   }
@@ -75,13 +70,10 @@ export class AuthController {
   }
 
   logout = (req: Request, res: Response) => {
-    res.clearCookie('access_token', {
-      httpOnly: true, // The same option used when setting the cookie
-      secure: process.env.NODE_ENV === 'production', // Same as when the cookie was set
-      sameSite: 'none', // Match SameSite option used for the cookie
-      domain: '.cliplink.app', // Ensure the correct domain is used for clearing the cookie
-      path: '/', // Ensure the correct path is used for clearing the cookie
-    }).json({ message: 'Logout successful' });
+    res.clearCookie(
+      'access_token',
+      CookieAdapter.authCookieOptions()
+    ).json({ message: 'Logout successful' });
   }
 
   checkToken = (req: Request, res: Response) => {
@@ -113,12 +105,11 @@ export class AuthController {
     new AuthGithub(this.authRepository)
       .execute(code)
       .then( data => {
-        res.cookie('access_token', data.token, {
-          httpOnly: true, // cookie can be only accessed in the server
-          secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'none', // allow cross-site cookies
-          maxAge: 1000 * 60 * 60 // valid 1 hour
-        });
+        res.cookie(
+          'access_token',
+          data.token,
+          CookieAdapter.authCookieOptions()
+        );
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
       .catch(error => {
@@ -143,12 +134,11 @@ export class AuthController {
     new AuthGoogle(this.authRepository)
       .execute(code)
       .then( data => {
-        res.cookie('access_token', data.token, {
-          httpOnly: true, // cookie can be only accessed in the server
-          secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'none', // allow cross-site cookies
-          maxAge: 1000 * 60 * 60 // valid 1 hour
-        });
+        res.cookie(
+          'access_token',
+          data.token,
+          CookieAdapter.authCookieOptions()
+        );
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
       .catch(error => {
@@ -211,13 +201,11 @@ export class AuthController {
     new UpdatePassword(this.authRepository)
       .execute(token, password)
       .then( data => {
-        res.cookie('access_token', data.token, {
-          httpOnly: true, // cookie can be only accessed in the server
-          secure: process.env.NODE_ENV === 'production', // only https access
-          sameSite: 'none', // allow cross-site cookies
-          maxAge: 1000 * 60 * 60 // valid 1 hour
-        })
-        .send(data.user);
+        res.cookie(
+          'access_token',
+          data.token,
+          CookieAdapter.authCookieOptions()
+        ).send(data.user);
       })
       .catch( error => this.handleError(error, res) );
   }
