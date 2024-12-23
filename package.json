@@ -5,7 +5,7 @@
   "main": "src/app.ts",
   "scripts": {
     "dev": "tsnd --respawn --clear --env-file=.env src/app.ts",
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc && mkdir -p dist/assets/templates && cp -R src/assets/templates/* dist/assets/templates",
     "start": "node dist/app.js",
     "ts.check": "tsc --project tsconfig.json"
   },
