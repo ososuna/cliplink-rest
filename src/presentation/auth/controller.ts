@@ -75,7 +75,13 @@ export class AuthController {
   }
 
   logout = (req: Request, res: Response) => {
-    res.clearCookie('access_token').json({ message: 'logout successful' })
+    res.clearCookie('access_token', {
+      httpOnly: true, // The same option used when setting the cookie
+      secure: process.env.NODE_ENV === 'production', // Same as when the cookie was set
+      sameSite: 'none', // Match SameSite option used for the cookie
+      domain: '.cliplink.app', // Ensure the correct domain is used for clearing the cookie
+      path: '/', // Ensure the correct path is used for clearing the cookie
+    }).json({ message: 'Logout successful' });
   }
 
   checkToken = (req: Request, res: Response) => {
