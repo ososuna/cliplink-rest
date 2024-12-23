@@ -40,6 +40,8 @@ async function main() {
     app.listen(envs.PORT, () => {
       console.log(`server running on port ${ envs.PORT }`);
     });
+
+    return app;
 }
 
-main();
+export default await main();

@@ -46,7 +46,8 @@ function main() {
         app.listen(config_1.envs.PORT, () => {
             console.log(`server running on port ${config_1.envs.PORT}`);
         });
+        return app;
     });
 }
-main();
+exports.default = await main();
 //# sourceMappingURL=app.js.map
