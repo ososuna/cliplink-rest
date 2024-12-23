@@ -51,9 +51,11 @@ export class AuthController {
           httpOnly: true, // cookie can be only accessed in the server
           secure: process.env.NODE_ENV === 'production', // only https access
           sameSite: 'none', // allow cross-site cookies
+          domain: process.env.NODE_ENV === 'production' ? '.cliplink.app' : undefined,
           maxAge: 1000 * 60 * 60 // valid 1 hour
         })
         .send(data.user);
+        console.log('🍪 Cookie sent:', res.cookie);
       })
       .catch( error => this.handleError(error, res) )
   }
