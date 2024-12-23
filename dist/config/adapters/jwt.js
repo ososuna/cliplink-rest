@@ -46,4 +46,3 @@ class JwtAdapter {
     }
 }
 exports.JwtAdapter = JwtAdapter;
-//# sourceMappingURL=jwt.js.map

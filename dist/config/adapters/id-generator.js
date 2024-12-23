@@ -8,4 +8,3 @@ class IdAdapter {
     }
 }
 exports.IdAdapter = IdAdapter;
-//# sourceMappingURL=id-generator.js.map

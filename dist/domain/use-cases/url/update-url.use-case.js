@@ -21,4 +21,3 @@ class UpdateUrl {
     }
 }
 exports.UpdateUrl = UpdateUrl;
-//# sourceMappingURL=update-url.use-case.js.map

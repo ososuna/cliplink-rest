@@ -19,10 +19,7 @@ class MongoDatabase {
         return __awaiter(this, void 0, void 0, function* () {
             const { dbName, mongoUrl } = options;
             try {
-                console.log('connecting to mongo...');
-                console.log(dbName);
-                const conection = yield mongoose_1.default.connect(mongoUrl, { dbName });
-                console.log(conection);
+                yield mongoose_1.default.connect(mongoUrl, { dbName });
                 console.log('mongo connection succesful ✅');
             }
             catch (error) {
@@ -33,4 +30,3 @@ class MongoDatabase {
     }
 }
 exports.MongoDatabase = MongoDatabase;
-//# sourceMappingURL=mongo-database.js.map

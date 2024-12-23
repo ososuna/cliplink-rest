@@ -10,4 +10,3 @@ class ResetPasswordToken {
     }
 }
 exports.ResetPasswordToken = ResetPasswordToken;
-//# sourceMappingURL=reset-password-token.entity.js.map

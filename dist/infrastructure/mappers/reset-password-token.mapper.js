@@ -15,4 +15,3 @@ class ResetPasswordTokenMapper {
     }
 }
 exports.ResetPasswordTokenMapper = ResetPasswordTokenMapper;
-//# sourceMappingURL=reset-password-token.mapper.js.map

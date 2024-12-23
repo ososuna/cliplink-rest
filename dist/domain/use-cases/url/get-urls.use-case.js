@@ -25,4 +25,3 @@ class GetUrls {
     }
 }
 exports.GetUrls = GetUrls;
-//# sourceMappingURL=get-urls.use-case.js.map

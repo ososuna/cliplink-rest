@@ -7,4 +7,3 @@ class DateAdapter {
     }
 }
 exports.DateAdapter = DateAdapter;
-//# sourceMappingURL=date.js.map

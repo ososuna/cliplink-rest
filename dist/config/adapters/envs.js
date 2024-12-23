@@ -23,4 +23,3 @@ exports.envs = {
     RESEND_API_KEY: (0, env_var_1.get)('RESEND_API_KEY').required().asString(),
     WEB_APP_URL: (0, env_var_1.get)('WEB_APP_URL').required().asString(),
 };
-//# sourceMappingURL=envs.js.map

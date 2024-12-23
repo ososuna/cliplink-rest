@@ -16,4 +16,3 @@ class ShortenerRoutes {
     }
 }
 exports.ShortenerRoutes = ShortenerRoutes;
-//# sourceMappingURL=routes.js.map

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import winston from 'winston';
 
 interface Options {
   mongoUrl: string;
@@ -13,10 +12,7 @@ export class MongoDatabase {
     const { dbName, mongoUrl } = options;
 
     try {
-      console.log('connecting to mongo...');
-      console.log(dbName);
-      const conection = await mongoose.connect(mongoUrl, { dbName });
-      console.log(conection);
+      await mongoose.connect(mongoUrl, { dbName });
       console.log('mongo connection succesful ✅');
     } catch (error) {
       console.log('mongo connection error ❌');

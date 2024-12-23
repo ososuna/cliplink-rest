@@ -21,4 +21,3 @@ __exportStar(require("./adapters/short-id"), exports);
 __exportStar(require("./adapters/id-generator"), exports);
 __exportStar(require("./adapters/date"), exports);
 __exportStar(require("./validators"), exports);
-//# sourceMappingURL=index.js.map

@@ -31,4 +31,3 @@ class AuthRoutes {
     }
 }
 exports.AuthRoutes = AuthRoutes;
-//# sourceMappingURL=routes.js.map

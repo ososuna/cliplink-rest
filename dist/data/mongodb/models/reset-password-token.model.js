@@ -59,4 +59,3 @@ const resetPasswordTokenSchema = new mongoose_1.Schema({
     timestamps: true,
 });
 exports.ResetPasswordTokenModel = mongoose_1.default.model('ResetPasswordToken', resetPasswordTokenSchema);
-//# sourceMappingURL=reset-password-token.model.js.map

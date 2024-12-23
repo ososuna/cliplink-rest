@@ -15,4 +15,3 @@ class UrlMapper {
     }
 }
 exports.UrlMapper = UrlMapper;
-//# sourceMappingURL=url.mapper.js.map
