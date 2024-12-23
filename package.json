@@ -1,5 +1,5 @@
 {
-  "name": "node-clean-architecture",
+  "name": "cliplink-rest",
   "version": "1.0.0",
   "description": "",
   "main": "src/app.ts",
@@ -9,11 +9,6 @@
     "start": "node dist/app.js",
     "ts.check": "tsc --project tsconfig.json"
   },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
