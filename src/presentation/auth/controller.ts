@@ -70,10 +70,8 @@ export class AuthController {
   }
 
   logout = (req: Request, res: Response) => {
-    res.clearCookie(
-      'access_token',
-      CookieAdapter.authClearCookieOptions()
-    ).json({ message: Messages.LOGOUT_SUCCESSFUL });
+    res.clearCookie('access_token', CookieAdapter.authClearCookieOptions())
+      .json({ message: Messages.LOGOUT_SUCCESSFUL });
   }
 
   checkToken = (req: Request, res: Response) => {
