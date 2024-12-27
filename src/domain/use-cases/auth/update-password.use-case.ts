@@ -1,5 +1,5 @@
 import { AuthRepository, CustomError } from "../../";
-import { JwtAdapter } from "../../../config";
+import { JwtAdapter, Messages } from "../../../config";
 
 interface UpdatePasswordUseCase {
   execute(token: string, password: string): Promise<UserToken>;
@@ -27,7 +27,7 @@ export class UpdatePassword implements UpdatePasswordUseCase {
     const user = await this.authRepository.updatePassword(token, password);
     const jwt = await this.signToken({ id: user.id }, "2h");
 
-    if (!jwt) throw CustomError.internalServer("error generating token");
+    if (!jwt) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
 
     return {
       token: jwt,

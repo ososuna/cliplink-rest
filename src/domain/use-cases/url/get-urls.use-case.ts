@@ -1,4 +1,5 @@
 import { CustomError, Page, UrlRepository } from '../..';
+import { Messages } from '../../../config';
 
 interface Url {
   id: string,
@@ -19,7 +20,7 @@ export class GetUrls implements GetUrlsUseCase {
 
   async execute(urlId: string, page: number, limit: number, search: string): Promise<Page<Url>> {
     if (page < 1 || limit < 1) {
-      throw CustomError.badRequest('Page and limit must be positive integers');
+      throw CustomError.badRequest(Messages.INVALID_PAGE_AND_LIMIT);
     }
     return await this.urlRepository.getUrls(urlId, page, limit, search);
   }

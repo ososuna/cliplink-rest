@@ -1,4 +1,5 @@
 import { CustomError, User } from '../../domain';
+import { Messages } from '../../config';
 
 export class UserGoogleMapper {
 
@@ -6,11 +7,11 @@ export class UserGoogleMapper {
 
     const { id, _id, name, lastName, email, roles, googleId } = object;
 
-    if ( !_id || !id ) throw CustomError.badRequest('missing id');
-    if ( !name ) throw CustomError.badRequest('missing name');
-    if ( !name ) throw CustomError.badRequest('Missing last name');
-    if ( !roles ) throw CustomError.badRequest('missing roles');
-    if ( !googleId ) throw CustomError.badRequest('Missing GitHub ID');
+    if ( !_id || !id ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));
+    if ( !name ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('name'));
+    if ( !lastName ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('last name'));
+    if ( !roles ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('roles'));
+    if ( !googleId ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('Google ID'));
 
     return new User(_id || id, name, lastName, email, roles, undefined, undefined, googleId);
   }

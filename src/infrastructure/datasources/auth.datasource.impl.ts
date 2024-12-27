@@ -1,6 +1,6 @@
 import { isValidObjectId } from 'mongoose';
 import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser, ResetPasswordToken } from '../../domain';
-import { BcryptAdapter, DateAdapter, envs } from '../../config';
+import { BcryptAdapter, DateAdapter, envs, Messages } from '../../config';
 import { UserMapper, UserGithubMapper, UserGoogleMapper, ResetPasswordTokenMapper } from '../';
 import { ResetPasswordTokenModel, UrlModel, UserModel } from '../../data/mongodb';
 
@@ -19,7 +19,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const exists = await UserModel.findOne({ email, active: true });
-      if (exists) throw CustomError.badRequest('user aleady exists');
+      if (exists) throw CustomError.badRequest(Messages.INVALID_EMAIL_REGISTER);
 
       const user = await UserModel.create({
         name: name,
@@ -44,12 +44,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const user = await UserModel.findOne({ email, active: true });
-      if ( !user ) throw CustomError.badRequest('bad credentials');
+      if ( !user ) throw CustomError.badRequest(Messages.BAD_CREDENTIALS);
       
-      if ( !user.password ) throw CustomError.badRequest('bad credentials');
+      if ( !user.password ) throw CustomError.badRequest(Messages.INVALID_EMAIL_LOGIN);
       
       const isValidPassword = this.comparePassword(password, user.password!);
-      if ( !isValidPassword ) throw CustomError.badRequest('bad credentials');
+      if ( !isValidPassword ) throw CustomError.badRequest(Messages.BAD_CREDENTIALS);
 
       return UserMapper.userEntityFromObject(user);
 
@@ -75,9 +75,9 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
   async getUser(userId: string): Promise<User> {
     try {
-      if ( !isValidObjectId(userId) ) throw CustomError.badRequest('user not found');
+      if ( !isValidObjectId(userId) ) throw CustomError.badRequest(Messages.USER_NOT_FOUND);
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.badRequest('user not found');
+      if ( !user ) throw CustomError.badRequest(Messages.USER_NOT_FOUND);
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -91,12 +91,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
     try {
       if (updateUserDto.email) {
         const exists = await UserModel.findOne({ email: updateUserDto.email });
-        if (exists) throw CustomError.badRequest('Invalid email');
+        if (exists) throw CustomError.badRequest(Messages.INVALID_EMAIL);
       }
       const user = await UserModel.findByIdAndUpdate(userId, updateUserDto, {
         new: true,
       });
-      if (!user) throw CustomError.notFound('User not found');
+      if (!user) throw CustomError.notFound(Messages.USER_NOT_FOUND);
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -123,7 +123,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       });
   
       if (!tokenResponse.ok) {
-        throw CustomError.internalServer('Failed to fetch Github access token');
+        throw CustomError.internalServer(Messages.GITHUB_ACCESS_TOKEN_ERROR);
       }
       const { access_token: accessToken } = await tokenResponse.json();
   
@@ -135,7 +135,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       });
   
       if (!userResponse.ok) {
-        throw CustomError.internalServer('Failed to fetch Github user data');
+        throw CustomError.internalServer(Messages.GITHUB_USER_DATA_ERROR);
       }  
       const githubUser: GithubUser = await userResponse.json();
 
@@ -147,7 +147,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       } else {
         // register
         const exists = await UserModel.findOne({ email: githubUser.email, active: true });
-        if (exists) throw CustomError.badRequest('An account with this email is already registered');
+        if (exists) throw CustomError.badRequest(Messages.INVALID_EMAIL_REGISTER);
         const userToSave = await UserModel.create({
           name: githubUser.name,
           email: githubUser.email,
@@ -185,7 +185,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       if (!tokenResponse.ok) {
         const errorDetails = await tokenResponse.text();
         console.error('Google Token Exchange Error:', errorDetails);
-        throw CustomError.internalServer('Failed to fetch Google access token');
+        throw CustomError.internalServer(Messages.GOOGLE_ACCESS_TOKEN_ERROR);
       }
   
       const { access_token: accessToken } = await tokenResponse.json();
@@ -198,7 +198,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       });
   
       if (!userResponse.ok) {
-        throw CustomError.internalServer('Failed to fetch Google user data');
+        throw CustomError.internalServer(Messages.GOOGLE_USER_DATA_ERROR);
       }
   
       const googleUser: GoogleUser = await userResponse.json();
@@ -211,7 +211,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       } else {
         // Register
         const exists = await UserModel.findOne({ email: googleUser.email, active: true });
-        if (exists) throw CustomError.badRequest('An account with this email is already registered');
+        if (exists) throw CustomError.badRequest(Messages.INVALID_EMAIL_REGISTER);
         const userToSave = await UserModel.create({
           name: googleUser.given_name,
           lastName: googleUser.family_name,
@@ -233,7 +233,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async deleteAccount(userId: string): Promise<User> {
     try {
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.notFound('user not found');
+      if ( !user ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
       
       await UrlModel.updateMany({ user: user._id }, { $set: { active: false } });
       await UserModel.findByIdAndDelete(userId);
@@ -250,8 +250,8 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await UserModel.findOne({ email, active: true });
-      if ( !user ) throw CustomError.badRequest('bad credentials');
-      if (user.googleId || user.githubId) throw CustomError.badRequest('bad credentials');
+      if ( !user ) throw CustomError.badRequest(Messages.INVALID_EMAIL);
+      if (user.googleId || user.githubId) throw CustomError.badRequest(Messages.INVALID_EMAIL);
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -264,7 +264,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken> {
     try {
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.notFound('user not found');
+      if ( !user ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
       
       const resetPasswordToken = await ResetPasswordTokenModel.create({
         user: user._id,
@@ -286,10 +286,10 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async isValidPasswordToken(token: string): Promise<ResetPasswordToken> {
     try {
       const resetPasswordToken = await ResetPasswordTokenModel.findOne({ token, active: true });
-      if ( !resetPasswordToken ) throw CustomError.badRequest('invalid token');
+      if ( !resetPasswordToken ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       const now = DateAdapter.now();
-      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest('expired token');
+      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       return ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
 
@@ -304,13 +304,13 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async updatePassword(token: string, password: string): Promise<User> {
     try {
       const resetPasswordToken = await ResetPasswordTokenModel.findOne({ token, active: true });
-      if ( !resetPasswordToken ) throw CustomError.badRequest('invalid token');
+      if ( !resetPasswordToken ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       const now = DateAdapter.now();
-      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest('expired token');
+      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       const user = await UserModel.findById(resetPasswordToken.user);
-      if ( !user ) throw CustomError.notFound('user not found');
+      if ( !user ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
 
       user.password = this.hashPassword(password);
       await user.save();

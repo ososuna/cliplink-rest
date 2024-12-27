@@ -1,4 +1,4 @@
-import { JwtAdapter } from '../../../config';
+import { JwtAdapter, Messages } from '../../../config';
 import { CustomError } from '../../errors/custom.error';
 import { AuthRepository } from '../../repositories/auth.repository';
 
@@ -29,7 +29,7 @@ export class AuthGithub implements AuthGithubUseCase {
   async execute(code: string): Promise<UserToken> {
     const user = await this.authRepository.authGithub(code);
     const token = await this.signToken({ id: user.id }, '2h');
-    if (!token) throw CustomError.internalServer('Error generating token');
+    if (!token) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
     return {
       token,
       user: {

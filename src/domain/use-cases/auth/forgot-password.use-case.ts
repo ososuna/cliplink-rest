@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { Resend } from 'resend';
-import { IdAdapter, envs } from '../../../config';
+import { IdAdapter, Messages, envs } from '../../../config';
 import { AuthRepository, CustomError } from '../../';
 
 interface ForgotPasswordUseCase {
@@ -37,6 +37,6 @@ export class ForgotPassword implements ForgotPasswordUseCase {
       html: emailHtml
     });
     
-    if (resp.error) throw CustomError.internalServer('Error sending email');
+    if (resp.error) throw CustomError.internalServer(Messages.SEND_EMAIL_ERROR);
   }
 }

@@ -1,4 +1,4 @@
-import { JwtAdapter } from '../../../config';
+import { JwtAdapter, Messages } from '../../../config';
 import { RegisterUserDto } from '../../dtos/auth/register-user.dto';
 import { CustomError } from '../../errors/custom.error';
 import { AuthRepository } from '../../repositories/auth.repository';
@@ -32,7 +32,7 @@ export class RegisterUser implements RegisterUserUseCase {
     const user = await this.authRepository.register(registerUserDto);
     const token = await this.signToken({ id: user.id }, '2h');
 
-    if (!token) throw CustomError.internalServer('error generating token');
+    if (!token) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
 
     return {
       token,

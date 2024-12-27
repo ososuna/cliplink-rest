@@ -7,3 +7,4 @@ export * from './adapters/date';
 export * from './adapters/cookie';
 
 export * from './validators';
+export * from './msg';

@@ -1,3 +1,4 @@
+import { Messages } from '../../config';
 import { CustomError, ResetPasswordToken } from '../../domain';
 
 export class ResetPasswordTokenMapper {
@@ -6,9 +7,9 @@ export class ResetPasswordTokenMapper {
 
     const { id, _id, token, expiresAt, user } = object;
 
-    if ( !_id || !id ) throw CustomError.badRequest('missing id');
-    if ( !token ) throw CustomError.badRequest('missing token');
-    if ( !expiresAt ) throw CustomError.badRequest('missing expiresAt');
+    if ( !_id || !id ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));
+    if ( !token ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('token'));
+    if ( !expiresAt ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('expires at'));
 
     return new ResetPasswordToken(_id || id, token, expiresAt, user);
   }

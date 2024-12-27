@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthGithub, AuthGoogle, AuthRepository, CheckPasswordToken, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdatePassword, UpdateUser, UpdateUserDto } from '../../domain';
-import { CookieAdapter, envs } from '../../config';
+import { CookieAdapter, Messages, envs } from '../../config';
 export class AuthController {
 
   // dependency injection 💉
@@ -13,7 +13,7 @@ export class AuthController {
       return res.status(error.statusCode).json({ message: error.message });
     }
     console.log(error); // winston logger
-    return res.status(500).json({ error: 'internal server error' });
+    return res.status(500).json({ error: Messages.INTERNAL_SERVER_ERROR });
   }
 
   registerUser = (req: Request, res: Response) => {
@@ -73,7 +73,7 @@ export class AuthController {
     res.clearCookie(
       'access_token',
       CookieAdapter.authClearCookieOptions()
-    ).json({ message: 'Logout successful' });
+    ).json({ message: Messages.LOGOUT_SUCCESSFUL });
   }
 
   checkToken = (req: Request, res: Response) => {
@@ -101,7 +101,7 @@ export class AuthController {
 
   loginGithubCallback = (req: Request, res: Response) => {
     const code = req.query.code as string;
-    if ( !code ) CustomError.badRequest('Missing Github Auth code');
+    if ( !code ) CustomError.badRequest(Messages.REQUIRED_FIELD('Github auth code'));
     new AuthGithub(this.authRepository)
       .execute(code)
       .then( data => {
@@ -114,7 +114,7 @@ export class AuthController {
       })
       .catch(error => {
         const url = new URL(`${envs.WEB_APP_URL}/auth/login`);
-        let errorMsg = 'internal server error';
+        let errorMsg = Messages.INTERNAL_SERVER_ERROR;
         if (error instanceof CustomError) {
           errorMsg = error.message;
         }
@@ -130,7 +130,7 @@ export class AuthController {
 
   loginGoogleCallback = (req: Request, res: Response) => {
     const code = req.query.code as string;
-    if ( !code ) CustomError.badRequest('Missing Google Auth code');
+    if ( !code ) CustomError.badRequest(Messages.REQUIRED_FIELD('Google auth code'));
     new AuthGoogle(this.authRepository)
       .execute(code)
       .then( data => {
@@ -143,7 +143,7 @@ export class AuthController {
       })
       .catch(error => {
         const url = new URL(`${envs.WEB_APP_URL}/auth/login`);        
-        let errorMsg = 'internal server error';
+        let errorMsg = Messages.INTERNAL_SERVER_ERROR;
         if (error instanceof CustomError) {
           errorMsg = error.message;
         }
@@ -165,12 +165,12 @@ export class AuthController {
   forgotPassword = (req: Request, res: Response) => {
     const email = req.body.email;
     if (!email) {
-      res.status(400).json({ error: 'Missing email' });
+      res.status(400).json({ error: Messages.REQUIRED_FIELD('email') });
       return;
     }
     new ForgotPassword(this.authRepository)
       .execute(email)
-      .then( () => res.json({ message: 'Email sent successfully' }))
+      .then( () => res.json({ message: Messages.EMAIL_SUCCESSFUL }))
       .catch( error => this.handleError(error, res) );
   }
 
