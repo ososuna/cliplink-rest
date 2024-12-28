@@ -93,7 +93,11 @@ export class UrlDataSourceImpl implements UrlDataSource {
 
       // Fetch items and total count
       const [urls, total] = await Promise.all([
-        UrlModel.find(query).skip(skip).limit(limit),
+        UrlModel
+          .find(query)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit),
         UrlModel.countDocuments(query),
       ]);
 
