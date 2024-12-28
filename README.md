@@ -47,11 +47,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<div align="center">
-  <a href="https://github.com/ososuna/cliplink-ui.git" target="_blank">
-    <img src="assets/img/cliplink-screenshot.jpeg" alt="Logo" width="400">
-  </a>
-</div>
+<a href="https://github.com/ososuna/cliplink-ui.git" target="_blank">
+  <img src="assets/img/cliplink-screenshot.png" alt="Logo" width="700">
+</a>
 
 ClipLink is a minimalistic, high-performance URL shortener designed with usability at its core. Whether you're managing a large number of links or just need a quick way to create short, shareable URLs, ClipLink makes it simple and efficient.
 
