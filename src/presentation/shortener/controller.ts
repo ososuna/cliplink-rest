@@ -11,7 +11,10 @@ export class ShortenerController {
 
   private handleError = (error: unknown, res: Response) => {
     if (error instanceof CustomError) {
-      return res.redirect(`${envs.WEB_APP_URL}/404`);
+      const notFoundUrl = process.env.NODE_ENV === 'production'
+        ? `${envs.WEB_APP_URL}/404.html`
+        : `${envs.WEB_APP_URL}/404`;
+      return res.redirect(notFoundUrl);
     }
     console.log(error); // winston logger
     return res.status(500).json({ error: 'internal server error' });
