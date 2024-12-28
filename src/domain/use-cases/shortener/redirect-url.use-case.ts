@@ -12,7 +12,6 @@ export class RedirectUrl implements RedirectUrlUseCase {
   ) {}
 
   async execute(shortId: string): Promise<Url> {
-    console.log(shortId);
     const url = this.urlRepository.getUrlByShortId(shortId);
     return url;
   }

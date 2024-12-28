@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CustomError, UrlRepository } from '../../domain';
 import { RedirectUrl } from '../../domain';
+import { envs } from '../../config';
 
 export class ShortenerController {
 
@@ -10,7 +11,7 @@ export class ShortenerController {
 
   private handleError = (error: unknown, res: Response) => {
     if (error instanceof CustomError) {
-      return res.status(error.statusCode).json({ message: error.message });
+      return res.redirect(`${envs.WEB_APP_URL}/404`);
     }
     console.log(error); // winston logger
     return res.status(500).json({ error: 'internal server error' });
