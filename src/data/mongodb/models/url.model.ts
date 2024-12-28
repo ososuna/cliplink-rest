@@ -22,6 +22,6 @@ const urlSchema = new Schema({
     required: true,
     default: true
   }
-});
+}, { timestamps: true });
 
 export const UrlModel = mongoose.model('Url', urlSchema);
