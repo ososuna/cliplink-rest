@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { envs } from '../config';
+import { Messages, envs } from '../config';
 
 interface Options {
   port?: number;
