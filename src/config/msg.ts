@@ -17,4 +17,5 @@ export const Messages = {
   INTERNAL_SERVER_ERROR: 'Something went wrong on our end. Please try again later.',
   LOGOUT_SUCCESSFUL: 'You have been successfully logged out.',
   EMAIL_SUCCESSFUL: 'The email was sent successfully. Please check your inbox.',
+  TOO_MANY_REQUESTS: 'Too many requests, please try again later',
 };
