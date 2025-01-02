@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { Messages, envs } from '../config';
+import { envs } from '../config';
 
 interface Options {
   port?: number;
@@ -32,6 +32,10 @@ export class Server {
     this.app.use(express.json());
     this.app.use(cookieParser());
     // this.app.use(express.urlencoded({ extended: true })); // x-www-formurlencoder
+
+    if (process.env.NODE_ENV == 'production') {
+      this.app.set('trust proxy', 1);
+    }
 
     this.app.use(this.routes);
 
