@@ -33,6 +33,12 @@ export class Server {
     this.app.use(cookieParser());
     // this.app.use(express.urlencoded({ extended: true })); // x-www-formurlencoder
 
+    this.app.use((req, res, next) => {
+      console.log(`Request IP: ${req.ip}`);
+      console.log(`X-Forwarded-For: ${req.headers['x-forwarded-for']}`);
+      next();
+    });
+
     if (process.env.NODE_ENV == 'production') {
       this.app.set('trust proxy', 1);
     }
