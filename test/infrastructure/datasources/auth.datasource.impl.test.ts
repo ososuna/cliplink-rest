@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, vi, expect, beforeAll } from 'vitest';
 import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks';
 import { AuthDataSourceImpl } from '../../../src/infrastructure';
-import { UserModel } from '../../../src/data/mongodb';
+import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
 import { isValidObjectId } from 'mongoose';
 
@@ -252,6 +252,28 @@ describe('AuthDataSourceImpl', () => {
       await expect(authDataSource.getUserByEmail('email')).rejects.toThrow(Messages.INVALID_EMAIL);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
       expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+  });
+
+  describe('save reset password token', () => {
+    it('should save reset password token', async () => {
+      await authDataSource.saveResetPasswordToken('userId', 'token');
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(ResetPasswordTokenModel.create).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(UserModel.findById).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.saveResetPasswordToken('userId', 'token')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should throw not found error if user does not exist', async () => {
+      asMock(UserModel.findById).mockResolvedValueOnce(null);
+      await expect(authDataSource.saveResetPasswordToken('userId', 'token')).rejects.toThrow(Messages.USER_NOT_FOUND);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(ResetPasswordTokenModel.create).toHaveBeenCalledTimes(0);
     });
   });
 

@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { User } from '../../../../src/domain';
+import { ResetPasswordToken, User } from '../../../../src/domain';
 
 export class AuthDataSourceMocks {
 
@@ -75,6 +75,13 @@ export class AuthDataSourceMocks {
     role: ['role'],
   };
 
+  static readonly resetPasswordToken: ResetPasswordToken = {
+    id: 'resetPasswordTokenId',
+    user: AuthDataSourceMocks.user,
+    token: 'token',
+    expiresAt: new Date(),
+  };
+
   static setupMocks() {
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
@@ -121,10 +128,8 @@ export class AuthDataSourceMocks {
 
     vi.mock('../../../../src/data/mongodb/models/reset-password-token.model.ts', () => ({
       ResetPasswordTokenModel: {
-        create: vi.fn().mockResolvedValue({
-          _id: 'resetPasswordTokenId',
-          userId: 'userId',
-        }),
+        create: vi.fn().mockResolvedValue({...AuthDataSourceMocks.resetPasswordToken, save: vi.fn()}),
+        findOne: vi.fn().mockResolvedValue(AuthDataSourceMocks.resetPasswordToken),
       },
     }));
   }
