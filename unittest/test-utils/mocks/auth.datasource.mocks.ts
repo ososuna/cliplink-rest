@@ -44,6 +44,7 @@ export class AuthDataSourceMocks {
           email: 'email',
           password: 'hashed-password',
           roles: ['role'],
+          save: vi.fn()
         }),
       },
     }));
