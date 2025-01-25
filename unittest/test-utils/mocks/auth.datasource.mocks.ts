@@ -12,6 +12,13 @@ export class AuthDataSourceMocks {
     role: ['role'],
   };
 
+  static readonly registerUserDto = {
+    name: 'name',
+    lastName: 'lastName',
+    email: 'email',
+    password: 'password',
+  };
+
   static setupMocks() {
     vi.mock("env-var", () => ({
       get: vi.fn(() => ({

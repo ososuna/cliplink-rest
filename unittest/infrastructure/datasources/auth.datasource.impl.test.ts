@@ -38,7 +38,7 @@ describe('AuthDataSourceImpl', () => {
       await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.USER_NOT_FOUND);
     });
   
-    it('should throw 500 error', async () => {
+    it('should throw internal server error', async () => {
       (isValidObjectId as any).mockImplementationOnce(() => {
         throw new Error('Unexpected error');
       });
@@ -60,13 +60,7 @@ describe('AuthDataSourceImpl', () => {
     });
 
     it('should register user', async () => {
-      const registerUserDto = {
-        name: 'name',
-        lastName: 'lastName',
-        email: 'email',
-        password: 'password',
-      };
-      const user = await authDataSource.register(registerUserDto);
+      const user = await authDataSource.register(AuthDataSourceMocks.registerUserDto);
       expect(user).toEqual(AuthDataSourceMocks.user);
       expect(UserModel.create).toHaveBeenCalledTimes(1);
       expect(UserModel.create).toHaveBeenCalledWith({
@@ -75,6 +69,13 @@ describe('AuthDataSourceImpl', () => {
         email: 'email',
         password: 'hashed-password',
       });
+    });
+
+    it('should throw internal server error', async () => {
+      (UserModel.findOne as any).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.register(AuthDataSourceMocks.registerUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
     });
 
     it('should throw error if email is already registered', async () => {
@@ -86,13 +87,7 @@ describe('AuthDataSourceImpl', () => {
         password: 'password',
         roles: ['role'],
       });
-      const registerUserDto = {
-        name: 'name',
-        lastName: 'lastName',
-        email: 'email',
-        password: 'password',
-      };
-      await expect(authDataSource.register(registerUserDto)).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
+      await expect(authDataSource.register(AuthDataSourceMocks.registerUserDto)).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
     });
   });
