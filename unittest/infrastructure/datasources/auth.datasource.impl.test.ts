@@ -85,10 +85,57 @@ describe('AuthDataSourceImpl', () => {
         lastName: 'lastName',
         email: 'email',
         password: 'password',
-        roles: ['role'],
+        role: ['role'],
       });
       await expect(authDataSource.register(AuthDataSourceMocks.registerUserDto)).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('login', () => {
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should login user', async () => {
+      (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.user);
+      (comparePasswordMock as any).mockReturnValueOnce(true);
+      const user = await authDataSource.login(AuthDataSourceMocks.loginUserDto);
+      expect(user).toEqual(AuthDataSourceMocks.user);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+
+    it('should throw internal server error', async () => {
+      (UserModel.findOne as any).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should throw error if email is not registered', async () => {
+      (UserModel.findOne as any).mockResolvedValueOnce(null);
+      await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.BAD_CREDENTIALS);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+
+    it('should throw invalid email', async () => {
+      // google autheticated user
+      (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
+      await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.INVALID_EMAIL_LOGIN);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+
+    it('should throw error if password is incorrect', async () => {
+      (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.user);
+      (comparePasswordMock as any).mockReturnValueOnce(false);
+      await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.BAD_CREDENTIALS);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+  });
+
 });

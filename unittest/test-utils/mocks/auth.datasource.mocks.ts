@@ -12,9 +12,23 @@ export class AuthDataSourceMocks {
     role: ['role'],
   };
 
+  static readonly googleUser: User = {
+    id: 'userId',
+    name: 'name',
+    lastName: 'lastName',
+    email: 'email',
+    googleId: 'googleId',
+    role: ['role'],
+  };
+
   static readonly registerUserDto = {
     name: 'name',
     lastName: 'lastName',
+    email: 'email',
+    password: 'password',
+  };
+
+  static readonly loginUserDto = {
     email: 'email',
     password: 'password',
   };
@@ -41,7 +55,7 @@ export class AuthDataSourceMocks {
           lastName: 'lastName',
           email: 'email',
           password: 'hashed-password',
-          roles: ['role']
+          role: ['role']
         }),
         findOne: vi.fn().mockResolvedValue(null),
         create: vi.fn().mockResolvedValue({
@@ -50,7 +64,7 @@ export class AuthDataSourceMocks {
           lastName: 'lastName',
           email: 'email',
           password: 'hashed-password',
-          roles: ['role'],
+          role: ['role'],
           save: vi.fn()
         }),
       },
