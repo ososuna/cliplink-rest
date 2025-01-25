@@ -140,6 +140,10 @@ describe('AuthDataSourceImpl', () => {
 
   describe('get users', () => {
 
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     it('should return users', async () => {
       const users = await authDataSource.getUsers();
       expect(users).toEqual(AuthDataSourceMocks.users);
