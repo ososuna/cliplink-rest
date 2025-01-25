@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { User } from '../../../src/domain';
+import { User } from '../../../../src/domain';
 
 export class AuthDataSourceMocks {
 
@@ -89,7 +89,7 @@ export class AuthDataSourceMocks {
       isValidObjectId: vi.fn().mockImplementation(() => true),
     }));
 
-    vi.mock('../../../src/data/mongodb/models/user.model.ts', () => ({
+    vi.mock('../../../../src/data/mongodb/models/user.model.ts', () => ({
       UserModel: {
         findById: vi.fn().mockResolvedValue({
           _id: 'userId',
@@ -114,7 +114,7 @@ export class AuthDataSourceMocks {
       },
     }));
 
-    vi.mock('../../../src/data/mongodb/models/url.model.ts', () => ({
+    vi.mock('../../../../src/data/mongodb/models/url.model.ts', () => ({
       UrlModel: {
         find: vi.fn().mockResolvedValue([]),
         create: vi.fn().mockResolvedValue({
@@ -126,7 +126,7 @@ export class AuthDataSourceMocks {
       },
     }));
 
-    vi.mock('../../../src/data/mongodb/models/reset-password-token.model.ts', () => ({
+    vi.mock('../../../../src/data/mongodb/models/reset-password-token.model.ts', () => ({
       ResetPasswordTokenModel: {
         create: vi.fn().mockResolvedValue({
           _id: 'resetPasswordTokenId',

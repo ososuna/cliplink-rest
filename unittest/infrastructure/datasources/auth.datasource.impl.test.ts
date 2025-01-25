@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, vi, expect, beforeAll } from 'vitest';
-import { AuthDataSourceMocks } from '../../test-utils/mocks/auth.datasource.mocks';
+import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks';
 import { AuthDataSourceImpl } from '../../../src/infrastructure';
 import { UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
