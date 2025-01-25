@@ -2,7 +2,7 @@ import { beforeEach, describe, it, vi, expect, beforeAll } from 'vitest';
 import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks';
 import { AuthDataSourceImpl } from '../../../src/infrastructure';
 import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
-import { Messages } from '../../../src/config';
+import { DateAdapter, Messages } from '../../../src/config';
 import { isValidObjectId } from 'mongoose';
 
 AuthDataSourceMocks.setupMocks();
@@ -274,6 +274,38 @@ describe('AuthDataSourceImpl', () => {
       await expect(authDataSource.saveResetPasswordToken('userId', 'token')).rejects.toThrow(Messages.USER_NOT_FOUND);
       expect(UserModel.findById).toHaveBeenCalledTimes(1);
       expect(ResetPasswordTokenModel.create).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('is valid password token', () => {
+    it('should return true if token is valid', async () => {
+      const expectedPasswordToken = AuthDataSourceMocks.resetPasswordToken;
+      expectedPasswordToken.expiresAt = new Date(new Date().getTime() + 60 * 60 * 1000);
+      await authDataSource.isValidPasswordToken('token');
+      expect(ResetPasswordTokenModel.findOne).toHaveBeenCalledTimes(1);
+      expect(ResetPasswordTokenModel.findOne).toHaveBeenCalledWith({ token: 'token', active: true });
+    });
+
+    it('should throw bad request error if token is expired', async () => {
+      const expectedPasswordToken = AuthDataSourceMocks.resetPasswordToken;
+      expectedPasswordToken.expiresAt = new Date(new Date().getTime() - 60 * 60 * 1000);
+      await expect(authDataSource.isValidPasswordToken('token')).rejects.toThrow(Messages.INVALID_PASSWORD_TOKEN);
+      expect(ResetPasswordTokenModel.findOne).toHaveBeenCalledTimes(1);
+      expect(ResetPasswordTokenModel.findOne).toHaveBeenCalledWith({ token: 'token', active: true });
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(ResetPasswordTokenModel.findOne).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.isValidPasswordToken('token')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should throw not found error if token does not exist', async () => {
+      asMock(ResetPasswordTokenModel.findOne).mockResolvedValueOnce(null);
+      await expect(authDataSource.isValidPasswordToken('token')).rejects.toThrow(Messages.INVALID_PASSWORD_TOKEN);
+      expect(ResetPasswordTokenModel.findOne).toHaveBeenCalledTimes(1);
+      expect(ResetPasswordTokenModel.findOne).toHaveBeenCalledWith({ token: 'token', active: true });
     });
   });
 
