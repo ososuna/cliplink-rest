@@ -174,31 +174,31 @@ describe('AuthDataSourceImpl', () => {
         email: 'email',
       }, { new: true });
     });
-  });
 
-  it('should throw bad request error if the email is already registered', async () => {
-    asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
-    await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INVALID_EMAIL);
-    expect(UserModel.findOne).toHaveBeenCalledTimes(1);
-    expect(UserModel.findByIdAndUpdate).toHaveBeenCalledTimes(0);
-  });
-
-  it('should throw not found error if user does not exist', async () => {
-    asMock(UserModel.findByIdAndUpdate).mockResolvedValueOnce(null);
-    await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.USER_NOT_FOUND);
-    expect(UserModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
-    expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith('userId', {
-      name: 'nameUpdated',
-      lastName: 'lastNameUpdated',
-      email: 'email',
-    }, { new: true });
-  });
-
-  it('should throw internal server error', async () => {
-    asMock(UserModel.findByIdAndUpdate).mockImplementationOnce(() => {
-      throw new Error('Unexpected error');
+    it('should throw bad request error if the email is already registered', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
+      await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INVALID_EMAIL);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledTimes(0);
     });
-    await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+  
+    it('should throw not found error if user does not exist', async () => {
+      asMock(UserModel.findByIdAndUpdate).mockResolvedValueOnce(null);
+      await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.USER_NOT_FOUND);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith('userId', {
+        name: 'nameUpdated',
+        lastName: 'lastNameUpdated',
+        email: 'email',
+      }, { new: true });
+    });
+  
+    it('should throw internal server error', async () => {
+      asMock(UserModel.findByIdAndUpdate).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
   });
 
 });
