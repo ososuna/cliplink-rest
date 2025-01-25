@@ -16,15 +16,13 @@ describe('AuthDataSourceImpl', () => {
 
   beforeAll(() => {
     authDataSource = new AuthDataSourceImpl(hashPasswordMock, comparePasswordMock);
+  });
+
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('register', () => {
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should register user', async () => {
       const user = await authDataSource.register(AuthDataSourceMocks.registerUserDto);
       expect(user).toEqual(AuthDataSourceMocks.user);
@@ -59,11 +57,6 @@ describe('AuthDataSourceImpl', () => {
   });
 
   describe('login', () => {
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should login user', async () => {
       (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.user);
       (comparePasswordMock as any).mockReturnValueOnce(true);
@@ -105,11 +98,6 @@ describe('AuthDataSourceImpl', () => {
   });
 
   describe('get users', () => {
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return users', async () => {
       const users = await authDataSource.getUsers();
       expect(users).toEqual(AuthDataSourceMocks.users);
@@ -147,11 +135,6 @@ describe('AuthDataSourceImpl', () => {
   });
 
   describe('get user', () => {
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return user if user exists', async () => {
       const expectedUser = AuthDataSourceMocks.user;
       const user = await authDataSource.getUser('userId');
