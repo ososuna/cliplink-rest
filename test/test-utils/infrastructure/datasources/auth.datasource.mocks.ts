@@ -82,6 +82,20 @@ export class AuthDataSourceMocks {
     expiresAt: new Date(),
   };
 
+  static readonly validResetPasswordToken: ResetPasswordToken = {
+    id: 'resetPasswordTokenId',
+    user: AuthDataSourceMocks.user,
+    token: 'token',
+    expiresAt: new Date(new Date().getTime() + 60 * 60 * 1000),
+  };
+
+  static readonly expiredResetPasswordToken: ResetPasswordToken = {
+    id: 'resetPasswordTokenId',
+    user: AuthDataSourceMocks.user,
+    token: 'token',
+    expiresAt: new Date(new Date().getTime() - 60 * 60 * 1000),
+  };
+
   static setupMocks() {
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
