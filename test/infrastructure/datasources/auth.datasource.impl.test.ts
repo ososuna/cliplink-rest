@@ -201,4 +201,58 @@ describe('AuthDataSourceImpl', () => {
     });
   });
 
+  describe('delete account', () => {
+    it('should delete account', async () => {
+      await authDataSource.deleteAccount('userId');
+      expect(UserModel.findByIdAndDelete).toHaveBeenCalledTimes(1);
+      expect(UserModel.findByIdAndDelete).toHaveBeenCalledWith('userId');
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(UserModel.findByIdAndDelete).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.deleteAccount('userId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should throw not found error if user does not exist', async () => {
+      asMock(UserModel.findById).mockResolvedValueOnce(null);
+      await expect(authDataSource.deleteAccount('userId')).rejects.toThrow(Messages.USER_NOT_FOUND);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findByIdAndDelete).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('get user by email', () => {
+    it('should return user if user exists', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
+      const expectedUser = AuthDataSourceMocks.user;
+      const user = await authDataSource.getUserByEmail('email');
+      expect(user).toEqual(expectedUser);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true});
+    });
+  
+    it('should throw internal server error', async () => {
+      asMock(UserModel.findOne).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.getUserByEmail('email')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+  
+    it('should throw error if user does not exist', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(null);
+      await expect(authDataSource.getUserByEmail('email')).rejects.toThrow(Messages.INVALID_EMAIL);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+
+    it('should throw bad request error if email is invalid', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
+      await expect(authDataSource.getUserByEmail('email')).rejects.toThrow(Messages.INVALID_EMAIL);
+      expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
+    });
+  });
+
 });

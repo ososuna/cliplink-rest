@@ -102,6 +102,7 @@ export class AuthDataSourceMocks {
           save: vi.fn()
         }),
         findByIdAndUpdate: vi.fn().mockResolvedValue(AuthDataSourceMocks.updatedUser),
+        findByIdAndDelete: vi.fn().mockResolvedValue(AuthDataSourceMocks.user),
       },
     }));
 
@@ -114,6 +115,7 @@ export class AuthDataSourceMocks {
           shortUrl: 'shortUrl',
           userId: 'userId',
         }),
+        updateMany: vi.fn().mockResolvedValue({ nModified: 1 }),
       },
     }));
 
