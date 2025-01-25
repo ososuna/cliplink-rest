@@ -19,40 +19,6 @@ describe('AuthDataSourceImpl', () => {
     vi.clearAllMocks();
   });
 
-  describe('get user', () => {
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it('should return user if user exists', async () => {
-      const expectedUser = AuthDataSourceMocks.user;
-      const user = await authDataSource.getUser('userId');
-      expect(user).toEqual(expectedUser);
-      expect(UserModel.findById).toHaveBeenCalledTimes(1);
-      expect(UserModel.findById).toHaveBeenCalledWith('userId');
-    });
-  
-    it('should throw error if userId is not valid', async () => {
-      (isValidObjectId as any).mockReturnValueOnce(false);
-      await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.USER_NOT_FOUND);
-    });
-  
-    it('should throw internal server error', async () => {
-      (isValidObjectId as any).mockImplementationOnce(() => {
-        throw new Error('Unexpected error');
-      });
-      await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
-    });
-  
-    it('should throw error if user does not exist', async () => {
-      (UserModel.findById as any).mockResolvedValueOnce(null);
-      await expect(authDataSource.getUser('userId')).rejects.toThrow('We could not find a user matching the provided information.');
-      expect(UserModel.findById).toHaveBeenCalledTimes(1);
-      expect(UserModel.findById).toHaveBeenCalledWith('userId');
-    });
-  });
-
   describe('register', () => {
 
     beforeEach(() => {
@@ -178,6 +144,40 @@ describe('AuthDataSourceImpl', () => {
       expect(UserModel.find).toHaveBeenCalledTimes(1);
     });
 
+  });
+
+  describe('get user', () => {
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return user if user exists', async () => {
+      const expectedUser = AuthDataSourceMocks.user;
+      const user = await authDataSource.getUser('userId');
+      expect(user).toEqual(expectedUser);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+    });
+  
+    it('should throw error if userId is not valid', async () => {
+      (isValidObjectId as any).mockReturnValueOnce(false);
+      await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.USER_NOT_FOUND);
+    });
+  
+    it('should throw internal server error', async () => {
+      (isValidObjectId as any).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+  
+    it('should throw error if user does not exist', async () => {
+      (UserModel.findById as any).mockResolvedValueOnce(null);
+      await expect(authDataSource.getUser('userId')).rejects.toThrow('We could not find a user matching the provided information.');
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+    });
   });
 
 });
