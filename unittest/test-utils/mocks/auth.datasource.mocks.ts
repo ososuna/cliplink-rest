@@ -60,6 +60,21 @@ export class AuthDataSourceMocks {
     }
   ];
 
+  static readonly updateUserDto = {
+    name: 'nameUpdated',
+    lastName: 'lastNameUpdated',
+    email: 'email',  
+  }
+
+  static readonly updatedUser: User = {
+    id: 'userId',
+    name: 'nameUpdated',
+    lastName: 'lastNameUpdated',
+    email: 'email',
+    password: 'hashed-password',
+    role: ['role'],
+  };
+
   static setupMocks() {
     vi.mock("env-var", () => ({
       get: vi.fn(() => ({
@@ -95,6 +110,7 @@ export class AuthDataSourceMocks {
           role: ['role'],
           save: vi.fn()
         }),
+        findByIdAndUpdate: vi.fn().mockResolvedValue(AuthDataSourceMocks.updatedUser),
       },
     }));
 
