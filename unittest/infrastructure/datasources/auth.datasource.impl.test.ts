@@ -138,4 +138,42 @@ describe('AuthDataSourceImpl', () => {
     });
   });
 
+  describe('get users', () => {
+
+    it('should return users', async () => {
+      const users = await authDataSource.getUsers();
+      expect(users).toEqual(AuthDataSourceMocks.users);
+      expect(UserModel.find).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw internal server error', async () => {
+      (UserModel.find as any).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.getUsers()).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return empty array if no users found', async () => {
+      (UserModel.find as any).mockResolvedValueOnce([]);
+      const users = await authDataSource.getUsers();
+      expect(users).toEqual([]);
+      expect(UserModel.find).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw bad request error', async () => {
+      (UserModel.find as any).mockResolvedValueOnce([
+        {
+          _id: 'userId',
+          lastName: 'lastName',
+          email: 'email',
+          password: 'password',
+          role: ['role'],
+        }
+      ]);
+      await expect(authDataSource.getUsers()).rejects.toThrow(Messages.REQUIRED_FIELD('name'));
+      expect(UserModel.find).toHaveBeenCalledTimes(1);
+    });
+
+  });
+
 });

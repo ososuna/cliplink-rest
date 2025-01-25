@@ -33,6 +33,33 @@ export class AuthDataSourceMocks {
     password: 'password',
   };
 
+  static readonly users: User[] = [
+    {
+      id: 'userId',
+      name: 'name',
+      lastName: 'lastName',
+      email: 'email',
+      password: 'hashed-password',
+      role: ['role'],
+    },
+    {
+      id: 'userId2',
+      name: 'name2',
+      lastName: 'lastName2',
+      email: 'email2',
+      password: 'hashed-password2',
+      role: ['role2'],
+    },
+    {
+      id: 'userId3',
+      name: 'name3',
+      lastName: 'lastName3',
+      email: 'email3',
+      password: 'hashed-password3',
+      role: ['role3'],
+    }
+  ];
+
   static setupMocks() {
     vi.mock("env-var", () => ({
       get: vi.fn(() => ({
@@ -57,6 +84,7 @@ export class AuthDataSourceMocks {
           password: 'hashed-password',
           role: ['role']
         }),
+        find: vi.fn().mockResolvedValue(AuthDataSourceMocks.users),
         findOne: vi.fn().mockResolvedValue(null),
         create: vi.fn().mockResolvedValue({
           _id: 'userId',
