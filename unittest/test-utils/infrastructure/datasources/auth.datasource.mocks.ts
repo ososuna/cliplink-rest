@@ -76,15 +76,6 @@ export class AuthDataSourceMocks {
   };
 
   static setupMocks() {
-    vi.mock("env-var", () => ({
-      get: vi.fn(() => ({
-        required: vi.fn().mockReturnValue({
-          asPortNumber: vi.fn().mockReturnValue(3000),
-          asString: vi.fn().mockReturnValue("dummy-value"),
-        }),
-      })),
-    }));
-
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
     }));

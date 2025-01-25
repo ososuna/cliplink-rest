@@ -36,14 +36,14 @@ describe('AuthDataSourceImpl', () => {
     });
 
     it('should throw internal server error', async () => {
-      (UserModel.findOne as any).mockImplementationOnce(() => {
+      asMock(UserModel.findOne).mockImplementationOnce(() => {
         throw new Error('Unexpected error');
       });
       await expect(authDataSource.register(AuthDataSourceMocks.registerUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
     });
 
     it('should throw error if email is already registered', async () => {
-      (UserModel.findOne as any).mockResolvedValueOnce({
+      asMock(UserModel.findOne).mockResolvedValueOnce({
         _id: 'userId',
         name: 'name',
         lastName: 'lastName',
@@ -58,8 +58,8 @@ describe('AuthDataSourceImpl', () => {
 
   describe('login', () => {
     it('should login user', async () => {
-      (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.user);
-      (comparePasswordMock as any).mockReturnValueOnce(true);
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
+      asMock(comparePasswordMock).mockReturnValueOnce(true);
       const user = await authDataSource.login(AuthDataSourceMocks.loginUserDto);
       expect(user).toEqual(AuthDataSourceMocks.user);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
@@ -67,14 +67,14 @@ describe('AuthDataSourceImpl', () => {
     });
 
     it('should throw internal server error', async () => {
-      (UserModel.findOne as any).mockImplementationOnce(() => {
+      asMock(UserModel.findOne).mockImplementationOnce(() => {
         throw new Error('Unexpected error');
       });
       await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
     });
 
     it('should throw error if email is not registered', async () => {
-      (UserModel.findOne as any).mockResolvedValueOnce(null);
+      asMock(UserModel.findOne).mockResolvedValueOnce(null);
       await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.BAD_CREDENTIALS);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
       expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
@@ -82,15 +82,15 @@ describe('AuthDataSourceImpl', () => {
 
     it('should throw invalid email', async () => {
       // google autheticated user
-      (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
       await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.INVALID_EMAIL_LOGIN);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
       expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
     });
 
     it('should throw error if password is incorrect', async () => {
-      (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.user);
-      (comparePasswordMock as any).mockReturnValueOnce(false);
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
+      asMock(comparePasswordMock).mockReturnValueOnce(false);
       await expect(authDataSource.login(AuthDataSourceMocks.loginUserDto)).rejects.toThrow(Messages.BAD_CREDENTIALS);
       expect(UserModel.findOne).toHaveBeenCalledTimes(1);
       expect(UserModel.findOne).toHaveBeenCalledWith({ email: 'email', active: true });
@@ -105,21 +105,21 @@ describe('AuthDataSourceImpl', () => {
     });
 
     it('should throw internal server error', async () => {
-      (UserModel.find as any).mockImplementationOnce(() => {
+      asMock(UserModel.find).mockImplementationOnce(() => {
         throw new Error('Unexpected error');
       });
       await expect(authDataSource.getUsers()).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
     });
 
     it('should return empty array if no users found', async () => {
-      (UserModel.find as any).mockResolvedValueOnce([]);
+      asMock(UserModel.find).mockResolvedValueOnce([]);
       const users = await authDataSource.getUsers();
       expect(users).toEqual([]);
       expect(UserModel.find).toHaveBeenCalledTimes(1);
     });
 
     it('should throw bad request error', async () => {
-      (UserModel.find as any).mockResolvedValueOnce([
+      asMock(UserModel.find).mockResolvedValueOnce([
         {
           _id: 'userId',
           lastName: 'lastName',
@@ -144,19 +144,19 @@ describe('AuthDataSourceImpl', () => {
     });
   
     it('should throw error if userId is not valid', async () => {
-      (isValidObjectId as any).mockReturnValueOnce(false);
+      asMock(isValidObjectId).mockReturnValueOnce(false);
       await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.USER_NOT_FOUND);
     });
   
     it('should throw internal server error', async () => {
-      (isValidObjectId as any).mockImplementationOnce(() => {
+      asMock(isValidObjectId).mockImplementationOnce(() => {
         throw new Error('Unexpected error');
       });
       await expect(authDataSource.getUser('invalidId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
     });
   
     it('should throw error if user does not exist', async () => {
-      (UserModel.findById as any).mockResolvedValueOnce(null);
+      asMock(UserModel.findById).mockResolvedValueOnce(null);
       await expect(authDataSource.getUser('userId')).rejects.toThrow('We could not find a user matching the provided information.');
       expect(UserModel.findById).toHaveBeenCalledTimes(1);
       expect(UserModel.findById).toHaveBeenCalledWith('userId');
@@ -177,14 +177,14 @@ describe('AuthDataSourceImpl', () => {
   });
 
   it('should throw bad request error if the email is already registered', async () => {
-    (UserModel.findOne as any).mockResolvedValueOnce(AuthDataSourceMocks.user);
+    asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
     await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INVALID_EMAIL);
     expect(UserModel.findOne).toHaveBeenCalledTimes(1);
     expect(UserModel.findByIdAndUpdate).toHaveBeenCalledTimes(0);
   });
 
   it('should throw not found error if user does not exist', async () => {
-    (UserModel.findByIdAndUpdate as any).mockResolvedValueOnce(null);
+    asMock(UserModel.findByIdAndUpdate).mockResolvedValueOnce(null);
     await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.USER_NOT_FOUND);
     expect(UserModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
     expect(UserModel.findByIdAndUpdate).toHaveBeenCalledWith('userId', {
@@ -195,7 +195,7 @@ describe('AuthDataSourceImpl', () => {
   });
 
   it('should throw internal server error', async () => {
-    (UserModel.findByIdAndUpdate as any).mockImplementationOnce(() => {
+    asMock(UserModel.findByIdAndUpdate).mockImplementationOnce(() => {
       throw new Error('Unexpected error');
     });
     await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
