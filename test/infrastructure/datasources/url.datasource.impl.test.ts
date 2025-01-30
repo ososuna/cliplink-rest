@@ -20,6 +20,26 @@ describe('UrlDataSourceImpl', () => {
     vi.clearAllMocks();
   });
 
+  describe('create url', () => {
+    it('should create url', async () => {
+      const url = await urlDataSource.create(UrlDataSourceMocks.createUrlDto);
+      expect(url).toEqual({
+        id: 'urlId',
+        shortId: 'shortId',
+        originalUrl: 'originalUrl',
+        user: 'userId',
+        name: 'name'
+      });
+      expect(UrlModel.create).toHaveBeenCalledTimes(1);
+      expect(UrlModel.create).toHaveBeenCalledWith({
+        name: 'name',
+        originalUrl: 'originalUrl',
+        shortId: 'shortId',
+        user: 'userId',
+      });
+    });
+  });
+
   describe('get url', () => {
     it('should return url', async () => {
       const url = await urlDataSource.getUrl('urlId');

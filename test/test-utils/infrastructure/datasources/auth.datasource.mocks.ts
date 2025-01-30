@@ -99,6 +99,9 @@ export class AuthDataSourceMocks {
   static setupMocks() {
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
+      Types: {
+        ObjectId: vi.fn().mockImplementation(() => 'userId'),
+      },
     }));
 
     vi.mock('../../../../src/data/mongodb/models/user.model.ts', () => ({
