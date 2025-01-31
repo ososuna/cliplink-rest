@@ -27,7 +27,7 @@ export class UrlDataSourceMocks {
           lastName: 'lastName',
           email: 'email',
           password: 'hashed-password',
-          role: ['role']
+          role: ['role'],
         }),
       },
       UrlModel: {
@@ -37,6 +37,8 @@ export class UrlDataSourceMocks {
           shortId: 'shortId',
           user: AuthDataSourceMocks.user,
           name: 'name',
+          save: vi.fn(),
+          active: true
         }),
         findOne: vi.fn().mockResolvedValue(null),
         find: vi.fn().mockResolvedValue([]),

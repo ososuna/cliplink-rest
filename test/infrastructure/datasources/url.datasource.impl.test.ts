@@ -40,18 +40,41 @@ describe('UrlDataSourceImpl', () => {
     });
     
     it('should throw user not found error', async () => {
-      asMock(UserModel.findById).mockResolvedValue(null);
+      asMock(UserModel.findById).mockResolvedValueOnce(null);
       await expect(urlDataSource.create(UrlDataSourceMocks.createUrlDto)).rejects.toThrow(Messages.USER_NOT_FOUND);
       expect(UserModel.findById).toHaveBeenCalledTimes(1);
       expect(UserModel.findById).toHaveBeenCalledWith('userId');
     });
   
     it('should throw internal server error', async () => {
-      asMock(UserModel.findById).mockRejectedValue(new Error('error'));
+      asMock(UserModel.findById).mockRejectedValueOnce(new Error('error'));
       await expect(urlDataSource.create(UrlDataSourceMocks.createUrlDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
       expect(UserModel.findById).toHaveBeenCalledTimes(1);
       expect(UserModel.findById).toHaveBeenCalledWith('userId');
     });
+  });
+
+  describe('delete url', () => {
+    it('should delete url', async () => {
+      await urlDataSource.delete('urlId');
+      expect(UrlModel.findById).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findById).toHaveBeenCalledWith('urlId');
+    });
+
+    it('should throw not found error', async () => {
+      asMock(UrlModel.findById).mockResolvedValueOnce(null);
+      await expect(urlDataSource.delete('urlId')).rejects.toThrow(Messages.URL_NOT_FOUND);
+      expect(UrlModel.findById).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findById).toHaveBeenCalledWith('urlId');
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(UrlModel.findById).mockRejectedValueOnce(new Error('error'));
+      await expect(urlDataSource.delete('urlId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+      expect(UrlModel.findById).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findById).toHaveBeenCalledWith('urlId');
+    });
+
   });
 
   describe('get url', () => {
@@ -63,14 +86,14 @@ describe('UrlDataSourceImpl', () => {
     });
 
     it('should throw not found error', async () => {
-      asMock(UrlModel.findById).mockResolvedValue(null);
+      asMock(UrlModel.findById).mockResolvedValueOnce(null);
       await expect(urlDataSource.getUrl('urlId')).rejects.toThrow(Messages.URL_NOT_FOUND);
       expect(UrlModel.findById).toHaveBeenCalledTimes(1);
       expect(UrlModel.findById).toHaveBeenCalledWith('urlId');
     });
 
     it('should throw internal server error', async () => {
-      asMock(UrlModel.findById).mockRejectedValue(new Error('error'));
+      asMock(UrlModel.findById).mockRejectedValueOnce(new Error('error'));
       await expect(urlDataSource.getUrl('urlId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
       expect(UrlModel.findById).toHaveBeenCalledTimes(1);
       expect(UrlModel.findById).toHaveBeenCalledWith('urlId');
