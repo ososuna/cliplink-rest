@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { UrlDataSourceMocks } from '../../test-utils/infrastructure/datasources/url.datasource.mocks';
 import { UrlDataSourceImpl } from '../../../src/infrastructure';
-import { UrlModel } from '../../../src/data/mongodb';
+import { UrlModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
 
 UrlDataSourceMocks.setupMocks();
@@ -37,6 +37,20 @@ describe('UrlDataSourceImpl', () => {
         shortId: 'shortId',
         user: 'userId',
       });
+    });
+    
+    it('should throw user not found error', async () => {
+      asMock(UserModel.findById).mockResolvedValue(null);
+      await expect(urlDataSource.create(UrlDataSourceMocks.createUrlDto)).rejects.toThrow(Messages.USER_NOT_FOUND);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+    });
+  
+    it('should throw internal server error', async () => {
+      asMock(UserModel.findById).mockRejectedValue(new Error('error'));
+      await expect(urlDataSource.create(UrlDataSourceMocks.createUrlDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
     });
   });
 
