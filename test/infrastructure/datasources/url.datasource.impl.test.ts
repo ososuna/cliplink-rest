@@ -101,4 +101,33 @@ describe('UrlDataSourceImpl', () => {
 
   });
 
+  describe('update url', () => {
+    it('should update url', async () => {
+      const url = await urlDataSource.update('urlId', 'userId', UrlDataSourceMocks.updateUrlDto);
+      expect(url).toEqual({
+        id: 'urlId',
+        shortId: 'shortId',
+        originalUrl: 'originalUrl',
+        user: 'userId',
+        name: 'newName'
+      });
+      expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledWith('urlId', UrlDataSourceMocks.updateUrlDto, { new: true });
+    });
+
+    it('should throw not found error', async () => {
+      asMock(UrlModel.findByIdAndUpdate).mockResolvedValueOnce(null);
+      await expect(urlDataSource.update('urlId', 'userId', UrlDataSourceMocks.updateUrlDto)).rejects.toThrow(Messages.URL_NOT_FOUND);
+      expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledWith('urlId', UrlDataSourceMocks.updateUrlDto, { new: true });
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(UrlModel.findByIdAndUpdate).mockRejectedValueOnce(new Error('error'));
+      await expect(urlDataSource.update('urlId', 'userId', UrlDataSourceMocks.updateUrlDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+      expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledWith('urlId', UrlDataSourceMocks.updateUrlDto, { new: true });
+    });
+  });
+
 });

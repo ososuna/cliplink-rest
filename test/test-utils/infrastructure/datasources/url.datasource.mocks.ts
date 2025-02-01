@@ -18,6 +18,11 @@ export class UrlDataSourceMocks {
     userId: 'userId'
   };
 
+  static readonly updateUrlDto = {
+    name: 'newName',
+    originalUrl: 'newOriginalUrl'
+  }
+
   static setupMocks() {
     vi.mock('./../../../../src/data/mongodb', () => ({
       UserModel: {
@@ -51,6 +56,14 @@ export class UrlDataSourceMocks {
           save: vi.fn(),
         }),
         updateMany: vi.fn().mockResolvedValue({ nModified: 1 }),
+        findByIdAndUpdate: vi.fn().mockResolvedValue({
+          _id: 'urlId',
+          name: 'newName',
+          originalUrl: 'originalUrl',
+          shortId: 'shortId',
+          user: 'userId',
+          save: vi.fn(),
+        }),
       },
     }));
   }
