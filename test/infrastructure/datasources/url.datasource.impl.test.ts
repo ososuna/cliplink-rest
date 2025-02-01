@@ -21,6 +21,11 @@ describe('UrlDataSourceImpl', () => {
   });
 
   describe('create url', () => {
+
+    beforeAll(() => {
+      asMock(UrlModel.findOne).mockResolvedValue(null);
+    });
+
     it('should create url', async () => {
       const url = await urlDataSource.create(UrlDataSourceMocks.createUrlDto);
       expect(url).toEqual({
@@ -102,6 +107,11 @@ describe('UrlDataSourceImpl', () => {
   });
 
   describe('update url', () => {
+
+    beforeAll(() => {
+      asMock(UrlModel.findOne).mockResolvedValue(null);
+    });
+
     it('should update url', async () => {
       const url = await urlDataSource.update('urlId', 'userId', UrlDataSourceMocks.updateUrlDto);
       expect(url).toEqual({
@@ -127,6 +137,48 @@ describe('UrlDataSourceImpl', () => {
       await expect(urlDataSource.update('urlId', 'userId', UrlDataSourceMocks.updateUrlDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
       expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
       expect(UrlModel.findByIdAndUpdate).toHaveBeenCalledWith('urlId', UrlDataSourceMocks.updateUrlDto, { new: true });
+    });
+  });
+
+  describe('get url by short id', () => {
+
+    beforeAll(() => {
+      asMock(UrlModel.findOne).mockResolvedValue({
+        _id: 'urlId',
+        originalUrl: 'originalUrl',
+        shortId: 'shortId',
+        user: 'userId',
+        name: 'name',
+        save: vi.fn(),
+        active: true
+      });
+    });
+
+    it('should return url', async () => {
+      const url = await urlDataSource.getUrlByShortId('shortId');
+      expect(url).toEqual({
+        id: 'urlId',
+        name: 'name',
+        originalUrl: 'originalUrl',
+        shortId: 'shortId',
+        user: 'userId',
+      });
+      expect(UrlModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findOne).toHaveBeenCalledWith({ shortId: 'shortId' });
+    });
+
+    it('should throw not found error', async () => {
+      asMock(UrlModel.findOne).mockResolvedValueOnce(null);
+      await expect(urlDataSource.getUrlByShortId('shortId')).rejects.toThrow(Messages.URL_NOT_FOUND);
+      expect(UrlModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findOne).toHaveBeenCalledWith({ shortId: 'shortId' });
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(UrlModel.findOne).mockRejectedValueOnce(new Error('error'));
+      await expect(urlDataSource.getUrlByShortId('shortId')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+      expect(UrlModel.findOne).toHaveBeenCalledTimes(1);
+      expect(UrlModel.findOne).toHaveBeenCalledWith({ shortId: 'shortId' });
     });
   });
 

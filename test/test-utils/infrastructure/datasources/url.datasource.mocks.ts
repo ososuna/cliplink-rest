@@ -45,7 +45,15 @@ export class UrlDataSourceMocks {
           save: vi.fn(),
           active: true
         }),
-        findOne: vi.fn().mockResolvedValue(null),
+        findOne: vi.fn().mockResolvedValue({
+          _id: 'urlId',
+          originalUrl: 'originalUrl',
+          shortId: 'shortId',
+          user: 'userId',
+          name: 'name',
+          save: vi.fn(),
+          active: true
+        }),
         find: vi.fn().mockResolvedValue([]),
         create: vi.fn().mockResolvedValue({
           _id: 'urlId',
