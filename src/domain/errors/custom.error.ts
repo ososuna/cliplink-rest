@@ -1,3 +1,5 @@
+import { Messages } from "../../config";
+
 export class CustomError extends Error {
   constructor(
     public readonly statusCode: number,
@@ -22,7 +24,7 @@ export class CustomError extends Error {
     return new CustomError(404, message);
   }
 
-  static internalServer(message: string = 'internal server error') {
+  static internalServer(message: string = Messages.INTERNAL_SERVER_ERROR) {
     return new CustomError(500, message);
   }
 
