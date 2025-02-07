@@ -12,6 +12,30 @@ export class UrlDataSourceMocks {
     name: 'name'
   };
 
+  static readonly urls: Url[] = [
+    {
+      id: 'urlId',
+      shortId: 'shortId',
+      originalUrl: 'originalUrl',
+      user: AuthDataSourceMocks.user,
+      name: 'name'
+    },
+    {
+      id: 'urlId2',
+      shortId: 'shortId2',
+      originalUrl: 'originalUrl',
+      user: AuthDataSourceMocks.user,
+      name: 'name (2)'
+    },
+    {
+      id: 'urlId3',
+      shortId: 'shortId3',
+      originalUrl: 'originalUrl',
+      user: AuthDataSourceMocks.user,
+      name: 'name (3)'
+    }
+  ];
+
   static readonly createUrlDto = {
     name: 'name',
     originalUrl: 'originalUrl',
@@ -54,7 +78,14 @@ export class UrlDataSourceMocks {
           save: vi.fn(),
           active: true
         }),
-        find: vi.fn().mockResolvedValue([]),
+        find: vi.fn(() => ({
+          sort: vi.fn(() => ({
+            skip: vi.fn(() => ({
+              limit: vi.fn().mockResolvedValue(UrlDataSourceMocks.urls),
+            })),
+          })),
+        })),
+        countDocuments: vi.fn().mockResolvedValue(3),
         create: vi.fn().mockResolvedValue({
           _id: 'urlId',
           name: 'name',

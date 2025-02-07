@@ -59,6 +59,44 @@ describe('UrlDataSourceImpl', () => {
     });
   });
 
+  describe('get urls', () => {
+    it('should return urls', async () => {
+      const urlsPage = await urlDataSource.getUrls('userId', 1, 9, '');
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+      expect(UrlModel.find).toHaveBeenCalledTimes(1);
+      expect(urlsPage.items).toEqual(UrlDataSourceMocks.urls);
+      expect(urlsPage.total).toBe(3);
+      expect(urlsPage.limit).toBe(9);
+      expect(urlsPage.page).toBe(1);
+    });
+
+    it('should search urls', async () => {
+      const urlsPage = await urlDataSource.getUrls('userId', 1, 9, 'search');
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+      expect(UrlModel.find).toHaveBeenCalledTimes(1);
+      expect(urlsPage.items).toEqual(UrlDataSourceMocks.urls);
+      expect(urlsPage.total).toBe(3);
+      expect(urlsPage.limit).toBe(9);
+      expect(urlsPage.page).toBe(1);
+    });
+
+    it('should throw user not found error', async () => {
+      asMock(UserModel.findById).mockResolvedValueOnce(null);
+      await expect(urlDataSource.getUrls('userId', 1, 9, '')).rejects.toThrow(Messages.USER_NOT_FOUND);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(UserModel.findById).mockRejectedValueOnce(new Error('error'));
+      await expect(urlDataSource.getUrls('userId', 1, 9, '')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+      expect(UserModel.findById).toHaveBeenCalledTimes(1);
+      expect(UserModel.findById).toHaveBeenCalledWith('userId');
+    });
+  });
+
   describe('delete url', () => {
     it('should delete url', async () => {
       await urlDataSource.delete('urlId');
