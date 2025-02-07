@@ -43,6 +43,36 @@ describe('UrlDataSourceImpl', () => {
         user: 'userId',
       });
     });
+
+    it('should create url with unique name', async () => {
+      asMock(UrlModel.findOne).mockImplementationOnce(async ({name, user, active}) => {
+        if (name === 'name') {
+          return Promise.resolve({
+            _id: 'urlId2',
+            id: 'urlId2',
+            originalUrl: 'originalUrl',
+            shortId: 'shortId',
+            name: 'name (2)',
+          });
+        }
+        return Promise.resolve(null);
+      });
+      const url = await urlDataSource.create(UrlDataSourceMocks.createUrlDto);
+      expect(url).toEqual({
+        id: 'urlId',
+        shortId: 'shortId',
+        originalUrl: 'originalUrl',
+        user: 'userId',
+        name: 'name'
+      });
+      expect(UrlModel.create).toHaveBeenCalledTimes(1);
+      expect(UrlModel.create).toHaveBeenCalledWith({
+        name: 'name (2)',
+        originalUrl: 'originalUrl',
+        shortId: 'shortId',
+        user: 'userId',
+      });
+    });
     
     it('should throw user not found error', async () => {
       asMock(UserModel.findById).mockResolvedValueOnce(null);
