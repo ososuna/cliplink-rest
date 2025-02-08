@@ -7,7 +7,7 @@ export class UserGithubMapper {
 
     const { id, _id, name, lastName, email, role, githubId } = object;
 
-    if ( !_id || !id ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));
+    if (!(_id || id)) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));
     if ( !name ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('name'));
     if ( !name ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('last name'));
     if ( !role ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('role'));

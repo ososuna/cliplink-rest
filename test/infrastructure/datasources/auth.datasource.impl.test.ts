@@ -201,6 +201,51 @@ describe('AuthDataSourceImpl', () => {
     });
   });
 
+  describe('auth github', () => {
+    it('should login user with github', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.githubUser);
+      const user = await authDataSource.authGithub('code');
+      expect(UserModel.findOne).toBeCalledTimes(1);
+      expect(UserModel.findOne).toBeCalledWith({ githubId: 'githubUserId', active: true });
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@github.com',
+        githubId: 'githubUserId',
+        role: ['role']
+      });
+    });
+
+    it('should register user with github', async () => {
+      asMock(UserModel.create).mockResolvedValueOnce({...AuthDataSourceMocks.githubUser, save: vi.fn()});
+      const user = await authDataSource.authGithub('code');
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@github.com',
+        githubId: 'githubUserId',
+        role: ['role']
+      });
+    });
+
+    it('should throw invalid email to register error', async () => {
+      asMock(UserModel.findOne).mockImplementation((params: Object) => {
+        if (params.hasOwnProperty('githubId')) {
+          return Promise.resolve(null);
+        } else if (params.hasOwnProperty('email')) {
+          return Promise.resolve(AuthDataSourceMocks.githubUser);
+        }
+      });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      asMock(UserModel.findOne).mockResolvedValue(null);
+    });
+
+  });
+
   describe('delete account', () => {
     it('should delete account', async () => {
       await authDataSource.deleteAccount('userId');

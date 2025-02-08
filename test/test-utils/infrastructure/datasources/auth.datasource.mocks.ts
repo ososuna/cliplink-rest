@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { type Mock, vi } from 'vitest';
 import { ResetPasswordToken, User } from '../../../../src/domain';
 
 export class AuthDataSourceMocks {
@@ -9,6 +9,15 @@ export class AuthDataSourceMocks {
     lastName: 'lastName',
     email: 'email',
     password: 'hashed-password',
+    role: ['role'],
+  };
+
+  static readonly githubUser: User = {
+    id: 'userId',
+    name: 'name',
+    lastName: 'lastName',
+    email: 'email@github.com',
+    githubId: 'githubUserId',
     role: ['role'],
   };
 
@@ -149,6 +158,32 @@ export class AuthDataSourceMocks {
         findOne: vi.fn().mockResolvedValue(AuthDataSourceMocks.resetPasswordToken),
       },
     }));
+
+    globalThis.fetch = vi.fn((url) => {
+      switch (url) {
+        case 'https://github.com/login/oauth/access_token':
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn(() => Promise.resolve({
+              access_token: 'fakegithubaccesstoken'
+            }))
+          });
+        case 'https://api.github.com/user':
+          return Promise.resolve({
+            ok: true,
+            json: vi.fn(() => Promise.resolve({
+              id: 'githubUserId',
+              email: 'email@github.com',
+              name: 'name',
+            }))
+          });
+        default:
+          return Promise.resolve({
+            status: 200,
+            ok: true
+          });
+      }
+    }) as Mock;
   }
 
   static clearMocks() {
