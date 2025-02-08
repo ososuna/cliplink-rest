@@ -244,6 +244,41 @@ describe('AuthDataSourceImpl', () => {
       asMock(UserModel.findOne).mockResolvedValue(null);
     });
 
+    it('should throw github access token error', async () => {
+      asMock(globalThis.fetch).mockResolvedValueOnce({ ok: false });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.GITHUB_ACCESS_TOKEN_ERROR);
+    });
+
+    it('should throw github user data error', async () => {
+      asMock(globalThis.fetch).mockImplementation((url) => {
+        switch (url) {
+          case 'https://github.com/login/oauth/access_token':
+            return Promise.resolve({
+              ok: true,
+              json: vi.fn(() => Promise.resolve({
+                access_token: 'fakegithubaccesstoken'
+              }))
+            });
+          case 'https://api.github.com/user':
+            return Promise.resolve({
+              ok: false
+            });
+          default:
+            return Promise.resolve({
+              status: 200,
+              ok: true
+            });
+        }
+      });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.GITHUB_USER_DATA_ERROR);
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(globalThis.fetch).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
   });
 
   describe('delete account', () => {
