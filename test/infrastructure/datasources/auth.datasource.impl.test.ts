@@ -281,6 +281,23 @@ describe('AuthDataSourceImpl', () => {
     });
   });
 
+  describe('auth google', () => {
+    it('should login user with google', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
+      const user = await authDataSource.authGoogle('code');
+      expect(UserModel.findOne).toBeCalledTimes(1);
+      expect(UserModel.findOne).toBeCalledWith({ googleId: 'googleUserId', active: true });
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@gmail.com',
+        googleId: 'googleUserId',
+        role: ['role']
+      });
+    });
+  });
+
   describe('delete account', () => {
     it('should delete account', async () => {
       await authDataSource.deleteAccount('userId');

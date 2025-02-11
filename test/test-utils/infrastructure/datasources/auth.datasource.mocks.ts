@@ -25,8 +25,8 @@ export class AuthDataSourceMocks {
     id: 'userId',
     name: 'name',
     lastName: 'lastName',
-    email: 'email',
-    googleId: 'googleId',
+    email: 'email@gmail.com',
+    googleId: 'googleUserId',
     role: ['role'],
   };
 
@@ -181,7 +181,15 @@ export class AuthDataSourceMocks {
           };
           break;
         case 'https://oauth2.googleapis.com/token':
-          body = { access_token: 'fakegithubaccesstoken'};
+          body = { access_token: 'fakegoogleaccesstoken'};
+          break;
+        case 'https://www.googleapis.com/oauth2/v3/userinfo':
+          body = {
+            sub: 'googleUserId',
+            email: 'email@gmail.com',
+            given_name: 'givenName',
+            family_name: 'familyName',
+          };
           break;
         default:
           break;
