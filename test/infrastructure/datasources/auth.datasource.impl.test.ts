@@ -1,9 +1,10 @@
-import { beforeEach, describe, it, vi, expect, beforeAll } from 'vitest';
+import { beforeEach, describe, it, vi, expect, beforeAll, afterAll } from 'vitest';
 import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks'; // this import should be right after vitest
 import { AuthDataSourceImpl } from '../../../src/infrastructure';
 import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
 import { isValidObjectId } from 'mongoose';
+import { asMock } from '../../test-utils/test-utils';
 
 AuthDataSourceMocks.setupMocks();
 
@@ -198,6 +199,158 @@ describe('AuthDataSourceImpl', () => {
         throw new Error('Unexpected error');
       });
       await expect(authDataSource.updateUser('userId', AuthDataSourceMocks.updateUserDto)).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+  });
+
+  describe('auth github', () => {
+
+    afterAll(() => {
+      AuthDataSourceMocks.setupMocks();
+    });
+
+    it('should login user with github', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.githubUser);
+      const user = await authDataSource.authGithub('code');
+      expect(UserModel.findOne).toBeCalledTimes(1);
+      expect(UserModel.findOne).toBeCalledWith({ githubId: 'githubUserId', active: true });
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@github.com',
+        githubId: 'githubUserId',
+        role: ['role']
+      });
+    });
+
+    it('should register user with github', async () => {
+      asMock(UserModel.create).mockResolvedValueOnce({...AuthDataSourceMocks.githubUser, save: vi.fn()});
+      const user = await authDataSource.authGithub('code');
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@github.com',
+        githubId: 'githubUserId',
+        role: ['role']
+      });
+    });
+
+    it('should throw invalid email to register error', async () => {
+      asMock(UserModel.findOne).mockImplementation((params: Object) => {
+        if (params.hasOwnProperty('githubId')) {
+          return Promise.resolve(null);
+        } else if (params.hasOwnProperty('email')) {
+          return Promise.resolve(AuthDataSourceMocks.githubUser);
+        }
+      });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      asMock(UserModel.findOne).mockResolvedValue(null);
+    });
+
+    it('should throw github access token error', async () => {
+      asMock(globalThis.fetch).mockResolvedValueOnce({ ok: false });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.GITHUB_ACCESS_TOKEN_ERROR);
+    });
+
+    it('should throw github user data error', async () => {
+      asMock(globalThis.fetch).mockImplementation((url) => {
+        switch (url) {
+          case 'https://github.com/login/oauth/access_token':
+            return AuthDataSourceMocks.buildFetchResolvedPromise({
+              access_token: 'fakegithubaccesstoken'
+            });
+          case 'https://api.github.com/user':
+            return AuthDataSourceMocks.buildFetchResolvedPromise({}, false, 500);
+          default:
+            return AuthDataSourceMocks.buildFetchResolvedPromise({});
+        }
+      });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.GITHUB_USER_DATA_ERROR);
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(globalThis.fetch).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
+  });
+
+  describe('auth google', () => {
+    it('should login user with google', async () => {
+      asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
+      const user = await authDataSource.authGoogle('code');
+      expect(UserModel.findOne).toBeCalledTimes(1);
+      expect(UserModel.findOne).toBeCalledWith({ googleId: 'googleUserId', active: true });
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@gmail.com',
+        googleId: 'googleUserId',
+        role: ['role']
+      });
+    });
+
+    it('should register user with google', async () => {
+      asMock(UserModel.create).mockResolvedValueOnce({...AuthDataSourceMocks.googleUser, save: vi.fn()});
+      const user = await authDataSource.authGoogle('code');
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@gmail.com',
+        googleId: 'googleUserId',
+        role: ['role']
+      });
+    });
+
+    it('should throw invalid email to register error', async () => {
+      asMock(UserModel.findOne).mockImplementation((params: Object) => {
+        if (params.hasOwnProperty('googleId')) {
+          return Promise.resolve(null);
+        } else if (params.hasOwnProperty('email')) {
+          return Promise.resolve(AuthDataSourceMocks.googleUser);
+        }
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      asMock(UserModel.findOne).mockResolvedValue(null);
+    });
+
+    it('should throw google access token error', async () => {
+      asMock(globalThis.fetch).mockResolvedValueOnce({
+        ok: false,
+        text: vi.fn(() => Promise.resolve('text'))
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.GOOGLE_ACCESS_TOKEN_ERROR);
+    });
+
+    it('should throw google user data error', async () => {
+      asMock(globalThis.fetch).mockImplementation((url) => {
+        switch (url) {
+          case 'https://oauth2.googleapis.com/token':
+            return AuthDataSourceMocks.buildFetchResolvedPromise({
+              access_token: 'fakegoogleaccesstoken'
+            });
+          case 'https://www.googleapis.com/oauth2/v3/userinfo':
+            return AuthDataSourceMocks.buildFetchResolvedPromise({}, false, 500);
+          default:
+            return AuthDataSourceMocks.buildFetchResolvedPromise({});
+        }
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.GOOGLE_USER_DATA_ERROR);
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(globalThis.fetch).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
     });
   });
 

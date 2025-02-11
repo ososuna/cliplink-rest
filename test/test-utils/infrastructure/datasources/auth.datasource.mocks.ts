@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { type Mock, vi } from 'vitest';
 import { ResetPasswordToken, User } from '../../../../src/domain';
 
 export class AuthDataSourceMocks {
@@ -12,12 +12,21 @@ export class AuthDataSourceMocks {
     role: ['role'],
   };
 
+  static readonly githubUser: User = {
+    id: 'userId',
+    name: 'name',
+    lastName: 'lastName',
+    email: 'email@github.com',
+    githubId: 'githubUserId',
+    role: ['role'],
+  };
+
   static readonly googleUser: User = {
     id: 'userId',
     name: 'name',
     lastName: 'lastName',
-    email: 'email',
-    googleId: 'googleId',
+    email: 'email@gmail.com',
+    googleId: 'googleUserId',
     role: ['role'],
   };
 
@@ -96,6 +105,14 @@ export class AuthDataSourceMocks {
     expiresAt: new Date(new Date().getTime() - 60 * 60 * 1000),
   };
 
+  static buildFetchResolvedPromise(body: Object, ok: boolean = true, status: number = 200) {
+    return Promise.resolve({
+      ok,
+      status,
+      json: vi.fn(() => Promise.resolve(body))
+    });
+  };
+
   static setupMocks() {
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
@@ -149,6 +166,36 @@ export class AuthDataSourceMocks {
         findOne: vi.fn().mockResolvedValue(AuthDataSourceMocks.resetPasswordToken),
       },
     }));
+
+    globalThis.fetch = vi.fn((url) => {
+      let body = {};
+      switch (url) {
+        case 'https://github.com/login/oauth/access_token':
+          body = { access_token: 'fakegithubaccesstoken' };
+          break;
+        case 'https://api.github.com/user':
+          body = {
+            id: 'githubUserId',
+            email: 'email@github.com',
+            name: 'name',
+          };
+          break;
+        case 'https://oauth2.googleapis.com/token':
+          body = { access_token: 'fakegoogleaccesstoken'};
+          break;
+        case 'https://www.googleapis.com/oauth2/v3/userinfo':
+          body = {
+            sub: 'googleUserId',
+            email: 'email@gmail.com',
+            given_name: 'givenName',
+            family_name: 'familyName',
+          };
+          break;
+        default:
+          break;
+      }
+      return this.buildFetchResolvedPromise(body);
+    }) as Mock;
   }
 
   static clearMocks() {
