@@ -3,6 +3,7 @@ import { UrlDataSourceMocks } from '../../test-utils/infrastructure/datasources/
 import { UrlDataSourceImpl } from '../../../src/infrastructure';
 import { UrlModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
+import { asMock } from '../../test-utils/test-utils';
 
 UrlDataSourceMocks.setupMocks();
 

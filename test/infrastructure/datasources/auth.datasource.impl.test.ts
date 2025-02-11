@@ -4,6 +4,7 @@ import { AuthDataSourceImpl } from '../../../src/infrastructure';
 import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
 import { isValidObjectId } from 'mongoose';
+import { asMock } from '../../test-utils/test-utils';
 
 AuthDataSourceMocks.setupMocks();
 

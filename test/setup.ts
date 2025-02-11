@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { asMock } from './test-utils';
+import { asMock } from './test-utils/test-utils';
 
 globalThis.asMock = asMock;
 
