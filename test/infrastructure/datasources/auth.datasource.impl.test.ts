@@ -293,6 +293,64 @@ describe('AuthDataSourceImpl', () => {
         role: ['role']
       });
     });
+
+    it('should register user with google', async () => {
+      asMock(UserModel.create).mockResolvedValueOnce({...AuthDataSourceMocks.googleUser, save: vi.fn()});
+      const user = await authDataSource.authGoogle('code');
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      expect(user).toEqual({
+        id: 'userId',
+        name: 'name',
+        lastName: 'lastName',
+        email: 'email@gmail.com',
+        googleId: 'googleUserId',
+        role: ['role']
+      });
+    });
+
+    it('should throw invalid email to register error', async () => {
+      asMock(UserModel.findOne).mockImplementation((params: Object) => {
+        if (params.hasOwnProperty('googleId')) {
+          return Promise.resolve(null);
+        } else if (params.hasOwnProperty('email')) {
+          return Promise.resolve(AuthDataSourceMocks.googleUser);
+        }
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.INVALID_EMAIL_REGISTER);
+      expect(UserModel.findOne).toBeCalledTimes(2);
+      asMock(UserModel.findOne).mockResolvedValue(null);
+    });
+
+    it('should throw google access token error', async () => {
+      asMock(globalThis.fetch).mockResolvedValueOnce({
+        ok: false,
+        text: vi.fn(() => Promise.resolve('text'))
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.GOOGLE_ACCESS_TOKEN_ERROR);
+    });
+
+    it('should throw google user data error', async () => {
+      asMock(globalThis.fetch).mockImplementation((url) => {
+        switch (url) {
+          case 'https://oauth2.googleapis.com/token':
+            return AuthDataSourceMocks.buildFetchResolvedPromise({
+              access_token: 'fakegoogleaccesstoken'
+            });
+          case 'https://www.googleapis.com/oauth2/v3/userinfo':
+            return AuthDataSourceMocks.buildFetchResolvedPromise({}, false, 500);
+          default:
+            return AuthDataSourceMocks.buildFetchResolvedPromise({});
+        }
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.GOOGLE_USER_DATA_ERROR);
+    });
+
+    it('should throw internal server error', async () => {
+      asMock(globalThis.fetch).mockImplementationOnce(() => {
+        throw new Error('Unexpected error');
+      });
+      await expect(authDataSource.authGoogle('code')).rejects.toThrow(Messages.INTERNAL_SERVER_ERROR);
+    });
   });
 
   describe('delete account', () => {
