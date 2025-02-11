@@ -105,6 +105,14 @@ export class AuthDataSourceMocks {
     expiresAt: new Date(new Date().getTime() - 60 * 60 * 1000),
   };
 
+  static buildFetchResolvedPromise(body: Object, ok: boolean = true, status: number = 200) {
+    return Promise.resolve({
+      ok,
+      status,
+      json: vi.fn(() => Promise.resolve(body))
+    });
+  };
+
   static setupMocks() {
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
@@ -160,29 +168,25 @@ export class AuthDataSourceMocks {
     }));
 
     globalThis.fetch = vi.fn((url) => {
+      let body = {};
       switch (url) {
         case 'https://github.com/login/oauth/access_token':
-          return Promise.resolve({
-            ok: true,
-            json: vi.fn(() => Promise.resolve({
-              access_token: 'fakegithubaccesstoken'
-            }))
-          });
+          body = { access_token: 'fakegithubaccesstoken' };
+          break;
         case 'https://api.github.com/user':
-          return Promise.resolve({
-            ok: true,
-            json: vi.fn(() => Promise.resolve({
-              id: 'githubUserId',
-              email: 'email@github.com',
-              name: 'name',
-            }))
-          });
+          body = {
+            id: 'githubUserId',
+            email: 'email@github.com',
+            name: 'name',
+          };
+          break;
+        case 'https://oauth2.googleapis.com/token':
+          body = { access_token: 'fakegithubaccesstoken'};
+          break;
         default:
-          return Promise.resolve({
-            status: 200,
-            ok: true
-          });
+          break;
       }
+      return this.buildFetchResolvedPromise(body);
     }) as Mock;
   }
 
