@@ -13,6 +13,6 @@ export class UserGoogleMapper {
     if ( !role ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('role'));
     if ( !googleId ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('Google ID'));
 
-    return new User(_id || id, name, lastName, email, role, undefined, undefined, googleId);
+    return new User(_id || id, name, lastName, email, role, undefined, undefined, undefined, googleId);
   }
 }
