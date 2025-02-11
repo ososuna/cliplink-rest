@@ -143,3 +143,5 @@ dist
 .svelte-kit
 
 mongo/
+
+.DS_Store
