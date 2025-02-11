@@ -1,4 +1,4 @@
-import { beforeEach, describe, it, vi, expect, beforeAll } from 'vitest';
+import { beforeEach, describe, it, vi, expect, beforeAll, afterAll } from 'vitest';
 import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks'; // this import should be right after vitest
 import { AuthDataSourceImpl } from '../../../src/infrastructure';
 import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
@@ -202,6 +202,11 @@ describe('AuthDataSourceImpl', () => {
   });
 
   describe('auth github', () => {
+
+    afterAll(() => {
+      AuthDataSourceMocks.setupMocks();
+    });
+
     it('should login user with github', async () => {
       asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.githubUser);
       const user = await authDataSource.authGithub('code');
@@ -253,21 +258,13 @@ describe('AuthDataSourceImpl', () => {
       asMock(globalThis.fetch).mockImplementation((url) => {
         switch (url) {
           case 'https://github.com/login/oauth/access_token':
-            return Promise.resolve({
-              ok: true,
-              json: vi.fn(() => Promise.resolve({
-                access_token: 'fakegithubaccesstoken'
-              }))
+            return AuthDataSourceMocks.buildFetchResolvedPromise({
+              access_token: 'fakegithubaccesstoken'
             });
           case 'https://api.github.com/user':
-            return Promise.resolve({
-              ok: false
-            });
+            return AuthDataSourceMocks.buildFetchResolvedPromise({}, false, 500);
           default:
-            return Promise.resolve({
-              status: 200,
-              ok: true
-            });
+            return AuthDataSourceMocks.buildFetchResolvedPromise({});
         }
       });
       await expect(authDataSource.authGithub('code')).rejects.toThrow(Messages.GITHUB_USER_DATA_ERROR);
