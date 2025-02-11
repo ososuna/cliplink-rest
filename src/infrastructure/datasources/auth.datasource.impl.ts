@@ -309,8 +309,8 @@ export class AuthDataSourceImpl implements AuthDataSource {
       const now = DateAdapter.now();
       if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
-      const user = await UserModel.findById(resetPasswordToken.user, { active: true });
-      if ( !user ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
+      const user = await UserModel.findById(resetPasswordToken.user._id);
+      if ( !user || !user.active ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
 
       user.password = this.hashPassword(password);
       await user.save();
