@@ -9,7 +9,7 @@ export class UserGithubMapper {
 
     if (!(_id || id)) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));
     if ( !name ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('name'));
-    if ( !name ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('last name'));
+    if ( !lastName ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('last name'));
     if ( !role ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('role'));
     if ( !githubId ) throw CustomError.badRequest(Messages.REQUIRED_FIELD('Github ID'));
 
