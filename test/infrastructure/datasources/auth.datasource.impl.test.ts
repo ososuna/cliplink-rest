@@ -5,12 +5,13 @@ import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
 import { isValidObjectId } from 'mongoose';
 import { asMock } from '../../test-utils/test-utils';
+import type { AuthDataSource } from '../../../src/domain';
 
 AuthDataSourceMocks.setupMocks();
 
 describe('AuthDataSourceImpl', () => {
 
-  let authDataSource: AuthDataSourceImpl;
+  let authDataSource: AuthDataSource;
 
   const hashPasswordMock = vi.fn((password: string) => `hashed-${password}`);
   const comparePasswordMock = vi.fn();

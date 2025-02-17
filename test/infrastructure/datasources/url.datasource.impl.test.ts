@@ -4,12 +4,13 @@ import { UrlDataSourceImpl } from '../../../src/infrastructure';
 import { UrlModel, UserModel } from '../../../src/data/mongodb';
 import { Messages } from '../../../src/config';
 import { asMock } from '../../test-utils/test-utils';
+import type { UrlDataSource } from '../../../src/domain';
 
 UrlDataSourceMocks.setupMocks();
 
 describe('UrlDataSourceImpl', () => {
 
-  let urlDataSource: UrlDataSourceImpl;
+  let urlDataSource: UrlDataSource;
 
   const shortIdGenerator = vi.fn(() => 'shortId');
 
