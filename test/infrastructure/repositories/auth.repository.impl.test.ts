@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks';
-import { LoginUserDto, RegisterUserDto, User, type AuthRepository } from '../../../src/domain';
+import { LoginUserDto, RegisterUserDto, UpdateUserDto, User, type AuthRepository } from '../../../src/domain';
 import { AuthDataSourceImpl, AuthRepositoryImpl } from '../../../src/infrastructure';
 import { UserModel } from '../../../src/data/mongodb';
 import { asMock } from '../../test-utils/test-utils';
@@ -67,6 +67,36 @@ describe('AuthRepositoryImpl', () => {
     expect(users).instanceOf(Array<User>);
     expect(users).toEqual(AuthDataSourceMocks.users);
   });
+  
+  it('get user', async () => {
+    const user = await authRepository.getUser('userId');
+    expect(user).instanceOf(User);
+    expect(user).toEqual(AuthDataSourceMocks.user);
+  });
 
+  it('update user', async () => {
+    const [error, updateUserDto] = UpdateUserDto.create({
+      name: 'name',
+      lastName: 'lastName',
+      email: 'user@example.com',
+    });
+    const user = await authRepository.updateUser('userId', updateUserDto!);
+    expect(user).instanceOf(User);
+    expect(user).toEqual(AuthDataSourceMocks.updatedUser)
+  });
+
+  it('auth github', async () => {
+    asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.githubUser);
+    const user = await authRepository.authGithub('code');
+    expect(user).instanceOf(User);
+    expect(user).toEqual(AuthDataSourceMocks.githubUser);
+  });
+
+  it('auth google', async () => {
+    asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.googleUser);
+    const user = await authRepository.authGoogle('code');
+    expect(user).instanceOf(User);
+    expect(user).toEqual(AuthDataSourceMocks.googleUser);
+  });
   
 });
