@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks';
-import { LoginUserDto, RegisterUserDto, UpdateUserDto, User, type AuthRepository } from '../../../src/domain';
+import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User, type AuthRepository } from '../../../src/domain';
 import { AuthDataSourceImpl, AuthRepositoryImpl } from '../../../src/infrastructure';
-import { UserModel } from '../../../src/data/mongodb';
+import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
 import { asMock } from '../../test-utils/test-utils';
 
 AuthDataSourceMocks.setupMocks();
@@ -75,7 +75,7 @@ describe('AuthRepositoryImpl', () => {
   });
 
   it('update user', async () => {
-    const [error, updateUserDto] = UpdateUserDto.create({
+    const [_error, updateUserDto] = UpdateUserDto.create({
       name: 'name',
       lastName: 'lastName',
       email: 'user@example.com',
@@ -98,5 +98,60 @@ describe('AuthRepositoryImpl', () => {
     expect(user).instanceOf(User);
     expect(user).toEqual(AuthDataSourceMocks.googleUser);
   });
-  
+
+  it('delete account', async () => {
+    const user = await authRepository.deleteAccount('userId');
+    expect(user).instanceOf(User);
+    expect(user).toEqual(AuthDataSourceMocks.user);
+  });
+
+  it('get user by email', async () => {
+    asMock(UserModel.findOne).mockResolvedValueOnce(AuthDataSourceMocks.user);
+    const user = await authRepository.getUserByEmail('user@test.com');
+    expect(user).instanceOf(User);
+    expect(user).toEqual(AuthDataSourceMocks.user);
+  });
+
+  it('save reset password token', async () => {
+    const resetPasswordToken = await authRepository.saveResetPasswordToken('userId', 'token');
+    expect(resetPasswordToken).instanceOf(ResetPasswordToken);
+    expect(resetPasswordToken).toEqual(AuthDataSourceMocks.resetPasswordToken);
+  });
+
+  it('is valid password token', async () => {
+    asMock(ResetPasswordTokenModel.findOne).mockResolvedValue(AuthDataSourceMocks.validResetPasswordToken);
+    const resetPasswordToken = await authRepository.isValidPasswordToken('token');
+    expect(resetPasswordToken).instanceOf(ResetPasswordToken);
+    expect(resetPasswordToken).toEqual(AuthDataSourceMocks.validResetPasswordToken);
+  });
+
+  it('update password', async () => {
+    const user = {
+      ...AuthDataSourceMocks.user,
+      _id: AuthDataSourceMocks.user.id,
+      active: true,
+      save: vi.fn()
+    };
+    const passwordToken = {
+      id: 'resetPasswordTokenId',
+      user: user,
+      token: 'token',
+      expiresAt: new Date(new Date().getTime() + 60 * 60 * 1000),
+      active: true,
+      save: vi.fn()
+    };
+    asMock(UserModel.findById).mockResolvedValueOnce(user);
+    asMock(ResetPasswordTokenModel.findOne).mockResolvedValue(passwordToken);
+    const updatedUser = await authRepository.updatePassword('token', 'newPassword');
+    expect(updatedUser).instanceOf(User);
+    expect(updatedUser).toEqual({
+      email: 'email',
+      id: 'userId',
+      lastName: 'lastName',
+      name: 'name',
+      password: 'hashed-newPassword',
+      role: ['role']
+    });
+  });
+
 });
