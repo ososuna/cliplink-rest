@@ -13,4 +13,13 @@ describe('CreateUrlDto', () => {
     expect(createUrlDto).toBeInstanceOf(CreateUrlDto);
   });
 
+  it('should return an error when originalUrl is missing', () => {
+    const [error, createUrlDto] = CreateUrlDto.create({
+      name: 'name',
+      userId: 'userId'
+    });
+    expect(error).toBe('missing original url');
+    expect(createUrlDto).toBeUndefined();
+  });
+
 });
