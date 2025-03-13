@@ -1,11 +1,8 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { UrlDataSourceMocks } from '../../../test-utils/infrastructure/datasources/url.datasource.mocks';
 import { CreateUrl, CreateUrlDto, UrlRepository } from '../../../../src/domain';
 import { UrlRepositoryImpl } from '../../../../src/infrastructure/repositories/url.repository.impl';
 import { UrlDataSourceImpl } from '../../../../src/infrastructure/datasources/url.datasource.impl';
 import { AuthDataSourceMocks } from '../../../test-utils/infrastructure/datasources/auth.datasource.mocks';
-
-UrlDataSourceMocks.setupMocks();
 
 describe('create URL use case', () => {
 
