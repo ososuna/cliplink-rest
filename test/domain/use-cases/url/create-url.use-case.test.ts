@@ -19,6 +19,8 @@ describe('create URL use case', () => {
       originalUrl: 'https://example.com'
     });
 
+    expect(error).toBeUndefined();
+
     const expectedUrl = {
       id: '1',
       originalUrl: 'https://example.com',
