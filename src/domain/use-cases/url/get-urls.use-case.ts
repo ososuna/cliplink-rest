@@ -9,7 +9,7 @@ interface Url {
 }
 
 interface GetUrlsUseCase {
-  execute(urlId: string, page: number, limit: number, search: string): Promise<Page<Url>>;
+  execute(userId: string, page: number, limit: number, search: string): Promise<Page<Url>>;
 }
 
 export class GetUrls implements GetUrlsUseCase {
@@ -18,11 +18,11 @@ export class GetUrls implements GetUrlsUseCase {
     private readonly urlRepository: UrlRepository
   ) {}
 
-  async execute(urlId: string, page: number, limit: number, search: string): Promise<Page<Url>> {
+  async execute(userId: string, page: number, limit: number, search: string): Promise<Page<Url>> {
     if (page < 1 || limit < 1) {
       throw CustomError.badRequest(Messages.INVALID_PAGE_AND_LIMIT);
     }
-    return await this.urlRepository.getUrls(urlId, page, limit, search);
+    return await this.urlRepository.getUrls(userId, page, limit, search);
   }
 
 }
