@@ -1,6 +1,6 @@
-import { rateLimit } from 'express-rate-limit';
-import { Messages } from '../../config';
 import { Request } from 'express';
+import { rateLimit } from 'express-rate-limit';
+import { Messages } from '@/config';
 
 export class NonAuthLimiter {
   static limit = rateLimit({

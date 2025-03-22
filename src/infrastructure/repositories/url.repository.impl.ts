@@ -1,4 +1,11 @@
-import { CreateUrlDto, Url, UrlRepository, UrlDataSource, UpdateUrlDto, Page } from '@/domain';
+import {
+  CreateUrlDto,
+  Url,
+  UrlRepository,
+  UrlDataSource,
+  UpdateUrlDto,
+  Page
+} from '@/domain';
 
 export class UrlRepositoryImpl implements UrlRepository {
 

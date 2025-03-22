@@ -1,15 +1,15 @@
 import { Types } from 'mongoose';
 import {
-  CreateUrlDto,
+  type CreateUrlDto,
   CustomError,
-  Page,
-  UpdateUrlDto,
-  Url,
-  UrlDataSource,
-} from '../../domain';
+  type Page,
+  type UpdateUrlDto,
+  type Url,
+  type UrlDataSource
+} from '@/domain';
 import { Messages, ShortIdAdapter } from '@/config';
+import { UrlMapper } from '@/infrastructure';
 import { UrlModel, UserModel } from '@/data/mongodb';
-import { UrlMapper } from '../mappers/url.mapper';
 
 type ShortIdGenerator = () => string;
 

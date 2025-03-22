@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { CreateUrl, CreateUrlDto, UrlRepository } from '../../../../src/domain';
-import { UrlRepositoryImpl } from '../../../../src/infrastructure/repositories/url.repository.impl';
-import { UrlDataSourceImpl } from '../../../../src/infrastructure/datasources/url.datasource.impl';
-import { AuthDataSourceMocks } from '../../../test-utils/infrastructure/datasources/auth.datasource.mocks';
+import { CreateUrl, CreateUrlDto, UrlRepository } from '@/domain';
+import { UrlRepositoryImpl, UrlDataSourceImpl } from '@/infrastructure';
+import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('create URL use case', () => {
 

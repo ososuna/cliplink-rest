@@ -1,6 +1,5 @@
-import { JwtAdapter, Messages } from '../../../config';
-import { CustomError } from '../../errors/custom.error';
-import { AuthRepository } from '../../repositories/auth.repository';
+import { JwtAdapter, Messages } from '@/config';
+import { type AuthRepository, CustomError } from '@/domain';
 
 interface UserToken {
   token: string;

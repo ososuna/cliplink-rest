@@ -1,10 +1,10 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { UrlDataSourceMocks } from '../../test-utils/infrastructure/datasources/url.datasource.mocks';
-import { UrlDataSourceImpl } from '../../../src/infrastructure';
-import { UrlModel, UserModel } from '../../../src/data/mongodb';
-import { Messages } from '../../../src/config';
-import { asMock } from '../../test-utils/test-utils';
-import type { UrlDataSource } from '../../../src/domain';
+import { UrlDataSourceMocks } from '@test/test-utils';
+import type { UrlDataSource } from '@/domain';
+import { UrlDataSourceImpl } from '@/infrastructure';
+import { Messages } from '@/config';
+import { UrlModel, UserModel } from '@/data/mongodb';
+import { asMock } from '@test/test-utils';
 
 UrlDataSourceMocks.setupMocks();
 

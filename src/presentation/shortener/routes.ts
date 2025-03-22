@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { ShortenerController } from './controller';
-import { UrlDataSourceImpl, UrlRepositoryImpl } from '../../infrastructure';
+import { UrlDataSourceImpl, UrlRepositoryImpl } from '@/infrastructure';
+import { ShortenerController } from '@/presentation/shortener/controller';
 
 export class ShortenerRoutes {
   static get routes(): Router {

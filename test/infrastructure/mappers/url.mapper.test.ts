@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { UrlMapper } from '../../../src/infrastructure';
-import { CustomError, Url } from '../../../src/domain';
-import { Messages } from '../../../src/config';
+import { CustomError, Url } from '@/domain';
+import { UrlMapper } from '@/infrastructure';
+import { Messages } from '@/config';
 
 describe('UrlMapper', () => {
   describe('urlEntityFromObject', () => {

@@ -1,8 +1,8 @@
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { Resend } from 'resend';
-import { IdAdapter, Messages, envs } from '../../../config';
-import { AuthRepository, CustomError } from '../../';
+import { type AuthRepository, CustomError } from '@/domain';
+import { IdAdapter, Messages, envs } from '@/config';
 
 interface ForgotPasswordUseCase {
   execute(email: string): Promise<void>;

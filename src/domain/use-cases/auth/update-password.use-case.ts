@@ -1,5 +1,5 @@
-import { AuthRepository, CustomError } from "../../";
-import { JwtAdapter, Messages } from "../../../config";
+import { type AuthRepository, CustomError } from '@/domain';
+import { JwtAdapter, Messages } from '@/config';
 
 interface UpdatePasswordUseCase {
   execute(token: string, password: string): Promise<UserToken>;

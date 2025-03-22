@@ -1,7 +1,5 @@
-import { JwtAdapter, Messages } from '../../../config';
-import { LoginUserDto } from '../../dtos/auth/login-user.dto';
-import { CustomError } from '../../errors/custom.error';
-import { AuthRepository } from '../../repositories/auth.repository';
+import { type AuthRepository, CustomError, LoginUserDto } from '@/domain';
+import { JwtAdapter, Messages } from '@/config';
 
 // can create a sep file of interfaces in domain
 interface UserToken {

@@ -1,4 +1,4 @@
-import { AuthRepository, User } from '../..';
+import { type AuthRepository, type User } from '@/domain';
 
 interface DeleteAccountUseCase {
   execute(userId: string): Promise<User>;

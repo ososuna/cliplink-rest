@@ -1,5 +1,5 @@
-import { Messages } from '@/config';
 import { CustomError, User } from '@/domain';
+import { Messages } from '@/config';
 
 export class UserGithubMapper {
 

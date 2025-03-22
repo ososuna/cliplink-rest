@@ -1,4 +1,12 @@
-import { AuthDataSource, AuthRepository, LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '@/domain';
+import type {
+  AuthDataSource,
+  AuthRepository,
+  LoginUserDto,
+  RegisterUserDto,
+  ResetPasswordToken,
+  UpdateUserDto,
+  User
+} from '@/domain';
 
 export class AuthRepositoryImpl implements AuthRepository {
   // dependency injection 💉

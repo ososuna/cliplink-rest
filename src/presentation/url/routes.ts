@@ -1,9 +1,7 @@
 import { Router } from 'express';
-import { UrlController } from './controller';
+import { UrlController } from '@/presentation/url/controller';
 import { UrlDataSourceImpl, UrlRepositoryImpl } from '@/infrastructure';
-import { AuthMiddleware } from '@/presentation/middlewares/auth.middleware';
-import { CreateUrlMiddleware } from '@/presentation/middlewares/create-url.middleware';
-import { AuthLimiter, NonAuthLimiter } from '@/presentation/middlewares';
+import { AuthLimiter, NonAuthLimiter, AuthMiddleware, CreateUrlMiddleware } from '@/presentation/middlewares';
 
 export class UrlRoutes {
   static get routes(): Router {

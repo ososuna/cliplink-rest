@@ -1,4 +1,4 @@
-import { CreateUrlDto, Page, UpdateUrlDto, Url } from '..';
+import { CreateUrlDto, Page, UpdateUrlDto, Url } from '@/domain';
 
 export interface UrlRepository {
   create(createUrlDto: CreateUrlDto): Promise<Url>;

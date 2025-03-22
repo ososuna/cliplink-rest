@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthController } from './controller';
 import { AuthDataSourceImpl, AuthRepositoryImpl } from '@/infrastructure';
-import { AuthMiddleware, AuthLimiter, NonAuthLimiter } from '../middlewares';
+import { AuthController } from '@/presentation/auth/controller';
+import { AuthMiddleware, AuthLimiter, NonAuthLimiter } from '@/presentation/middlewares';
 
 export class AuthRoutes {
   static get routes(): Router {
@@ -11,7 +11,6 @@ export class AuthRoutes {
     const authRepository = new AuthRepositoryImpl(dataSource);
     const controller = new AuthController(authRepository);
     
-    // Define main routes
     router.post('/login', NonAuthLimiter.limit, controller.loginUser);
     router.get('/github', NonAuthLimiter.limit, controller.loginGithub);
     router.get('/github/callback', NonAuthLimiter.limit, controller.loginGithubCallback);

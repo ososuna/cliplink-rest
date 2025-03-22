@@ -1,11 +1,11 @@
 import { beforeEach, describe, it, vi, expect, beforeAll, afterAll } from 'vitest';
-import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks'; // this import should be right after vitest
-import { AuthDataSourceImpl } from '../../../src/infrastructure';
-import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
-import { Messages } from '../../../src/config';
+import { AuthDataSourceMocks } from '@test/test-utils/infrastructure/datasources/auth.datasource.mocks'; // this import should be right after vitest
 import { isValidObjectId } from 'mongoose';
-import { asMock } from '../../test-utils/test-utils';
-import type { AuthDataSource } from '../../../src/domain';
+import type { AuthDataSource } from '@/domain';
+import { AuthDataSourceImpl } from '@/infrastructure';
+import { Messages } from '@/config';
+import { ResetPasswordTokenModel, UserModel } from '@/data/mongodb';
+import { asMock } from '@test/test-utils';
 
 AuthDataSourceMocks.setupMocks();
 

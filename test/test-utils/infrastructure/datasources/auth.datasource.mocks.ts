@@ -1,5 +1,5 @@
 import { type Mock, vi } from 'vitest';
-import { ResetPasswordToken, User } from '../../../../src/domain';
+import { ResetPasswordToken, User } from '@/domain';
 
 export class AuthDataSourceMocks {
 

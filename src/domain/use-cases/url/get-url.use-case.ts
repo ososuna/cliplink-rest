@@ -1,4 +1,4 @@
-import { UrlRepository } from '@/domain';
+import type { UrlRepository } from '@/domain';
 
 interface Url {
   id: string,

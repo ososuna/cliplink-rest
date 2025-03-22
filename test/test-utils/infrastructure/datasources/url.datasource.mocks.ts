@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
-import { Url } from '../../../../src/domain';
-import { AuthDataSourceMocks } from './auth.datasource.mocks';
+import { Url } from '@/domain';
+import { AuthDataSourceMocks } from '@test/test-utils';
 
 export class UrlDataSourceMocks {
 

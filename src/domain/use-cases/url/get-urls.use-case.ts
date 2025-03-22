@@ -1,4 +1,4 @@
-import { CustomError, Page, UrlRepository } from '@/domain';
+import { CustomError, type Page, type UrlRepository } from '@/domain';
 import { Messages } from '@/config';
 
 interface Url {

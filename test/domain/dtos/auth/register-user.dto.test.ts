@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RegisterUserDto } from '../../../../src/domain/dtos/auth/register-user.dto';
+import { RegisterUserDto } from '@/domain';
 
 describe('RegisterUserDto', () => {
 
