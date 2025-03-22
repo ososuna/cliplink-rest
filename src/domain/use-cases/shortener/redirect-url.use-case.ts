@@ -1,5 +1,4 @@
-import { Url } from '../..';
-import { UrlRepository } from '../../repositories/url.repository';
+import type { Url, UrlRepository } from '@/domain';
 
 interface RedirectUrlUseCase {
   execute(shortId: string): Promise<Url>

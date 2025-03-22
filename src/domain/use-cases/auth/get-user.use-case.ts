@@ -1,4 +1,4 @@
-import { AuthRepository } from '../../repositories/auth.repository';
+import { type AuthRepository } from '@/domain';
 
 interface User {
   id: string,

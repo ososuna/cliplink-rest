@@ -1,5 +1,15 @@
 import { Request, Response } from 'express';
-import { UrlRepository, CreateUrl, CreateUrlDto, CustomError, GetUrls, DeleteUrl, GetUrl, UpdateUrl, UpdateUrlDto } from '@/domain';
+import {
+  UrlRepository,
+  CreateUrl,
+  CreateUrlDto,
+  CustomError,
+  GetUrls,
+  DeleteUrl,
+  GetUrl,
+  UpdateUrl,
+  UpdateUrlDto
+} from '@/domain';
 
 export class UrlController {
 

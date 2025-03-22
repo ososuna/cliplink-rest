@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { JwtAdapter } from '../../config';
-import { UserModel } from '../../data/mongodb';
+import { JwtAdapter } from '@/config';
+import { UserModel } from '@/data/mongodb';
 
 export class CreateUrlMiddleware {
 

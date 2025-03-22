@@ -1,4 +1,4 @@
-import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '..';
+import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '@/domain';
 
 /**
 * Abstract business rules to implement.

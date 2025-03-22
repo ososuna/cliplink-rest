@@ -1,8 +1,17 @@
 import { isValidObjectId } from 'mongoose';
-import { AuthDataSource, CustomError, RegisterUserDto, LoginUserDto, User, UpdateUserDto, GithubUser, GoogleUser, ResetPasswordToken } from '../../domain';
-import { BcryptAdapter, DateAdapter, envs, Messages } from '../../config';
-import { UserMapper, UserGithubMapper, UserGoogleMapper, ResetPasswordTokenMapper } from '../';
-import { ResetPasswordTokenModel, UrlModel, UserModel } from '../../data/mongodb';
+import {
+  type AuthDataSource,
+  CustomError,
+  type RegisterUserDto,
+  type LoginUserDto,
+  type User,
+  type UpdateUserDto,
+  type GithubUser,
+  type GoogleUser,
+  type ResetPasswordToken } from '@/domain';
+import { BcryptAdapter, DateAdapter, envs, Messages } from '@/config';
+import { UserMapper, UserGithubMapper, UserGoogleMapper, ResetPasswordTokenMapper } from '@/infrastructure';
+import { ResetPasswordTokenModel, UrlModel, UserModel } from '@/data/mongodb';
 
 type HashFunction = (password: string) => string;
 type CompareFunction = (password: string, hashed: string) => boolean;

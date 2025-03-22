@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { CustomError, UrlRepository } from '@/domain';
-import { RedirectUrl } from '@/domain';
+import { CustomError, type UrlRepository, RedirectUrl } from '@/domain';
 import { envs } from '@/config';
 
 export class ShortenerController {

@@ -1,6 +1,23 @@
 import { Request, Response } from 'express';
-import { AuthGithub, AuthGoogle, AuthRepository, CheckPasswordToken, CustomError, DeleteAccount, ForgotPassword, GetUser, GetUsers, LoginUser, LoginUserDto, RegisterUser, RegisterUserDto, UpdatePassword, UpdateUser, UpdateUserDto } from '../../domain';
-import { CookieAdapter, Messages, envs } from '../../config';
+import {
+  AuthGithub,
+  AuthGoogle,
+  AuthRepository,
+  CheckPasswordToken,
+  CustomError,
+  DeleteAccount,
+  ForgotPassword,
+  GetUser,
+  GetUsers,
+  LoginUser,
+  LoginUserDto,
+  RegisterUser,
+  RegisterUserDto,
+  UpdatePassword,
+  UpdateUser,
+  UpdateUserDto
+} from '@/domain';
+import { CookieAdapter, Messages, envs } from '@/config';
 export class AuthController {
 
   // dependency injection 💉

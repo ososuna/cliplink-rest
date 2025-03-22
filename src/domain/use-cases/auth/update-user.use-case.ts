@@ -1,4 +1,4 @@
-import { AuthRepository, UpdateUserDto } from './../../';
+import { type AuthRepository, type UpdateUserDto } from '@/domain';
 
 interface User {
   id: string,

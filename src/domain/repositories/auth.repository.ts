@@ -1,4 +1,4 @@
-import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '..';
+import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User } from '@/domain';
 
 /**
 * We can implement this interface with any data source

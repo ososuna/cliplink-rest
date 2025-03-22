@@ -1,4 +1,4 @@
-import { AuthRepository, ResetPasswordToken } from '../../';
+import { type AuthRepository, type ResetPasswordToken } from '@/domain';
 
 interface CheckPasswordTokenUseCase {
   execute(token: string): Promise<ResetPasswordToken>;

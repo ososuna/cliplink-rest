@@ -1,4 +1,4 @@
-import { User } from './user.entity';
+import { User } from '@/domain';
 
 export class ResetPasswordToken {
   constructor(

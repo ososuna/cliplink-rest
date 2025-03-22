@@ -1,4 +1,4 @@
-import { Messages } from "@/config";
+import { Messages } from '@/config';
 
 export class CustomError extends Error {
   constructor(
