@@ -27,7 +27,7 @@ export class AuthGoogle implements AuthGoogleUseCase {
 
   async execute(code: string): Promise<UserToken> {
     const user = await this.authRepository.authGoogle(code);
-    const token = await this.signToken({ id: user.id }, '2h');
+    const token = await this.signToken({ id: user.id });
     if (!token) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
     return {
       token,
