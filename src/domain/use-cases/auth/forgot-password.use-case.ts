@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import { readFile } from 'fs/promises';
+import { resolve } from 'path';
 import { Resend } from 'resend';
 import { IdAdapter, Messages, envs } from '../../../config';
 import { AuthRepository, CustomError } from '../../';
@@ -25,8 +25,8 @@ export class ForgotPassword implements ForgotPasswordUseCase {
     const url = envs.WEB_APP_URL + '/auth/reset-password/' + resetPasswordToken.token;
     
     // Load the email template
-    const templatePath = path.resolve(__dirname, '../../../assets/templates/reset-password.template.html');
-    let emailHtml = await fs.readFile(templatePath, 'utf-8');
+    const templatePath = resolve(__dirname, '../../../assets/templates/reset-password.template.html');
+    let emailHtml = await readFile(templatePath, 'utf-8');
     emailHtml = emailHtml.replace('{{resetLink}}', url);
     
     const resend = new Resend(envs.RESEND_API_KEY);
