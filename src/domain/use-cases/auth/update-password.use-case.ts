@@ -25,7 +25,7 @@ export class UpdatePassword implements UpdatePasswordUseCase {
 
   async execute(token: string, password: string): Promise<UserToken> {
     const user = await this.authRepository.updatePassword(token, password);
-    const jwt = await this.signToken({ id: user.id }, "2h");
+    const jwt = await this.signToken({ id: user.id });
 
     if (!jwt) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
 

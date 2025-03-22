@@ -5,7 +5,7 @@
   "main": "src/app.ts",
   "scripts": {
     "dev": "tsnd --respawn --clear --require tsconfig-paths/register --env-file=.env src/app.ts",
-    "build": "rimraf ./dist && tsc && tsc-alias && mkdir -p dist/assets/templates && cp -R src/assets/templates/* dist/assets/templates",
+    "build": "rimraf ./dist && tsc --project tsconfig.build.json && tsc-alias && mkdir -p dist/assets/templates && cp -R src/assets/templates/* dist/assets/templates",
     "start": "node dist/app.js",
     "ts.check": "tsc --project tsconfig.json",
     "test": "vitest",
