@@ -7,8 +7,8 @@ import {
   Url,
   UrlDataSource,
 } from '../../domain';
-import { Messages, ShortIdAdapter } from '../../config';
-import { UrlModel, UserModel } from '../../data/mongodb';
+import { Messages, ShortIdAdapter } from '@/config';
+import { UrlModel, UserModel } from '@/data/mongodb';
 import { UrlMapper } from '../mappers/url.mapper';
 
 type ShortIdGenerator = () => string;

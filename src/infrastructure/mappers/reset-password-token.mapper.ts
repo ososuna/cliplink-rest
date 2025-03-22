@@ -1,5 +1,5 @@
-import { Messages } from '../../config';
-import { CustomError, ResetPasswordToken } from '../../domain';
+import { Messages } from '@/config';
+import { CustomError, ResetPasswordToken } from '@/domain';
 
 export class ResetPasswordTokenMapper {
 

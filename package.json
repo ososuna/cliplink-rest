@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "tsnd --respawn --clear --env-file=.env src/app.ts",
-    "build": "rimraf ./dist && tsc && mkdir -p dist/assets/templates && cp -R src/assets/templates/* dist/assets/templates",
+    "dev": "tsnd --respawn --clear --require tsconfig-paths/register --env-file=.env src/app.ts",
+    "build": "rimraf ./dist && tsc && tsc-alias && mkdir -p dist/assets/templates && cp -R src/assets/templates/* dist/assets/templates",
     "start": "node dist/app.js",
     "ts.check": "tsc --project tsconfig.json",
     "test": "vitest",
@@ -25,6 +25,8 @@
     "pre-commit": "^1.2.2",
     "rimraf": "^6.0.1",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.11",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3",
     "vitest": "^3.0.2"
   },

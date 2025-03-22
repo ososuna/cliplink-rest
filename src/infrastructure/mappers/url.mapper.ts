@@ -1,5 +1,5 @@
-import { Messages } from '../../config';
-import { CustomError, Url } from '../../domain';
+import { Messages } from '@/config';
+import { CustomError, Url } from '@/domain';
 
 export class UrlMapper {
 

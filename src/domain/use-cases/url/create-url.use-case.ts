@@ -1,4 +1,4 @@
-import { CreateUrlDto, UrlRepository } from '../..';
+import { CreateUrlDto, UrlRepository } from '@/domain';
 interface Url {
   id: string,
   name?: string,

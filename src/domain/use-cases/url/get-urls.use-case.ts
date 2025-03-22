@@ -1,5 +1,5 @@
-import { CustomError, Page, UrlRepository } from '../..';
-import { Messages } from '../../../config';
+import { CustomError, Page, UrlRepository } from '@/domain';
+import { Messages } from '@/config';
 
 interface Url {
   id: string,
