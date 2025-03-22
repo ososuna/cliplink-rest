@@ -1,9 +1,7 @@
 import { beforeAll, describe, vi, it, expect } from 'vitest';
-import { UrlRepository } from '../../../../src/domain/repositories/url.repository';
-import { UrlRepositoryImpl } from '../../../../src/infrastructure/repositories/url.repository.impl';
-import { UrlDataSourceImpl } from '../../../../src/infrastructure/datasources/url.datasource.impl';
-import { AuthDataSourceMocks } from '../../../test-utils/infrastructure/datasources/auth.datasource.mocks';
-import { UpdateUrl, UpdateUrlDto } from '../../../../src/domain';
+import { UrlRepository, UpdateUrl, UpdateUrlDto } from '@/domain';
+import { UrlRepositoryImpl, UrlDataSourceImpl } from '@/infrastructure';
+import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('update URL use case', () => {
 

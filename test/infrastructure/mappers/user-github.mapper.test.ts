@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { UserGithubMapper } from '../../../src/infrastructure';
-import { CustomError, User } from '../../../src/domain';
-import { Messages } from '../../../src/config';
+import { CustomError, User } from '@/domain';
+import { UserGithubMapper } from '@/infrastructure';
+import { Messages } from '@/config';
 
 describe('UserGithubMapper', () => {
   describe('userEntityFromObject', () => {

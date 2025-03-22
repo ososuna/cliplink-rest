@@ -1,9 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { UrlDataSourceMocks } from '../../test-utils/infrastructure/datasources/url.datasource.mocks';
-import { CreateUrlDto, Url, type UrlRepository } from '../../../src/domain';
-import { UrlDataSourceImpl, UrlRepositoryImpl } from '../../../src/infrastructure';
-import { asMock } from '../../test-utils/test-utils';
-import { UrlModel } from '../../../src/data/mongodb';
+import { UrlDataSourceMocks, asMock } from '@test/test-utils';
+import { CreateUrlDto, Url, type UrlRepository } from '@/domain';
+import { UrlDataSourceImpl, UrlRepositoryImpl } from '@/infrastructure';
+import { UrlModel } from '@/data/mongodb';
 
 UrlDataSourceMocks.setupMocks();
 

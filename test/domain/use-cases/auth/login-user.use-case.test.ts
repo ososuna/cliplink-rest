@@ -1,10 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AuthRepository } from '../../../../src/domain/repositories/auth.repository';
-import { AuthRepositoryImpl } from '../../../../src/infrastructure/repositories/auth.repository.impl';
-import { AuthDataSourceImpl } from '../../../../src/infrastructure/datasources/auth.datasource.impl';
-import { AuthDataSourceMocks } from '../../../test-utils/infrastructure/datasources/auth.datasource.mocks';
-import { LoginUser, LoginUserDto } from '../../../../src/domain';
-import { Messages } from '../../../../src/config';
+import { AuthRepository, LoginUser, LoginUserDto } from '@/domain';
+import { AuthRepositoryImpl, AuthDataSourceImpl } from '@/infrastructure';
+import { Messages } from '@/config';
+import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('login user use case', () => {
 

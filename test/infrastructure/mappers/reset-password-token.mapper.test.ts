@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { ResetPasswordTokenMapper } from '../../../src/infrastructure/mappers/reset-password-token.mapper';
-import { CustomError, ResetPasswordToken } from '../../../src/domain';
-import { Messages } from '../../../src/config';
+import { CustomError, ResetPasswordToken } from '@/domain';
+import { ResetPasswordTokenMapper } from '@/infrastructure';
+import { Messages } from '@/config';
 
 describe('ResetPasswordTokenMapper', () => {
   describe('resetPasswordTokenEntityFromObject', () => {

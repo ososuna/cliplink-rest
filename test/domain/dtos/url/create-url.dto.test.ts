@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CreateUrlDto } from '../../../../src/domain/dtos/url/create-url.dto';
+import { CreateUrlDto } from '@/domain';
 
 describe('CreateUrlDto', () => {
 

@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AuthDataSourceMocks } from '../../test-utils/infrastructure/datasources/auth.datasource.mocks';
-import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User, type AuthRepository } from '../../../src/domain';
-import { AuthDataSourceImpl, AuthRepositoryImpl } from '../../../src/infrastructure';
-import { ResetPasswordTokenModel, UserModel } from '../../../src/data/mongodb';
-import { asMock } from '../../test-utils/test-utils';
+import { AuthDataSourceMocks } from '@test/test-utils/infrastructure/datasources/auth.datasource.mocks';
+import { LoginUserDto, RegisterUserDto, ResetPasswordToken, UpdateUserDto, User, type AuthRepository } from '@/domain';
+import { AuthDataSourceImpl, AuthRepositoryImpl } from '@/infrastructure';
+import { ResetPasswordTokenModel, UserModel } from '@/data/mongodb';
+import { asMock } from '@test/test-utils';
 
 AuthDataSourceMocks.setupMocks();
 

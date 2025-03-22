@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { UrlDataSourceMocks } from '../../../test-utils/infrastructure/datasources/url.datasource.mocks';
-import { GetUrl, UrlRepository } from '../../../../src/domain';
-import { UrlRepositoryImpl } from '../../../../src/infrastructure/repositories/url.repository.impl';
-import { UrlDataSourceImpl } from '../../../../src/infrastructure/datasources/url.datasource.impl';
+import { GetUrl, UrlRepository } from '@/domain';
+import { UrlRepositoryImpl, UrlDataSourceImpl } from '@/infrastructure';
+import { UrlDataSourceMocks } from '@test/test-utils';
 
 describe('get URL use case', () => {
 

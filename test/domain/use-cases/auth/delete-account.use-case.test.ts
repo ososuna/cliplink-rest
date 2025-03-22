@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AuthRepository, DeleteAccount } from '../../../../src/domain';
-import { AuthDataSourceImpl, AuthRepositoryImpl } from '../../../../src/infrastructure';
-import { AuthDataSourceMocks } from '../../../test-utils/infrastructure/datasources/auth.datasource.mocks';
+import { AuthRepository, DeleteAccount } from '@/domain';
+import { AuthDataSourceImpl, AuthRepositoryImpl } from '@/infrastructure';
+import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('delete account use case', () => {
 

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AuthRepository, CheckPasswordToken } from '../../../../src/domain';
-import { AuthDataSourceImpl, AuthRepositoryImpl } from '../../../../src/infrastructure';
-import { AuthDataSourceMocks } from '../../../test-utils/infrastructure/datasources/auth.datasource.mocks';
+import { AuthRepository, CheckPasswordToken } from '@/domain';
+import { AuthDataSourceImpl, AuthRepositoryImpl } from '@/infrastructure';
+import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('check password token use case', () => {
 

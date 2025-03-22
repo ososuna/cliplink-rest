@@ -1,7 +1,7 @@
 import { beforeAll, describe, vi, it, expect } from 'vitest';
-import { UrlRepository, RedirectUrl } from '../../../../src/domain';
-import { UrlDataSourceImpl, UrlRepositoryImpl } from '../../../../src/infrastructure';
-import { UrlDataSourceMocks } from '../../../test-utils/infrastructure/datasources/url.datasource.mocks';
+import { UrlRepository, RedirectUrl } from '@/domain';
+import { UrlDataSourceImpl, UrlRepositoryImpl } from '@/infrastructure';
+import { UrlDataSourceMocks } from '@test/test-utils';
 
 describe('redirect url use case', () => {
 

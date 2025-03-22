@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { UserMapper } from '../../../src/infrastructure';
-import { CustomError, User } from '../../../src/domain';
-import { Messages } from '../../../src/config';
+import { CustomError, User } from '@/domain';
+import { UserMapper } from '@/infrastructure';
+import { Messages } from '@/config';
 
 describe('UserMapper', () => {
   describe('userEntityFromObject', () => {
