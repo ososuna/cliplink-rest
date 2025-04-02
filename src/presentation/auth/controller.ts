@@ -42,12 +42,18 @@ export class AuthController {
     // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
-      .then( data => {
+      .then(data => {
         res.cookie(
           'access_token',
-          data.token,
+          data.accessToken,
           CookieAdapter.authCookieOptions()
-        ).send(data.user);
+        );
+        res.cookie(
+          'refresh_token',
+          data.refreshToken,
+          CookieAdapter.authCookieOptions(60 * 60 * 24 * 7) // 7 days
+        )
+        .send(data.user);
       })
       .catch( error => this.handleError(error, res) );
   }

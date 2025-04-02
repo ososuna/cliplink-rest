@@ -32,7 +32,8 @@ describe('register user use case', () => {
     
     expect(authRepository.register).toHaveBeenCalledWith(registerUserDto);
     expect(result).toEqual({
-      token: 'token',
+      accessToken: 'token',
+      refreshToken: 'token',
       user: {
         'email': 'email',
         'id': 'userId',

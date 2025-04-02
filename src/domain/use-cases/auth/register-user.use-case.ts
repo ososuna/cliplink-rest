@@ -1,17 +1,7 @@
-import { type AuthRepository, CustomError, type RegisterUserDto } from '@/domain';
+import { type AuthRepository, CustomError, type RegisterUserDto, type UserToken } from '@/domain';
 import { JwtAdapter, Messages } from '@/config';
 
-interface UserToken {
-  token: string;
-  user: {
-    id: string;
-    name: string;
-    lastName: string;
-    email: string;
-  }
-}
-
-type SignToken = (payload: Object, duration?: string) => Promise<string | null>;
+type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string | null>;
 
 interface RegisterUserUseCase {
   execute(registerUserDto: RegisterUserDto): Promise<any>
@@ -26,20 +16,22 @@ export class RegisterUser implements RegisterUserUseCase {
   ) {}
 
   async execute(registerUserDto: RegisterUserDto): Promise<UserToken> {
-
     const user = await this.authRepository.register(registerUserDto);
-    const token = await this.signToken({ id: user.id });
-
-    if (!token) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
-
+    const payload = {
+      id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email
+    }
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signToken(payload, 'access'),
+      this.signToken(payload, 'refresh')
+    ]);
+    if (!accessToken || !refreshToken) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
     return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        lastName: user.lastName,
-        email: user.email,
-      }
+      accessToken,
+      refreshToken,
+      user: payload
     }
   }
 

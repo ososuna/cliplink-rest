@@ -40,3 +40,4 @@ export * from './use-cases/shortener/redirect-url.use-case';
 export * from './interfaces/page';
 export * from './interfaces/github-user';
 export * from './interfaces/google-user';
+export * from './interfaces/user-token';
