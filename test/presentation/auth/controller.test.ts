@@ -1,9 +1,10 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, Mock, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
-import { LoginUser, RegisterUser } from '@/domain';
+import { GetUsers, LoginUser, RegisterUser } from '@/domain';
 import { AuthDataSourceImpl } from '@/infrastructure';
 import { AuthController } from '@/presentation/auth/controller';
 import { AuthDataSourceMocks, createMockRequest, createMockResponse } from '@test/test-utils';
+import { Messages } from '@/config';
 
 describe('auth controller', () => {
 
@@ -130,6 +131,48 @@ describe('auth controller', () => {
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: expect.any(String) });
+    });
+  });
+
+  describe('get users', () => {
+
+    let getUsersSpy: MockInstance;
+
+    beforeEach(() => {
+      getUsersSpy?.mockRestore();
+    });
+
+    it('should get users', async () => {
+      const mockUsers = AuthDataSourceMocks.users;
+      getUsersSpy = vi.spyOn(GetUsers.prototype, 'execute').mockResolvedValue(mockUsers);
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/users'
+      });
+      const res = createMockResponse();
+      authController.getUsers(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUsers);
+    });
+
+    it('should return error 500 if there is an error', async () => {
+      const mockError = new Error('Database error');
+      getUsersSpy = vi.spyOn(GetUsers.prototype, 'execute').mockRejectedValue(mockError);
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/users'
+      });
+      const res = createMockResponse();
+      authController.getUsers(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: Messages.INTERNAL_SERVER_ERROR
+      });
     });
   });
 });
