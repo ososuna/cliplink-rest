@@ -30,7 +30,7 @@ export class AuthController {
       return res.status(error.statusCode).json({ message: error.message });
     }
     console.log(error); // winston logger
-    return res.status(500).json({ error: Messages.INTERNAL_SERVER_ERROR });
+    return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR });
   }
 
   registerUser = (req: Request, res: Response) => {
