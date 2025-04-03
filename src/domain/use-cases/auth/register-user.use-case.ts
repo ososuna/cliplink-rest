@@ -1,13 +1,9 @@
 import { type AuthRepository, CustomError, type RegisterUserDto, type UserToken } from '@/domain';
 import { JwtAdapter, Messages } from '@/config';
-
-type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string | null>;
-
 interface RegisterUserUseCase {
-  execute(registerUserDto: RegisterUserDto): Promise<any>
+  execute(registerUserDto: RegisterUserDto): Promise<UserToken>
 }
-
-// This use case will allow us to change the repository and the way we are signing tokens
+type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string | null>;
 export class RegisterUser implements RegisterUserUseCase {
 
   constructor(
