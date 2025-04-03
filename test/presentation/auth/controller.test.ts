@@ -83,7 +83,8 @@ describe('auth controller', () => {
     it('should login user', async () => {
       const mockUser = AuthDataSourceMocks.user;
       vi.spyOn(LoginUser.prototype, 'execute').mockResolvedValue({
-        token: 'token',
+        accessToken: 'token',
+        refreshToken: 'token',
         user: {
           id: mockUser.id,
           name: mockUser.name,

@@ -15,7 +15,8 @@ import {
   RegisterUserDto,
   UpdatePassword,
   UpdateUser,
-  UpdateUserDto
+  UpdateUserDto,
+  type UserToken
 } from '@/domain';
 import { CookieAdapter, Messages, envs } from '@/config';
 export class AuthController {
@@ -33,6 +34,20 @@ export class AuthController {
     return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR });
   }
 
+  private setAuthCookies = (res: Response, userToken: UserToken) => {
+    res.cookie(
+      'access_token',
+      userToken.accessToken,
+      CookieAdapter.authCookieOptions()
+    );
+    res.cookie(
+      'refresh_token',
+      userToken.refreshToken,
+      CookieAdapter.authCookieOptions(60 * 60 * 24 * 7) // 7 days
+    )
+    .send(userToken.user);
+  };
+
   registerUser = (req: Request, res: Response) => {
     const [error, registerUserDto] = RegisterUserDto.create(req.body);
     if (error) {
@@ -42,20 +57,8 @@ export class AuthController {
     // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
-      .then(data => {
-        res.cookie(
-          'access_token',
-          data.accessToken,
-          CookieAdapter.authCookieOptions()
-        );
-        res.cookie(
-          'refresh_token',
-          data.refreshToken,
-          CookieAdapter.authCookieOptions(60 * 60 * 24 * 7) // 7 days
-        )
-        .send(data.user);
-      })
-      .catch( error => this.handleError(error, res) );
+      .then( data => this.setAuthCookies( res, data ))
+      .catch( error => this.handleError( error, res ));
   }
 
   loginUser = (req: Request, res: Response) => {
@@ -67,13 +70,7 @@ export class AuthController {
     // create use case instance
     new LoginUser(this.authRepository)
       .execute(loginUserDto!)
-      .then( data => {
-        res.cookie(
-          'access_token',
-          data.token,
-          CookieAdapter.authCookieOptions()
-        ).send(data.user);
-      })
+      .then( data => this.setAuthCookies( res, data ))
       .catch( error => this.handleError(error, res) )
   }
 

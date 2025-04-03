@@ -24,7 +24,8 @@ describe('login user use case', () => {
     const signToken = vi.fn(async () => 'token');
     const result = await new LoginUser(authRepository, signToken).execute(loginUserDto!);
     expect(result).toEqual({
-      token: 'token',
+      accessToken: 'token',
+      refreshToken: 'token',
       user: {
         email: 'email',
         id: 'userId',
