@@ -44,8 +44,12 @@ export class AuthController {
       'refresh_token',
       userToken.refreshToken,
       CookieAdapter.authCookieOptions(60 * 60 * 24 * 7) // 7 days
-    )
-    .send(userToken.user);
+    );
+  };
+
+  private clearAuthCookies = (res: Response) => {
+    res.clearCookie('access_token', CookieAdapter.authClearCookieOptions());
+    res.clearCookie('refresh_token', CookieAdapter.authClearCookieOptions());
   };
 
   registerUser = (req: Request, res: Response) => {
@@ -57,7 +61,10 @@ export class AuthController {
     // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
-      .then( data => this.setAuthCookies( res, data ))
+      .then( data => {
+        this.setAuthCookies(res, data);
+        res.send(data.user);
+      })
       .catch( error => this.handleError( error, res ));
   }
 
@@ -67,10 +74,12 @@ export class AuthController {
       res.status(400).json({ error });
       return;
     }
-    // create use case instance
     new LoginUser(this.authRepository)
       .execute(loginUserDto!)
-      .then( data => this.setAuthCookies( res, data ))
+      .then( data => {
+        this.setAuthCookies(res, data);
+        res.send(data.user);
+      })
       .catch( error => this.handleError(error, res) )
   }
 
@@ -90,8 +99,8 @@ export class AuthController {
   }
 
   logout = (req: Request, res: Response) => {
-    res.clearCookie('access_token', CookieAdapter.authClearCookieOptions())
-      .json({ message: Messages.LOGOUT_SUCCESSFUL });
+    this.clearAuthCookies(res);
+    res.json({ message: Messages.LOGOUT_SUCCESSFUL });
   }
 
   checkToken = (req: Request, res: Response) => {
@@ -123,11 +132,7 @@ export class AuthController {
     new AuthGithub(this.authRepository)
       .execute(code)
       .then( data => {
-        res.cookie(
-          'access_token',
-          data.token,
-          CookieAdapter.authCookieOptions()
-        );
+        this.setAuthCookies(res, data);
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
       .catch(error => {
@@ -152,11 +157,7 @@ export class AuthController {
     new AuthGoogle(this.authRepository)
       .execute(code)
       .then( data => {
-        res.cookie(
-          'access_token',
-          data.token,
-          CookieAdapter.authCookieOptions()
-        );
+        this.setAuthCookies(res, data);
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
       .catch(error => {
@@ -174,10 +175,11 @@ export class AuthController {
     const userId = req.body.user.id;
     new DeleteAccount(this.authRepository)
       .execute(userId)
-      .then( data => {
-        res.clearCookie('access_token').json(data);
+      .then(data => {
+        this.clearAuthCookies(res);
+        res.json(data);
       })
-      .catch( error => this.handleError(error, res) )
+      .catch(error => this.handleError(error, res));
   }
 
   forgotPassword = (req: Request, res: Response) => {
@@ -215,15 +217,11 @@ export class AuthController {
       res.status(400).json({ error: 'missing password' });  
       return
     }
-    
     new UpdatePassword(this.authRepository)
       .execute(token, password)
       .then( data => {
-        res.cookie(
-          'access_token',
-          data.token,
-          CookieAdapter.authCookieOptions()
-        ).send(data.user);
+        this.setAuthCookies(res, data);
+        res.send(data.user);
       })
       .catch( error => this.handleError(error, res) );
   }

@@ -19,7 +19,8 @@ describe('auth google use case', () => {
     const signToken = vi.fn(async () => 'token');
     const result = await new AuthGoogle(authRepository, signToken).execute('code');
     expect(result).toEqual({
-      token: 'token',
+      accessToken: 'token',
+      refreshToken: 'token',
       user: {
         id: 'userId',
         name: 'name',

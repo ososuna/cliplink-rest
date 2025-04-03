@@ -21,7 +21,8 @@ describe('update password use case', () => {
       .execute('token', 'password');
     expect(authRepository.updatePassword).toHaveBeenCalledExactlyOnceWith('token', 'password');
     expect(result).toEqual({
-      token: 'token',
+      accessToken: 'token',
+      refreshToken: 'token',
       user: {
         id: expectedUser.id,
         name: expectedUser.name,
