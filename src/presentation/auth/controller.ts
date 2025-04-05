@@ -11,6 +11,7 @@ import {
   GetUsers,
   LoginUser,
   LoginUserDto,
+  RefreshToken,
   RegisterUser,
   RegisterUserDto,
   UpdatePassword,
@@ -104,8 +105,14 @@ export class AuthController {
   }
 
   checkToken = (req: Request, res: Response) => {
-    const { id, name, lastName, email, githubId, googleId } = req.body.user;
-    res.json({ id, name, lastName, email, githubId, googleId });
+    const user = req.body.user;
+    new RefreshToken()
+      .execute(user)
+      .then(data => {
+        this.setAuthCookies(res, data);
+        res.send(data.user);
+      })
+      .catch( error => this.handleError(error, res) );
   }
 
   updateUser = (req: Request, res: Response) => {
