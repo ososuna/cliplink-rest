@@ -4,8 +4,7 @@ import { UserModel } from '@/data/mongodb';
 
 export class AuthMiddleware {
 
-  static validateJWT = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.access_token;
+  private static checkToken = async (token: string, req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = await JwtAdapter.validateToken<{ id: string }>(token);
       if ( !payload ) {
@@ -23,6 +22,16 @@ export class AuthMiddleware {
       console.log(error);
       res.status(500).json({ error: 'internal server error' });
     }
+  }
+
+  static validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.access_token;
+    this.checkToken(token, req, res, next);
+  }
+
+  static validateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.refresh_token;
+    this.checkToken(token, req, res, next);
   }
 
 }
