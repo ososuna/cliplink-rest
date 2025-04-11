@@ -12,12 +12,11 @@ export class UrlRoutes {
 
     const controller = new UrlController(urlRepository);
 
-    // Define main routes
     router.post('/', CreateUrlMiddleware.validateJWT, NonAuthLimiter.limit, controller.createUrl);
-    router.get('/', AuthMiddleware.validateJWT, controller.getUrls);
-    router.get('/:id', AuthMiddleware.validateJWT, AuthLimiter.limit, controller.getUrl);
-    router.delete('/:id', AuthMiddleware.validateJWT, AuthLimiter.limit, controller.deleteUrl);
-    router.put('/:id', AuthMiddleware.validateJWT, AuthLimiter.limit, controller.updateUrl);
+    router.get('/', AuthMiddleware.validateAccessToken, controller.getUrls);
+    router.get('/:id', AuthMiddleware.validateAccessToken, AuthLimiter.limit, controller.getUrl);
+    router.delete('/:id', AuthMiddleware.validateAccessToken, AuthLimiter.limit, controller.deleteUrl);
+    router.put('/:id', AuthMiddleware.validateAccessToken, AuthLimiter.limit, controller.updateUrl);
 
     return router;
   }
