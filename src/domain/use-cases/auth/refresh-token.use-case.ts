@@ -6,11 +6,11 @@ interface RefreshTokenUseCase {
   execute(user: User): Promise<UserToken>;
 }
 
-type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string | null>;
+type SignToken = (payload: object, type: 'access' | 'refresh') => Promise<string | null>;
 
 export class RefreshToken implements RefreshTokenUseCase {
   constructor(
-    private readonly signToken: SignToken = JwtAdapter.generateToken
+    private readonly signToken: SignToken = JwtAdapter.generateToken,
   ) {}
 
   async execute(user: User): Promise<UserToken> {

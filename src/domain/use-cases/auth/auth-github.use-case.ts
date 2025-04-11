@@ -3,15 +3,15 @@ import { JwtAdapter } from '@/config';
 import { generateAuthTokens } from '@/domain/utils/token.utils';
 
 interface AuthGithubUseCase {
-  execute(code: string): Promise<UserToken>
+  execute(code: string): Promise<UserToken>;
 }
 
-type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string | null>;
+type SignToken = (payload: object, type: 'access' | 'refresh') => Promise<string | null>;
 
 export class AuthGithub implements AuthGithubUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
-    private readonly signToken: SignToken = JwtAdapter.generateToken
+    private readonly signToken: SignToken = JwtAdapter.generateToken,
   ) {}
 
   async execute(code: string): Promise<UserToken> {

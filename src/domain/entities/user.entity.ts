@@ -10,5 +10,4 @@ export class User {
     public githubId?: string,
     public googleId?: string,
   ) {}
-
 }

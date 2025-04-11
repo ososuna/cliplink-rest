@@ -3,15 +3,14 @@ import { JwtAdapter } from '@/config';
 import { generateAuthTokens } from '@/domain/utils/token.utils';
 
 interface LoginUserUseCase {
-  execute(loginUserDto: LoginUserDto): Promise<UserToken>
+  execute(loginUserDto: LoginUserDto): Promise<UserToken>;
 }
 
-type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string | null>;
-
+type SignToken = (payload: object, type: 'access' | 'refresh') => Promise<string | null>;
 export class LoginUser implements LoginUserUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
-    private readonly signToken: SignToken = JwtAdapter.generateToken
+    private readonly signToken: SignToken = JwtAdapter.generateToken,
   ) {}
 
   async execute(loginUserDto: LoginUserDto): Promise<UserToken> {

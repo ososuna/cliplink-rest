@@ -9,18 +9,17 @@ interface User {
 }
 
 interface GetUsersUseCase {
-  execute(): Promise<User[]>
+  execute(): Promise<User[]>;
 }
 
 export class GetUsers implements GetUsersUseCase {
 
   constructor(
-    private readonly authRepository: AuthRepository
+    private readonly authRepository: AuthRepository,
   ) {}
 
   async execute(): Promise<User[]> {
     const users = await this.authRepository.getUsers();
     return users;
   }
-
 }

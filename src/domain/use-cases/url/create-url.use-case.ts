@@ -1,9 +1,10 @@
 import type { CreateUrlDto, UrlRepository } from '@/domain';
+
 interface Url {
   id: string,
   name?: string,
   originalUrl: string,
-  shortId: string
+  shortId: string,
 }
 
 interface CreateUrlUseCase {
@@ -11,9 +12,8 @@ interface CreateUrlUseCase {
 }
 
 export class CreateUrl implements CreateUrlUseCase {
-
   constructor(
-    private readonly urlRepository: UrlRepository
+    private readonly urlRepository: UrlRepository,
   ) {}
   
   async execute(createUrlDto: CreateUrlDto): Promise<Url> {

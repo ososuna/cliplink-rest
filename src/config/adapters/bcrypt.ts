@@ -1,8 +1,7 @@
 import { compareSync, hashSync } from 'bcryptjs';
 
-// Adapter pattern
 export class BcryptAdapter {
-  static hash(password: string): string {    
+  static hash(password: string): string {
     return hashSync(password);
   }
 

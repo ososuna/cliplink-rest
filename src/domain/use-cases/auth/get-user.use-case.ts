@@ -8,13 +8,13 @@ interface User {
 }
 
 interface GetUserUseCase {
-  execute(userId: string): Promise<User>
+  execute(userId: string): Promise<User>;
 }
 
 export class GetUser implements GetUserUseCase {
 
   constructor(
-    private readonly authRepository: AuthRepository
+    private readonly authRepository: AuthRepository,
   ) {}
 
   async execute(userId: string): Promise<User> {
@@ -26,5 +26,4 @@ export class GetUser implements GetUserUseCase {
       email: user.email,
     }
   }
-
 }

@@ -12,13 +12,11 @@ interface GetUrlUseCase {
 }
 
 export class GetUrl implements GetUrlUseCase {
-
   constructor(
-    private readonly urlRepository: UrlRepository
+    private readonly urlRepository: UrlRepository,
   ) {}
 
   async execute(urlId: string): Promise<Url> {
     return await this.urlRepository.getUrl(urlId);
   }
-
 }

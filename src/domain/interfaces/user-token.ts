@@ -6,5 +6,5 @@ export interface UserToken {
     name: string;
     lastName: string;
     email: string;
-  }
+  };
 }

@@ -5,6 +5,6 @@ export class ResetPasswordToken {
     public id: string,
     public token: string,
     public expiresAt: Date,
-    public user: User
+    public user: User,
   ) {}
 }

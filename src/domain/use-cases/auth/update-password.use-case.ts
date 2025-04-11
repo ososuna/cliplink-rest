@@ -10,7 +10,7 @@ type SignToken = (payload: Object, type: 'access' | 'refresh') => Promise<string
 export class UpdatePassword implements UpdatePasswordUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
-    private readonly signToken: SignToken = JwtAdapter.generateToken
+    private readonly signToken: SignToken = JwtAdapter.generateToken,
   ) {}
 
   async execute(token: string, password: string): Promise<UserToken> {
@@ -29,7 +29,7 @@ export class UpdatePassword implements UpdatePasswordUseCase {
     return {
       accessToken,
       refreshToken,
-      user: payload
+      user: payload,
     }
   }
 }

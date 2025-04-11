@@ -1,7 +1,14 @@
+declare const process: {
+  env: {
+    NODE_ENV: string;
+    [key: string]: string | undefined;
+  };
+};
+
 interface CookieOptions {
   httpOnly: boolean;
   secure: boolean;
-  sameSite: boolean | "none" | "lax" | "strict" | undefined;
+  sameSite: boolean | 'none' | 'lax' | 'strict' | undefined;
   domain?: string;
   maxAge?: number;
 }
@@ -13,7 +20,7 @@ export class CookieAdapter {
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.cliplink.app' : undefined,
-      maxAge: maxAge || 60 * 60 // 1 hour
+      maxAge: maxAge || 60 * 60, // 1 hour
     };
   }
   static authClearCookieOptions(): CookieOptions {
@@ -21,7 +28,7 @@ export class CookieAdapter {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      domain: process.env.NODE_ENV === 'production' ? '.cliplink.app' : undefined
+      domain: process.env.NODE_ENV === 'production' ? '.cliplink.app' : undefined,
     };
   }
 }

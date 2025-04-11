@@ -9,13 +9,13 @@ interface User {
 }
 
 interface UpdateUserUseCase {
-  execute(userId: string, updateUserDto: UpdateUserDto): Promise<User>
+  execute(userId: string, updateUserDto: UpdateUserDto): Promise<User>;
 }
 
 export class UpdateUser implements UpdateUserUseCase {
 
   constructor(
-    private readonly authRepository: AuthRepository
+    private readonly authRepository: AuthRepository,
   ) {}
 
   async execute(userId: string, updateUserDto: UpdateUserDto): Promise<User> {

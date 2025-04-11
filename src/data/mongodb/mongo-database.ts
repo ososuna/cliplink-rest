@@ -6,9 +6,7 @@ interface Options {
 }
 
 export class MongoDatabase {
-
-  static async connect(options: Options) {
-
+  static async connect(options: Options): Promise<void> {
     const { dbName, mongoUrl } = options;
 
     try {

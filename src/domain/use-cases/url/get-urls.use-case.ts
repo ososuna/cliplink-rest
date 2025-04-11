@@ -15,7 +15,7 @@ interface GetUrlsUseCase {
 export class GetUrls implements GetUrlsUseCase {
 
   constructor(
-    private readonly urlRepository: UrlRepository
+    private readonly urlRepository: UrlRepository,
   ) {}
 
   async execute(userId: string, page: number, limit: number, search: string): Promise<Page<Url>> {
@@ -24,5 +24,4 @@ export class GetUrls implements GetUrlsUseCase {
     }
     return await this.urlRepository.getUrls(userId, page, limit, search);
   }
-
 }

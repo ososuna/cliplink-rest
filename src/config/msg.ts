@@ -13,7 +13,7 @@ export const Messages = {
   GOOGLE_ACCESS_TOKEN_ERROR: 'Unable to retrieve the Google access token. Please try again later.',
   GOOGLE_USER_DATA_ERROR: 'Unable to fetch Google user data. Please ensure your Google account is accessible.',
   INVALID_PASSWORD_TOKEN: 'The password reset token is invalid or has expired. Please request a new token.',
-  REQUIRED_FIELD: (field: string) => `The ${field} field is required. Please provide a value.`,
+  REQUIRED_FIELD: (field: string): string => `The ${field} field is required. Please provide a value.`,
   INTERNAL_SERVER_ERROR: 'Something went wrong on our end. Please try again later.',
   LOGOUT_SUCCESSFUL: 'You have been successfully logged out.',
   EMAIL_SUCCESSFUL: 'The email was sent successfully. Please check your inbox.',

@@ -8,7 +8,7 @@ const JWT_REFRESH_EXPIRATION = envs.JWT_REFRESH_EXPIRATION;
 // Adapter pattern
 export class JwtAdapter {
 
-  static async generateToken(payload: Object, type: 'access' | 'refresh'): Promise<string|null> {    
+  static async generateToken(payload: object, type: 'access' | 'refresh'): Promise<string | null> {    
     return new Promise((resolve) => {
       const duration = type === 'access' ? JWT_ACCESS_EXPIRATION : JWT_REFRESH_EXPIRATION;
       jwt.sign(payload, JWT_SEED, { expiresIn: duration }, (err, token) => {
@@ -20,8 +20,8 @@ export class JwtAdapter {
       });
     });
   }
-    
-  static async validateToken<T>(token: string): Promise<T|null> {
+ 
+  static async validateToken<T>(token: string): Promise<T | null> {
     return new Promise((resolve) => {
       jwt.verify(token, JWT_SEED, (err, decoded) => {
         if (err) {
@@ -32,5 +32,4 @@ export class JwtAdapter {
       });
     });
   }
-
 }
