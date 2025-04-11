@@ -1,17 +1,7 @@
-import {
-  CreateUrlDto,
-  Url,
-  UrlRepository,
-  UrlDataSource,
-  UpdateUrlDto,
-  Page
-} from '@/domain';
+import { CreateUrlDto, Url, UrlRepository, UrlDataSource, UpdateUrlDto, Page } from '@/domain';
 
 export class UrlRepositoryImpl implements UrlRepository {
-
-  constructor(
-    private readonly urlDataSource: UrlDataSource
-  ) {}
+  constructor(private readonly urlDataSource: UrlDataSource) {}
 
   create(createUrlDto: CreateUrlDto): Promise<Url> {
     return this.urlDataSource.create(createUrlDto);
@@ -22,7 +12,7 @@ export class UrlRepositoryImpl implements UrlRepository {
   }
 
   delete(urlId: string): Promise<Url> {
-    return this.urlDataSource.delete(urlId);    
+    return this.urlDataSource.delete(urlId);
   }
 
   getUrl(urlId: string): Promise<Url> {
@@ -36,5 +26,4 @@ export class UrlRepositoryImpl implements UrlRepository {
   getUrlByShortId(shortId: string): Promise<Url> {
     return this.urlDataSource.getUrlByShortId(shortId);
   }
-
 }

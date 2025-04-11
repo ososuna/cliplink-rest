@@ -9,9 +9,7 @@ interface RefreshTokenUseCase {
 type SignToken = (payload: object, type: 'access' | 'refresh') => Promise<string | null>;
 
 export class RefreshToken implements RefreshTokenUseCase {
-  constructor(
-    private readonly signToken: SignToken = JwtAdapter.generateToken,
-  ) {}
+  constructor(private readonly signToken: SignToken = JwtAdapter.generateToken) {}
 
   async execute(user: User): Promise<UserToken> {
     return generateAuthTokens(user, this.signToken);

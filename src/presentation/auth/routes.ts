@@ -6,11 +6,11 @@ import { AuthMiddleware, AuthLimiter, NonAuthLimiter } from '@/presentation/midd
 export class AuthRoutes {
   static get routes(): Router {
     const router = Router();
-    
+
     const dataSource = new AuthDataSourceImpl();
     const authRepository = new AuthRepositoryImpl(dataSource);
     const controller = new AuthController(authRepository);
-    
+
     router.post('/login', NonAuthLimiter.limit, controller.loginUser);
     router.get('/github', NonAuthLimiter.limit, controller.loginGithub);
     router.get('/github/callback', NonAuthLimiter.limit, controller.loginGithubCallback);

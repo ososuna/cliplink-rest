@@ -8,12 +8,11 @@ import { asMock } from '@test/test-utils';
 AuthDataSourceMocks.setupMocks();
 
 describe('AuthRepositoryImpl', () => {
-
   let authRepository: AuthRepository;
-  
+
   const hashPasswordMock = vi.fn((password: string) => `hashed-${password}`);
   const comparePasswordMock = vi.fn(() => true);
-  
+
   beforeAll(() => {
     authRepository = new AuthRepositoryImpl(new AuthDataSourceImpl(hashPasswordMock, comparePasswordMock));
   });
@@ -29,12 +28,12 @@ describe('AuthRepositoryImpl', () => {
     });
     const [_error, loginUserDto] = LoginUserDto.create({
       email: 'user@example.com',
-      password: '12345678'
+      password: '12345678',
     });
     const user = await authRepository.login(loginUserDto!);
     expect(user).instanceOf(User);
     expect(user).toEqual({
-      id: "userId",
+      id: 'userId',
       name: 'name',
       password: 'hashed-password',
       lastName: 'lastName',
@@ -48,12 +47,12 @@ describe('AuthRepositoryImpl', () => {
       name: 'name',
       lastName: 'lastName',
       email: 'user@example.com',
-      password: '12345678'
+      password: '12345678',
     });
     const user = await authRepository.register(registerUserDto!);
     expect(user).instanceOf(User);
     expect(user).toEqual({
-      id: "userId",
+      id: 'userId',
       name: 'name',
       password: 'hashed-password',
       lastName: 'lastName',
@@ -67,7 +66,7 @@ describe('AuthRepositoryImpl', () => {
     expect(users).instanceOf(Array<User>);
     expect(users).toEqual(AuthDataSourceMocks.users);
   });
-  
+
   it('get user', async () => {
     const user = await authRepository.getUser('userId');
     expect(user).instanceOf(User);
@@ -82,7 +81,7 @@ describe('AuthRepositoryImpl', () => {
     });
     const user = await authRepository.updateUser('userId', updateUserDto!);
     expect(user).instanceOf(User);
-    expect(user).toEqual(AuthDataSourceMocks.updatedUser)
+    expect(user).toEqual(AuthDataSourceMocks.updatedUser);
   });
 
   it('auth github', async () => {
@@ -130,7 +129,7 @@ describe('AuthRepositoryImpl', () => {
       ...AuthDataSourceMocks.user,
       _id: AuthDataSourceMocks.user.id,
       active: true,
-      save: vi.fn()
+      save: vi.fn(),
     };
     const passwordToken = {
       id: 'resetPasswordTokenId',
@@ -138,7 +137,7 @@ describe('AuthRepositoryImpl', () => {
       token: 'token',
       expiresAt: new Date(new Date().getTime() + 60 * 60 * 1000),
       active: true,
-      save: vi.fn()
+      save: vi.fn(),
     };
     asMock(UserModel.findById).mockResolvedValueOnce(user);
     asMock(ResetPasswordTokenModel.findOne).mockResolvedValue(passwordToken);
@@ -150,8 +149,7 @@ describe('AuthRepositoryImpl', () => {
       lastName: 'lastName',
       name: 'name',
       password: 'hashed-newPassword',
-      role: ['role']
+      role: ['role'],
     });
   });
-
 });

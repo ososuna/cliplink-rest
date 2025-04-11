@@ -1,10 +1,10 @@
 import { type AuthRepository } from '@/domain';
 
 interface User {
-  id: string,
-  name: string,
-  lastName: string,
-  email: string,
+  id: string;
+  name: string;
+  lastName: string;
+  email: string;
 }
 
 interface GetUserUseCase {
@@ -12,10 +12,7 @@ interface GetUserUseCase {
 }
 
 export class GetUser implements GetUserUseCase {
-
-  constructor(
-    private readonly authRepository: AuthRepository,
-  ) {}
+  constructor(private readonly authRepository: AuthRepository) {}
 
   async execute(userId: string): Promise<User> {
     const user = await this.authRepository.getUser(userId);
@@ -24,6 +21,6 @@ export class GetUser implements GetUserUseCase {
       name: user.name,
       lastName: user.lastName,
       email: user.email,
-    }
+    };
   }
 }

@@ -5,7 +5,6 @@ import { Messages } from '@/config';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('login user use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -31,7 +30,7 @@ describe('login user use case', () => {
         id: 'userId',
         lastName: 'lastName',
         name: 'name',
-      }
+      },
     });
   });
 
@@ -44,8 +43,8 @@ describe('login user use case', () => {
     const expectedUser = AuthDataSourceMocks.user;
     vi.spyOn(authRepository, 'login').mockResolvedValue(expectedUser);
     const signToken = vi.fn(async () => null);
-    await expect(new LoginUser(authRepository, signToken).execute(loginUserDto!))
-      .rejects.toThrow(Messages.TOKEN_GENERATION_ERROR);
+    await expect(new LoginUser(authRepository, signToken).execute(loginUserDto!)).rejects.toThrow(
+      Messages.TOKEN_GENERATION_ERROR,
+    );
   });
-
 });

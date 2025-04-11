@@ -4,7 +4,6 @@ import { AuthRepositoryImpl, AuthDataSourceImpl } from '@/infrastructure';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('update user use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -24,5 +23,4 @@ describe('update user use case', () => {
     expect(authRepository.updateUser).toHaveBeenCalledExactlyOnceWith('userId', updateUserDto!);
     expect(result).toEqual(expectedUser);
   });
-
 });

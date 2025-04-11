@@ -2,13 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { RegisterUserDto } from '@/domain';
 
 describe('RegisterUserDto', () => {
-
   it('should create a new instance of RegisterUserDto', () => {
     const [error, registerUserDto] = RegisterUserDto.create({
       name: 'John',
       lastName: 'Doe',
       email: 'john@test.com',
-      password: '12345678'
+      password: '12345678',
     });
     expect(error).toBeUndefined();
     expect(registerUserDto).toBeInstanceOf(RegisterUserDto);
@@ -19,7 +18,7 @@ describe('RegisterUserDto', () => {
       name: '',
       lastName: 'Doe',
       email: 'john@test.com',
-      password: '12345678'
+      password: '12345678',
     });
     expect(error).toBeDefined();
     expect(error).toEqual('missing name');
@@ -31,7 +30,7 @@ describe('RegisterUserDto', () => {
       name: 'John',
       lastName: '',
       email: 'john@test.com',
-      password: '12345678'
+      password: '12345678',
     });
     expect(error).toBeDefined();
     expect(error).toEqual('missing last name');
@@ -43,7 +42,7 @@ describe('RegisterUserDto', () => {
       name: 'John',
       lastName: 'Doe',
       email: '',
-      password: '12345678'
+      password: '12345678',
     });
     expect(error).toBeDefined();
     expect(error).toEqual('missing email');
@@ -55,7 +54,7 @@ describe('RegisterUserDto', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'john',
-      password: '12345678'
+      password: '12345678',
     });
     expect(error).toBeDefined();
     expect(error).toEqual('email is not valid');
@@ -67,7 +66,7 @@ describe('RegisterUserDto', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'john@test.com',
-      password: ''
+      password: '',
     });
     expect(error).toBeDefined();
     expect(error).toEqual('missing password');
@@ -79,11 +78,10 @@ describe('RegisterUserDto', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'john@test.com',
-      password: '123'
+      password: '123',
     });
     expect(error).toBeDefined();
     expect(error).toEqual('password too short');
     expect(registerUserDto).toBeUndefined();
   });
-
 });

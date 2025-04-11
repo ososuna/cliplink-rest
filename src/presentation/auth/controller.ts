@@ -17,15 +17,12 @@ import {
   UpdatePassword,
   UpdateUser,
   UpdateUserDto,
-  type UserToken
+  type UserToken,
 } from '@/domain';
 import { CookieAdapter, Messages, envs } from '@/config';
 export class AuthController {
-
   // dependency injection 💉
-  constructor(
-    private readonly authRepository: AuthRepository
-  ) {}
+  constructor(private readonly authRepository: AuthRepository) {}
 
   private handleError = (error: unknown, res: Response) => {
     if (error instanceof CustomError) {
@@ -33,18 +30,14 @@ export class AuthController {
     }
     console.log(error); // winston logger
     return res.status(500).json({ message: Messages.INTERNAL_SERVER_ERROR });
-  }
+  };
 
   private setAuthCookies = (res: Response, userToken: UserToken) => {
-    res.cookie(
-      'access_token',
-      userToken.accessToken,
-      CookieAdapter.authCookieOptions()
-    );
+    res.cookie('access_token', userToken.accessToken, CookieAdapter.authCookieOptions());
     res.cookie(
       'refresh_token',
       userToken.refreshToken,
-      CookieAdapter.authCookieOptions(60 * 60 * 24 * 7) // 7 days
+      CookieAdapter.authCookieOptions(60 * 60 * 24 * 7), // 7 days
     );
   };
 
@@ -62,12 +55,12 @@ export class AuthController {
     // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
-      .then( data => {
+      .then((data) => {
         this.setAuthCookies(res, data);
         res.send(data.user);
       })
-      .catch( error => this.handleError( error, res ));
-  }
+      .catch((error) => this.handleError(error, res));
+  };
 
   loginUser = (req: Request, res: Response) => {
     const [error, loginUserDto] = LoginUserDto.create(req.body);
@@ -77,48 +70,48 @@ export class AuthController {
     }
     new LoginUser(this.authRepository)
       .execute(loginUserDto!)
-      .then( data => {
+      .then((data) => {
         this.setAuthCookies(res, data);
         res.send(data.user);
       })
-      .catch( error => this.handleError(error, res) )
-  }
+      .catch((error) => this.handleError(error, res));
+  };
 
   getUsers = (req: Request, res: Response) => {
     new GetUsers(this.authRepository)
       .execute()
-      .then( data => res.json(data) )
-      .catch( error => this.handleError(error, res) )
-  }
+      .then((data) => res.json(data))
+      .catch((error) => this.handleError(error, res));
+  };
 
   getUser = (req: Request, res: Response) => {
     const userId = req.params.id;
     new GetUser(this.authRepository)
       .execute(userId)
-      .then( data => res.json(data) )
-      .catch( error => this.handleError(error, res) )
-  }
+      .then((data) => res.json(data))
+      .catch((error) => this.handleError(error, res));
+  };
 
   logout = (req: Request, res: Response) => {
     this.clearAuthCookies(res);
     res.json({ message: Messages.LOGOUT_SUCCESSFUL });
-  }
+  };
 
   checkToken = (req: Request, res: Response) => {
     const { id, name, lastName, email, githubId, googleId } = req.body.user;
     res.json({ id, name, lastName, email, githubId, googleId });
-  }
+  };
 
   refreshToken = (req: Request, res: Response) => {
     const user = req.body.user;
     new RefreshToken()
       .execute(user)
-      .then(data => {
+      .then((data) => {
         this.setAuthCookies(res, data);
         res.send(data.user);
       })
-      .catch( error => this.handleError(error, res) )
-  }
+      .catch((error) => this.handleError(error, res));
+  };
 
   updateUser = (req: Request, res: Response) => {
     const userId = req.body.user.id;
@@ -129,25 +122,25 @@ export class AuthController {
     }
     new UpdateUser(this.authRepository)
       .execute(userId, updateUserDto!)
-      .then(data => res.json(data))
-      .catch( error => this.handleError(error, res) )
-  }
+      .then((data) => res.json(data))
+      .catch((error) => this.handleError(error, res));
+  };
 
   loginGithub = (req: Request, res: Response) => {
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${envs.GITHUB_CLIENT_ID}&redirect_uri=${envs.GITHUB_CALLBACK_URL}`;
     res.redirect(githubAuthUrl);
-  }
+  };
 
   loginGithubCallback = (req: Request, res: Response) => {
     const code = req.query.code as string;
-    if ( !code ) CustomError.badRequest(Messages.REQUIRED_FIELD('Github auth code'));
+    if (!code) CustomError.badRequest(Messages.REQUIRED_FIELD('Github auth code'));
     new AuthGithub(this.authRepository)
       .execute(code)
-      .then( data => {
+      .then((data) => {
         this.setAuthCookies(res, data);
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
-      .catch(error => {
+      .catch((error) => {
         const url = new URL(`${envs.WEB_APP_URL}/auth/login`);
         let errorMsg = Messages.INTERNAL_SERVER_ERROR;
         if (error instanceof CustomError) {
@@ -156,7 +149,7 @@ export class AuthController {
         url.searchParams.set('error', errorMsg);
         res.redirect(url.toString());
       });
-  }
+  };
 
   loginGoogle = (req: Request, res: Response) => {
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${envs.GOOGLE_CLIENT_ID}&redirect_uri=${envs.GOOGLE_CALLBACK_URL}&scope=openid%20email%20profile`;
@@ -165,15 +158,15 @@ export class AuthController {
 
   loginGoogleCallback = (req: Request, res: Response) => {
     const code = req.query.code as string;
-    if ( !code ) CustomError.badRequest(Messages.REQUIRED_FIELD('Google auth code'));
+    if (!code) CustomError.badRequest(Messages.REQUIRED_FIELD('Google auth code'));
     new AuthGoogle(this.authRepository)
       .execute(code)
-      .then( data => {
+      .then((data) => {
         this.setAuthCookies(res, data);
         res.redirect(`${envs.WEB_APP_URL}/dashboard`);
       })
-      .catch(error => {
-        const url = new URL(`${envs.WEB_APP_URL}/auth/login`);        
+      .catch((error) => {
+        const url = new URL(`${envs.WEB_APP_URL}/auth/login`);
         let errorMsg = Messages.INTERNAL_SERVER_ERROR;
         if (error instanceof CustomError) {
           errorMsg = error.message;
@@ -181,18 +174,18 @@ export class AuthController {
         url.searchParams.set('error', errorMsg);
         res.redirect(url.toString());
       });
-  }
+  };
 
   deleteAccount = (req: Request, res: Response) => {
     const userId = req.body.user.id;
     new DeleteAccount(this.authRepository)
       .execute(userId)
-      .then(data => {
+      .then((data) => {
         this.clearAuthCookies(res);
         res.json(data);
       })
-      .catch(error => this.handleError(error, res));
-  }
+      .catch((error) => this.handleError(error, res));
+  };
 
   forgotPassword = (req: Request, res: Response) => {
     const email = req.body.email;
@@ -202,9 +195,9 @@ export class AuthController {
     }
     new ForgotPassword(this.authRepository)
       .execute(email)
-      .then( () => res.json({ message: Messages.EMAIL_SUCCESSFUL }))
-      .catch( error => this.handleError(error, res) );
-  }
+      .then(() => res.json({ message: Messages.EMAIL_SUCCESSFUL }))
+      .catch((error) => this.handleError(error, res));
+  };
 
   checkResetPasswordToken = (req: Request, res: Response) => {
     const token = req.params.token;
@@ -214,28 +207,27 @@ export class AuthController {
     }
     new CheckPasswordToken(this.authRepository)
       .execute(token)
-      .then( data => res.json(data) )
-      .catch( error => this.handleError(error, res) );
-  }
+      .then((data) => res.json(data))
+      .catch((error) => this.handleError(error, res));
+  };
 
   updatePassword = (req: Request, res: Response) => {
     const token = req.body.token;
     const password = req.body.password;
-    if ( !token ) {
+    if (!token) {
       res.status(400).json({ error: 'missing token' });
       return;
-    };
-    if (!password){
-      res.status(400).json({ error: 'missing password' });  
-      return
+    }
+    if (!password) {
+      res.status(400).json({ error: 'missing password' });
+      return;
     }
     new UpdatePassword(this.authRepository)
       .execute(token, password)
-      .then( data => {
+      .then((data) => {
         this.setAuthCookies(res, data);
         res.send(data.user);
       })
-      .catch( error => this.handleError(error, res) );
-  }
-
+      .catch((error) => this.handleError(error, res));
+  };
 }

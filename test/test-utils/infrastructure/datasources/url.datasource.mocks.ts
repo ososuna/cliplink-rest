@@ -3,13 +3,12 @@ import { Url } from '@/domain';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 export class UrlDataSourceMocks {
-
   static readonly url: Url = {
     id: 'urlId',
     shortId: 'shortId',
     originalUrl: 'originalUrl',
     user: AuthDataSourceMocks.user,
-    name: 'name'
+    name: 'name',
   };
 
   static readonly urls: Url[] = [
@@ -18,34 +17,34 @@ export class UrlDataSourceMocks {
       shortId: 'shortId',
       originalUrl: 'originalUrl',
       user: AuthDataSourceMocks.user,
-      name: 'name'
+      name: 'name',
     },
     {
       id: 'urlId2',
       shortId: 'shortId2',
       originalUrl: 'originalUrl',
       user: AuthDataSourceMocks.user,
-      name: 'name (2)'
+      name: 'name (2)',
     },
     {
       id: 'urlId3',
       shortId: 'shortId3',
       originalUrl: 'originalUrl',
       user: AuthDataSourceMocks.user,
-      name: 'name (3)'
-    }
+      name: 'name (3)',
+    },
   ];
 
   static readonly createUrlDto = {
     name: 'name',
     originalUrl: 'originalUrl',
-    userId: 'userId'
+    userId: 'userId',
   };
 
   static readonly updateUrlDto = {
     name: 'newName',
-    originalUrl: 'newOriginalUrl'
-  }
+    originalUrl: 'newOriginalUrl',
+  };
 
   static setupMocks() {
     vi.mock('./../../../../src/data/mongodb', () => ({
@@ -67,7 +66,7 @@ export class UrlDataSourceMocks {
           user: AuthDataSourceMocks.user,
           name: 'name',
           save: vi.fn(),
-          active: true
+          active: true,
         }),
         findOne: vi.fn().mockResolvedValue({
           _id: 'urlId',
@@ -76,7 +75,7 @@ export class UrlDataSourceMocks {
           user: 'userId',
           name: 'name',
           save: vi.fn(),
-          active: true
+          active: true,
         }),
         find: vi.fn(() => ({
           sort: vi.fn(() => ({

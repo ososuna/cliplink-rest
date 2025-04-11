@@ -5,7 +5,6 @@ interface CheckPasswordTokenUseCase {
 }
 
 export class CheckPasswordToken implements CheckPasswordTokenUseCase {
-  
   constructor(private readonly authRepository: AuthRepository) {}
 
   async execute(token: string): Promise<ResetPasswordToken> {

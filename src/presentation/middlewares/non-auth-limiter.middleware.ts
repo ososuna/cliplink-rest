@@ -18,6 +18,6 @@ export class NonAuthLimiter {
     },
     standardHeaders: 'draft-8', // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-    message: { message: Messages.TOO_MANY_REQUESTS }
+    message: { message: Messages.TOO_MANY_REQUESTS },
   });
 }

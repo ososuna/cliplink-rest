@@ -1,11 +1,10 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AuthRepository, AuthGithub} from '@/domain';
+import { AuthRepository, AuthGithub } from '@/domain';
 import { AuthRepositoryImpl, AuthDataSourceImpl } from '@/infrastructure';
 import { Messages } from '@/config';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('auth github use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -37,5 +36,4 @@ describe('auth github use case', () => {
     const authGithub = new AuthGithub(authRepository, signToken);
     await expect(authGithub.execute('code')).rejects.toThrow(Messages.TOKEN_GENERATION_ERROR);
   });
-
 });

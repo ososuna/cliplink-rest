@@ -5,11 +5,10 @@ import { envs } from '@/config';
 
 interface Options {
   port?: number;
-  routes: Router
+  routes: Router;
 }
 
 export class Server {
-
   public readonly app = express();
   private readonly port: number;
   private readonly routes: Router;
@@ -21,14 +20,15 @@ export class Server {
   }
 
   async start() {
-
     // middlewares
-    this.app.use(cors({
-      origin: envs.WEB_APP_URL, // Frontend URL
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow relevant HTTP methods
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Allow specific headers
-      credentials: true, // Allow cookies to be sent
-    }));
+    this.app.use(
+      cors({
+        origin: envs.WEB_APP_URL, // Frontend URL
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow relevant HTTP methods
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Allow specific headers
+        credentials: true, // Allow cookies to be sent
+      }),
+    );
     this.app.use(express.json());
     this.app.use(cookieParser());
     // this.app.use(express.urlencoded({ extended: true })); // x-www-formurlencoder
@@ -40,7 +40,7 @@ export class Server {
     this.app.use(this.routes);
 
     this.app.listen(this.port, () => {
-      console.log(`server running on port ${ this.port }`);
+      console.log(`server running on port ${this.port}`);
       console.log('Environment:', process.env.NODE_ENV == 'production' ? 'production' : 'development');
     });
   }

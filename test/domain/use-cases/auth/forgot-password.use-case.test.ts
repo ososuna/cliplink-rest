@@ -7,25 +7,24 @@ import { Messages } from '@/config';
 let sendEmailMock: ReturnType<typeof vi.fn>;
 
 describe('forgot password use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
   const idGenerator = vi.fn(() => 'e204b07e-a274-4a4b-9ef4-b9a3c71d81db');
 
   const setupMocks = () => {
     vi.mock('path', () => ({
-      resolve: vi.fn(() => 'templatePath')
+      resolve: vi.fn(() => 'templatePath'),
     }));
     vi.mock('fs/promises', () => ({
-      readFile: vi.fn((_path, _encoding) => Promise.resolve('<html>{{resetLink}}</html>'))
+      readFile: vi.fn((_path, _encoding) => Promise.resolve('<html>{{resetLink}}</html>')),
     }));
     sendEmailMock = vi.fn(() => Promise.resolve({ error: null }));
     vi.mock('resend', () => ({
       Resend: vi.fn(() => ({
         emails: {
           send: sendEmailMock,
-        }
-      }))
+        },
+      })),
     }));
   };
 
@@ -53,7 +52,8 @@ describe('forgot password use case', () => {
     sendEmailMock.mockResolvedValueOnce({ error: 'Some error occurred' });
     vi.spyOn(authRepository, 'getUserByEmail').mockResolvedValue(expectedUser);
     vi.spyOn(authRepository, 'saveResetPasswordToken').mockResolvedValue(expectedPasswordToken);
-    await expect(new ForgotPassword(authRepository, idGenerator).execute('user@example.com')).rejects.toThrowError(Messages.SEND_EMAIL_ERROR);
+    await expect(new ForgotPassword(authRepository, idGenerator).execute('user@example.com')).rejects.toThrowError(
+      Messages.SEND_EMAIL_ERROR,
+    );
   });
-
 });

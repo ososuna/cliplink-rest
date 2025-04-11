@@ -7,15 +7,14 @@ import { AuthDataSourceMocks, createMockRequest, createMockResponse } from '@tes
 import { Messages } from '@/config';
 
 describe('auth controller', () => {
-
   let authController: AuthController;
-  
+
   beforeAll(() => {
     const shortIdGenerator = vi.fn(() => 'shortId');
     authController = new AuthController(new AuthDataSourceImpl(shortIdGenerator));
   });
 
-  describe('register user', () => {   
+  describe('register user', () => {
     it('should register user', async () => {
       const mockUser = AuthDataSourceMocks.user;
       vi.spyOn(RegisterUser.prototype, 'execute').mockResolvedValue({
@@ -25,18 +24,18 @@ describe('auth controller', () => {
           id: mockUser.id,
           name: mockUser.name,
           lastName: mockUser.lastName,
-          email: mockUser.email
-        }
+          email: mockUser.email,
+        },
       });
       const req = createMockRequest({
         body: {
           name: 'John',
           lastName: 'Wick',
           email: 'john@test.com',
-          password: 'password'
+          password: 'password',
         },
         method: 'POST',
-        url: '/auth/register'
+        url: '/auth/register',
       });
       const res = createMockResponse();
       authController.registerUser(req as Request, res as Response);
@@ -48,13 +47,9 @@ describe('auth controller', () => {
         name: 'John',
         lastName: 'Wick',
         email: 'john@test.com',
-        password: 'password'
+        password: 'password',
       });
-      expect(res.cookie).toHaveBeenCalledWith(
-        'access_token',
-        'token',
-        expect.any(Object)
-      );      
+      expect(res.cookie).toHaveBeenCalledWith('access_token', 'token', expect.any(Object));
     });
 
     it('should return error 400 if dto is invalid', async () => {
@@ -63,10 +58,10 @@ describe('auth controller', () => {
           name: '',
           lastName: 'Wick',
           email: 'john@test.com',
-          password: 'password'
+          password: 'password',
         },
         method: 'POST',
-        url: '/auth/register'
+        url: '/auth/register',
       });
       const res = createMockResponse();
       authController.registerUser(req as Request, res as Response);
@@ -76,7 +71,6 @@ describe('auth controller', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: expect.any(String) });
     });
-
   });
 
   describe('login user', () => {
@@ -89,16 +83,16 @@ describe('auth controller', () => {
           id: mockUser.id,
           name: mockUser.name,
           lastName: mockUser.lastName,
-          email: mockUser.email
-        }
+          email: mockUser.email,
+        },
       });
       const req = createMockRequest({
         body: {
           email: 'john@test.com',
-          password: 'password'
+          password: 'password',
         },
         method: 'POST',
-        url: '/auth/login'
+        url: '/auth/login',
       });
       const res = createMockResponse();
       authController.loginUser(req as Request, res as Response);
@@ -108,23 +102,19 @@ describe('auth controller', () => {
       expect(LoginUser.prototype.execute).toHaveBeenCalledTimes(1);
       expect(LoginUser.prototype.execute).toHaveBeenCalledWith({
         email: 'john@test.com',
-        password: 'password'
+        password: 'password',
       });
-      expect(res.cookie).toHaveBeenCalledWith(
-        'access_token',
-        'token',
-        expect.any(Object)
-      );      
+      expect(res.cookie).toHaveBeenCalledWith('access_token', 'token', expect.any(Object));
     });
 
     it('should return error 400 if dto is invalid', async () => {
       const req = createMockRequest({
         body: {
           email: '',
-          password: 'password'
+          password: 'password',
         },
         method: 'POST',
-        url: '/auth/login'
+        url: '/auth/login',
       });
       const res = createMockResponse();
       authController.loginUser(req as Request, res as Response);
@@ -137,7 +127,6 @@ describe('auth controller', () => {
   });
 
   describe('get users', () => {
-
     let getUsersSpy: MockInstance;
 
     beforeEach(() => {
@@ -149,7 +138,7 @@ describe('auth controller', () => {
       getUsersSpy = vi.spyOn(GetUsers.prototype, 'execute').mockResolvedValue(mockUsers);
       const req = createMockRequest({
         method: 'GET',
-        url: '/auth/users'
+        url: '/auth/users',
       });
       const res = createMockResponse();
       authController.getUsers(req as Request, res as Response);
@@ -164,7 +153,7 @@ describe('auth controller', () => {
       getUsersSpy = vi.spyOn(GetUsers.prototype, 'execute').mockRejectedValue(mockError);
       const req = createMockRequest({
         method: 'GET',
-        url: '/auth/users'
+        url: '/auth/users',
       });
       const res = createMockResponse();
       authController.getUsers(req as Request, res as Response);
@@ -173,7 +162,7 @@ describe('auth controller', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: Messages.INTERNAL_SERVER_ERROR
+        message: Messages.INTERNAL_SERVER_ERROR,
       });
     });
   });

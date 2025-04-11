@@ -4,7 +4,6 @@ import { AuthDataSourceImpl, AuthRepositoryImpl } from '@/infrastructure';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('check password token use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 

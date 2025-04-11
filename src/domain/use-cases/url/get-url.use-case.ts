@@ -1,10 +1,10 @@
 import type { UrlRepository } from '@/domain';
 
 interface Url {
-  id: string,
-  name?: string,
-  originalUrl: string,
-  shortId: string,
+  id: string;
+  name?: string;
+  originalUrl: string;
+  shortId: string;
 }
 
 interface GetUrlUseCase {
@@ -12,9 +12,7 @@ interface GetUrlUseCase {
 }
 
 export class GetUrl implements GetUrlUseCase {
-  constructor(
-    private readonly urlRepository: UrlRepository,
-  ) {}
+  constructor(private readonly urlRepository: UrlRepository) {}
 
   async execute(urlId: string): Promise<Url> {
     return await this.urlRepository.getUrl(urlId);

@@ -2,7 +2,6 @@ import { type Mock, vi } from 'vitest';
 import { ResetPasswordToken, User } from '@/domain';
 
 export class AuthDataSourceMocks {
-
   static readonly user: User = {
     id: 'userId',
     name: 'name',
@@ -66,14 +65,14 @@ export class AuthDataSourceMocks {
       email: 'email3',
       password: 'hashed-password3',
       role: ['role3'],
-    }
+    },
   ];
 
   static readonly updateUserDto = {
     name: 'nameUpdated',
     lastName: 'lastNameUpdated',
-    email: 'email',  
-  }
+    email: 'email',
+  };
 
   static readonly updatedUser: User = {
     id: 'userId',
@@ -105,13 +104,13 @@ export class AuthDataSourceMocks {
     expiresAt: new Date(new Date().getTime() - 60 * 60 * 1000),
   };
 
-  static buildFetchResolvedPromise(body: Object, ok: boolean = true, status: number = 200) {
+  static buildFetchResolvedPromise(body: object, ok: boolean = true, status: number = 200) {
     return Promise.resolve({
       ok,
       status,
-      json: vi.fn(() => Promise.resolve(body))
+      json: vi.fn(() => Promise.resolve(body)),
     });
-  };
+  }
 
   static setupMocks() {
     vi.mock('mongoose', () => ({
@@ -129,7 +128,7 @@ export class AuthDataSourceMocks {
           lastName: 'lastName',
           email: 'email',
           password: 'hashed-password',
-          role: ['role']
+          role: ['role'],
         }),
         find: vi.fn().mockResolvedValue(AuthDataSourceMocks.users),
         findOne: vi.fn().mockResolvedValue(null),
@@ -140,7 +139,7 @@ export class AuthDataSourceMocks {
           email: 'email',
           password: 'hashed-password',
           role: ['role'],
-          save: vi.fn()
+          save: vi.fn(),
         }),
         findByIdAndUpdate: vi.fn().mockResolvedValue(AuthDataSourceMocks.updatedUser),
         findByIdAndDelete: vi.fn().mockResolvedValue(AuthDataSourceMocks.user),
@@ -162,7 +161,7 @@ export class AuthDataSourceMocks {
 
     vi.mock('../../../../src/data/mongodb/models/reset-password-token.model.ts', () => ({
       ResetPasswordTokenModel: {
-        create: vi.fn().mockResolvedValue({...AuthDataSourceMocks.resetPasswordToken, save: vi.fn()}),
+        create: vi.fn().mockResolvedValue({ ...AuthDataSourceMocks.resetPasswordToken, save: vi.fn() }),
         findOne: vi.fn().mockResolvedValue(AuthDataSourceMocks.resetPasswordToken),
       },
     }));
@@ -181,7 +180,7 @@ export class AuthDataSourceMocks {
           };
           break;
         case 'https://oauth2.googleapis.com/token':
-          body = { access_token: 'fakegoogleaccesstoken'};
+          body = { access_token: 'fakegoogleaccesstoken' };
           break;
         case 'https://www.googleapis.com/oauth2/v3/userinfo':
           body = {

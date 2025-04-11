@@ -5,13 +5,9 @@ interface DeleteAccountUseCase {
 }
 
 export class DeleteAccount implements DeleteAccountUseCase {
-
-  constructor(
-    private readonly authRepository: AuthRepository,
-  ) {}
+  constructor(private readonly authRepository: AuthRepository) {}
 
   async execute(userId: string): Promise<User> {
     return this.authRepository.deleteAccount(userId);
   }
-
 }

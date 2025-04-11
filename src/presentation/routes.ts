@@ -13,8 +13,8 @@ export class AppRoutes {
 
     router.get('/:shortId', controller.shorten);
     router.get('/', controller.welcome);
-    router.use('/api/v1/auth', AuthRoutes.routes)
-    router.use('/api/v1/url', UrlRoutes.routes)
+    router.use('/api/v1/auth', AuthRoutes.routes);
+    router.use('/api/v1/url', UrlRoutes.routes);
 
     return router;
   }

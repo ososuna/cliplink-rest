@@ -11,11 +11,11 @@ describe('UrlMapper', () => {
         name: 'Test URL',
         originalUrl: 'https://example.com',
         shortId: 'exmpl',
-        user: 'user-123'
+        user: 'user-123',
       };
-      
+
       const url = UrlMapper.urlEntityFromObject(urlData);
-      
+
       expect(url).toBeInstanceOf(Url);
       expect(url.id).toBe(urlData.id);
       expect(url.name).toBe(urlData.name);
@@ -29,7 +29,7 @@ describe('UrlMapper', () => {
         name: 'Test URL',
         originalUrl: 'https://example.com',
         shortId: 'exmpl',
-        user: 'user-123'
+        user: 'user-123',
       };
 
       expect(() => UrlMapper.urlEntityFromObject(urlData)).toThrow(CustomError);
@@ -41,7 +41,7 @@ describe('UrlMapper', () => {
         id: 'abcdef12-3456-7890-abcd-ef1234567890',
         name: 'Test URL',
         shortId: 'exmpl',
-        user: 'user-123'
+        user: 'user-123',
       };
 
       expect(() => UrlMapper.urlEntityFromObject(urlData)).toThrow(CustomError);
@@ -53,7 +53,7 @@ describe('UrlMapper', () => {
         id: 'fedcba98-7654-3210-abcdefabcdef',
         name: 'Test URL',
         originalUrl: 'https://example.com',
-        user: 'user-123'
+        user: 'user-123',
       };
 
       expect(() => UrlMapper.urlEntityFromObject(urlData)).toThrow(CustomError);

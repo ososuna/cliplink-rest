@@ -5,10 +5,10 @@ export class RegisterUserDto {
     public name: string,
     public lastName: string,
     public email: string,
-    public password: string
+    public password: string,
   ) {}
 
-  static create(object: {[ key: string ]: any }): [string?, RegisterUserDto?] {
+  static create(object: { [key: string]: any }): [string?, RegisterUserDto?] {
     const { name, lastName, email, password } = object;
 
     if (!name) return ['missing name'];
@@ -18,9 +18,6 @@ export class RegisterUserDto {
     if (!password) return ['missing password'];
     if (password.length < 6) return ['password too short'];
 
-    return [
-      undefined,
-      new RegisterUserDto(name, lastName, email, password)
-    ];
+    return [undefined, new RegisterUserDto(name, lastName, email, password)];
   }
 }

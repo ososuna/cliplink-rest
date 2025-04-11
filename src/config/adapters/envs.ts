@@ -15,4 +15,4 @@ export const envs = {
   GOOGLE_CALLBACK_URL: get('GOOGLE_CALLBACK_URL').required().asString(),
   RESEND_API_KEY: get('RESEND_API_KEY').required().asString(),
   WEB_APP_URL: get('WEB_APP_URL').required().asString(),
-}
+};

@@ -12,7 +12,7 @@ describe('UserMapper', () => {
         lastName: 'Kamado',
         email: 'tanjirou@gmail.com',
         password: '12345678',
-        role: ['user']
+        role: ['user'],
       };
       const user = UserMapper.userEntityFromObject(userObj);
       expect(user).toBeInstanceOf(User);
@@ -30,7 +30,7 @@ describe('UserMapper', () => {
         lastName: 'Kamado',
         email: 'nezuko@gmail.com',
         password: '87654321',
-        role: ['user']
+        role: ['user'],
       };
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(CustomError);
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(Messages.REQUIRED_FIELD('ID'));
@@ -42,7 +42,7 @@ describe('UserMapper', () => {
         lastName: 'Rengoku',
         email: 'rengoku@gmail.com',
         password: 'flamehashira',
-        role: ['admin']
+        role: ['admin'],
       };
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(CustomError);
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(Messages.REQUIRED_FIELD('name'));
@@ -54,7 +54,7 @@ describe('UserMapper', () => {
         name: 'Zenitsu',
         email: 'zenitsu@gmail.com',
         password: 'thunderclap',
-        role: ['user']
+        role: ['user'],
       };
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(CustomError);
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(Messages.REQUIRED_FIELD('last name'));
@@ -66,11 +66,10 @@ describe('UserMapper', () => {
         name: 'Inosuke',
         lastName: 'Hashibira',
         email: 'inosuke@gmail.com',
-        password: 'beastbreath'
+        password: 'beastbreath',
       };
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(CustomError);
       expect(() => UserMapper.userEntityFromObject(userData)).toThrow(Messages.REQUIRED_FIELD('role'));
     });
-    
   });
 });

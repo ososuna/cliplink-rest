@@ -5,10 +5,7 @@ interface RedirectUrlUseCase {
 }
 
 export class RedirectUrl implements RedirectUrlUseCase {
-  
-  constructor(
-    private readonly urlRepository: UrlRepository,
-  ) {}
+  constructor(private readonly urlRepository: UrlRepository) {}
 
   async execute(shortId: string): Promise<Url> {
     const url = this.urlRepository.getUrlByShortId(shortId);

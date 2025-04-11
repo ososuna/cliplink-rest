@@ -5,7 +5,6 @@ import { Messages } from '@/config';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('update password use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -17,8 +16,7 @@ describe('update password use case', () => {
     const expectedUser = AuthDataSourceMocks.user;
     vi.spyOn(authRepository, 'updatePassword').mockResolvedValue(expectedUser);
     const signToken = vi.fn(async () => 'token');
-    const result = await new UpdatePassword(authRepository, signToken)
-      .execute('token', 'password');
+    const result = await new UpdatePassword(authRepository, signToken).execute('token', 'password');
     expect(authRepository.updatePassword).toHaveBeenCalledExactlyOnceWith('token', 'password');
     expect(result).toEqual({
       accessToken: 'token',
@@ -28,7 +26,7 @@ describe('update password use case', () => {
         name: expectedUser.name,
         lastName: expectedUser.lastName,
         email: expectedUser.email,
-      }
+      },
     });
   });
 
@@ -36,8 +34,8 @@ describe('update password use case', () => {
     const expectedUser = AuthDataSourceMocks.user;
     vi.spyOn(authRepository, 'updatePassword').mockResolvedValue(expectedUser);
     const signToken = vi.fn(async () => null);
-    await expect(new UpdatePassword(authRepository, signToken)
-      .execute('token', 'password')).rejects.toThrowError(Messages.TOKEN_GENERATION_ERROR);
+    await expect(new UpdatePassword(authRepository, signToken).execute('token', 'password')).rejects.toThrowError(
+      Messages.TOKEN_GENERATION_ERROR,
+    );
   });
-
 });

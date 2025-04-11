@@ -1,11 +1,11 @@
 import { type AuthRepository, type UpdateUserDto } from '@/domain';
 
 interface User {
-  id: string,
-  name: string,
-  email: string,
-  role: string[],
-  img?: string,
+  id: string;
+  name: string;
+  email: string;
+  role: string[];
+  img?: string;
 }
 
 interface UpdateUserUseCase {
@@ -13,10 +13,7 @@ interface UpdateUserUseCase {
 }
 
 export class UpdateUser implements UpdateUserUseCase {
-
-  constructor(
-    private readonly authRepository: AuthRepository,
-  ) {}
+  constructor(private readonly authRepository: AuthRepository) {}
 
   async execute(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.authRepository.updateUser(userId, updateUserDto);
