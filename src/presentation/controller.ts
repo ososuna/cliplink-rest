@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { CustomError, type UrlRepository, RedirectUrl } from '@/domain';
 import { envs } from '@/config';
 
-export class ShortenerController {
+export class MainController {
 
   constructor(
     private readonly urlRepository: UrlRepository
