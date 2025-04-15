@@ -46,7 +46,7 @@ export class UrlDataSourceMocks {
     originalUrl: 'newOriginalUrl',
   };
 
-  static setupMocks() {
+  static setupMocks(): void {
     vi.mock('./../../../../src/data/mongodb', () => ({
       UserModel: {
         findById: vi.fn().mockResolvedValue({

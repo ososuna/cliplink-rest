@@ -104,7 +104,11 @@ export class AuthDataSourceMocks {
     expiresAt: new Date(new Date().getTime() - 60 * 60 * 1000),
   };
 
-  static buildFetchResolvedPromise(body: object, ok: boolean = true, status: number = 200) {
+  static buildFetchResolvedPromise(
+    body: object,
+    ok: boolean = true,
+    status: number = 200,
+  ): Promise<{ ok: boolean; status: number; json: () => Promise<object> }> {
     return Promise.resolve({
       ok,
       status,
@@ -112,7 +116,7 @@ export class AuthDataSourceMocks {
     });
   }
 
-  static setupMocks() {
+  static setupMocks(): void {
     vi.mock('mongoose', () => ({
       isValidObjectId: vi.fn().mockImplementation(() => true),
       Types: {
@@ -197,7 +201,7 @@ export class AuthDataSourceMocks {
     }) as Mock;
   }
 
-  static clearMocks() {
+  static clearMocks(): void {
     vi.clearAllMocks();
   }
 }

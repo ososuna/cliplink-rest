@@ -12,18 +12,17 @@ import {
 } from '@/domain';
 
 export class UrlController {
-  // dependency injection 💉
   constructor(private readonly urlRepository: UrlRepository) {}
 
-  private handleError = (error: unknown, res: Response) => {
+  private handleError = (error: unknown, res: Response): Response | void => {
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
-    console.log(error); // winston logger
+    console.error(error);
     return res.status(500).json({ error: 'internal server error' });
   };
 
-  createUrl = (req: Request, res: Response) => {
+  createUrl = (req: Request, res: Response): void => {
     let userId;
     if (req.body.user) {
       userId = req.body.user.id;
@@ -46,7 +45,7 @@ export class UrlController {
       .catch((error) => this.handleError(error, res));
   };
 
-  getUrls = (req: Request, res: Response) => {
+  getUrls = (req: Request, res: Response): void => {
     const userId = req.body.user.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -57,7 +56,7 @@ export class UrlController {
       .catch((error) => this.handleError(error, res));
   };
 
-  deleteUrl = (req: Request, res: Response) => {
+  deleteUrl = (req: Request, res: Response): void => {
     const urlId = req.params.id;
     new DeleteUrl(this.urlRepository)
       .execute(urlId)
@@ -65,7 +64,7 @@ export class UrlController {
       .catch((error) => this.handleError(error, res));
   };
 
-  getUrl = (req: Request, res: Response) => {
+  getUrl = (req: Request, res: Response): void => {
     const urlId = req.params.id;
     new GetUrl(this.urlRepository)
       .execute(urlId)
@@ -73,7 +72,7 @@ export class UrlController {
       .catch((error) => this.handleError(error, res));
   };
 
-  updateUrl = (req: Request, res: Response) => {
+  updateUrl = (req: Request, res: Response): void => {
     const [error, updateUrlDto] = UpdateUrlDto.create(req.body);
     if (error) {
       res.status(400).json({ error });

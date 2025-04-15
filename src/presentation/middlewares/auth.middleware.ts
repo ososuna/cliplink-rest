@@ -3,7 +3,7 @@ import { JwtAdapter } from '@/config';
 import { UserModel } from '@/data/mongodb';
 
 export class AuthMiddleware {
-  private static checkToken = async (token: string, req: Request, res: Response, next: NextFunction) => {
+  private static checkToken = async (token: string, req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const payload = await JwtAdapter.validateToken<{ id: string }>(token);
       if (!payload) {
@@ -23,12 +23,12 @@ export class AuthMiddleware {
     }
   };
 
-  static validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  static validateAccessToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const token = req.cookies.access_token;
     this.checkToken(token, req, res, next);
   };
 
-  static validateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
+  static validateRefreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const token = req.cookies.refresh_token;
     this.checkToken(token, req, res, next);
   };

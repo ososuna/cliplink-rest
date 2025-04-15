@@ -4,7 +4,7 @@ export class UpdateUrlDto {
     public originalUrl: string,
   ) {}
 
-  static create(object: { [key: string]: any }): [string?, UpdateUrlDto?] {
+  static create(object: { [key: string]: string }): [string?, UpdateUrlDto?] {
     const { name, originalUrl } = object;
     return [undefined, new UpdateUrlDto(name, originalUrl)];
   }

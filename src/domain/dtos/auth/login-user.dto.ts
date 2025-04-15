@@ -5,7 +5,7 @@ export class LoginUserDto {
     public email: string,
     public password: string,
   ) {}
-  static create(object: { [key: string]: any }): [string?, LoginUserDto?] {
+  static create(object: { [key: string]: string }): [string?, LoginUserDto?] {
     const { email, password } = object;
 
     if (!email) return ['missing email'];

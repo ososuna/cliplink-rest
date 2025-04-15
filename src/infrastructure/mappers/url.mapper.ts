@@ -2,7 +2,7 @@ import { CustomError, Url } from '@/domain';
 import { Messages } from '@/config';
 
 export class UrlMapper {
-  static urlEntityFromObject(object: { [key: string]: any }) {
+  static urlEntityFromObject(object: { [key: string]: any }): Url {
     const { id, _id, name, originalUrl, shortId, user } = object;
 
     if (!(_id || id)) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));

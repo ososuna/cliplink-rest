@@ -3,7 +3,7 @@ import { JwtAdapter } from '@/config';
 import { UserModel } from '@/data/mongodb';
 
 export class CreateUrlMiddleware {
-  static validateJWT = async (req: Request, res: Response, next: NextFunction) => {
+  static validateJWT = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const token = req.cookies.access_token;
     try {
       const payload = await JwtAdapter.validateToken<{ id: string }>(token);
@@ -13,7 +13,7 @@ export class CreateUrlMiddleware {
       req.body.user = user;
       next();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       res.status(500).json({ error: 'internal server error' });
     }
   };

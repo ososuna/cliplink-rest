@@ -253,9 +253,9 @@ describe('AuthDataSourceImpl', () => {
 
     it('should throw invalid email to register error', async () => {
       asMock(UserModel.findOne).mockImplementation((params: object) => {
-        if (params.hasOwnProperty('githubId')) {
+        if (Object.prototype.hasOwnProperty.call(params, 'githubId')) {
           return Promise.resolve(null);
-        } else if (params.hasOwnProperty('email')) {
+        } else if (Object.prototype.hasOwnProperty.call(params, 'email')) {
           return Promise.resolve(AuthDataSourceMocks.githubUser);
         }
       });
@@ -325,9 +325,9 @@ describe('AuthDataSourceImpl', () => {
 
     it('should throw invalid email to register error', async () => {
       asMock(UserModel.findOne).mockImplementation((params: object) => {
-        if (params.hasOwnProperty('googleId')) {
+        if (Object.prototype.hasOwnProperty.call(params, 'googleId')) {
           return Promise.resolve(null);
-        } else if (params.hasOwnProperty('email')) {
+        } else if (Object.prototype.hasOwnProperty.call(params, 'email')) {
           return Promise.resolve(AuthDataSourceMocks.googleUser);
         }
       });

@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it, Mock, MockInstance, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
 import { GetUsers, LoginUser, RegisterUser } from '@/domain';
 import { AuthDataSourceImpl } from '@/infrastructure';

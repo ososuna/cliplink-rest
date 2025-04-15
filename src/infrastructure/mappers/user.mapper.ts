@@ -2,7 +2,7 @@ import { CustomError, User } from '@/domain';
 import { Messages } from '@/config';
 
 export class UserMapper {
-  static userEntityFromObject(object: { [key: string]: any }) {
+  static userEntityFromObject(object: { [key: string]: any }): User {
     const { id, _id, name, lastName, email, password, role } = object;
 
     if (!(_id || id)) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));

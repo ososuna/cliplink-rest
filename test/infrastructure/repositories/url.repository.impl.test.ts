@@ -15,7 +15,7 @@ describe('UrlRepositoryImpl', () => {
   });
 
   it('create', async () => {
-    const [_error, createUrlDto] = CreateUrlDto.create({
+    const [, createUrlDto] = CreateUrlDto.create({
       name: 'name',
       originalUrl: 'originalUrl',
       userId: 'userId',
@@ -54,7 +54,7 @@ describe('UrlRepositoryImpl', () => {
 
   it('update', async () => {
     asMock(UrlModel.findOne).mockResolvedValue(null);
-    const [_error, updateUrlDto] = CreateUrlDto.create({
+    const [, updateUrlDto] = CreateUrlDto.create({
       name: 'newName',
       originalUrl: 'newOriginalUrl',
     });

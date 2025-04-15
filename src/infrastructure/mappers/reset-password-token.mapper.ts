@@ -2,7 +2,7 @@ import { CustomError, ResetPasswordToken } from '@/domain';
 import { Messages } from '@/config';
 
 export class ResetPasswordTokenMapper {
-  static resetPasswordTokenEntityFromObject(object: { [key: string]: any }) {
+  static resetPasswordTokenEntityFromObject(object: { [key: string]: any }): ResetPasswordToken {
     const { id, _id, token, expiresAt, user } = object;
 
     if (!(_id || id)) throw CustomError.badRequest(Messages.REQUIRED_FIELD('ID'));

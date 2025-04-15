@@ -22,11 +22,11 @@ export class AuthRepositoryImpl implements AuthRepository {
     return this.authDataSource.register(registerUserDto);
   }
 
-  getUsers() {
+  getUsers(): Promise<User[]> {
     return this.authDataSource.getUsers();
   }
 
-  getUser(userId: string) {
+  getUser(userId: string): Promise<User> {
     return this.authDataSource.getUser(userId);
   }
 

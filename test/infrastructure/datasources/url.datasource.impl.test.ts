@@ -45,7 +45,7 @@ describe('UrlDataSourceImpl', () => {
     });
 
     it('should create url with unique name', async () => {
-      asMock(UrlModel.findOne).mockImplementationOnce(async ({ name, user, active }) => {
+      asMock(UrlModel.findOne).mockImplementationOnce(async ({ name }) => {
         if (name === 'name') {
           return Promise.resolve({
             _id: 'urlId2',

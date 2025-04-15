@@ -26,7 +26,7 @@ describe('AuthRepositoryImpl', () => {
       email: 'user@example.com',
       role: ['role'],
     });
-    const [_error, loginUserDto] = LoginUserDto.create({
+    const [, loginUserDto] = LoginUserDto.create({
       email: 'user@example.com',
       password: '12345678',
     });
@@ -43,7 +43,7 @@ describe('AuthRepositoryImpl', () => {
   });
 
   it('register', async () => {
-    const [_error, registerUserDto] = RegisterUserDto.create({
+    const [, registerUserDto] = RegisterUserDto.create({
       name: 'name',
       lastName: 'lastName',
       email: 'user@example.com',
@@ -74,7 +74,7 @@ describe('AuthRepositoryImpl', () => {
   });
 
   it('update user', async () => {
-    const [_error, updateUserDto] = UpdateUserDto.create({
+    const [, updateUserDto] = UpdateUserDto.create({
       name: 'name',
       lastName: 'lastName',
       email: 'user@example.com',

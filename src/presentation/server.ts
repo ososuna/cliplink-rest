@@ -19,7 +19,7 @@ export class Server {
     this.routes = routes;
   }
 
-  async start() {
+  async start(): Promise<void> {
     // middlewares
     this.app.use(
       cors({
@@ -41,7 +41,7 @@ export class Server {
 
     this.app.listen(this.port, () => {
       console.log(`server running on port ${this.port}`);
-      console.log('Environment:', process.env.NODE_ENV == 'production' ? 'production' : 'development');
+      console.log('environment:', process.env.NODE_ENV == 'production' ? 'production' : 'development');
     });
   }
 }

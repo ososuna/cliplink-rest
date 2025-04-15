@@ -5,7 +5,7 @@ export class UpdateUserDto {
     public email: string,
   ) {}
 
-  static create(object: { [key: string]: any }): [string?, UpdateUserDto?] {
+  static create(object: { [key: string]: string }): [string?, UpdateUserDto?] {
     const { name, lastName, email } = object;
     return [undefined, new UpdateUserDto(name, lastName, email)];
   }

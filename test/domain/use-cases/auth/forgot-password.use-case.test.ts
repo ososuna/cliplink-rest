@@ -11,7 +11,7 @@ describe('forgot password use case', () => {
   const shortIdGenerator = vi.fn(() => 'shortId');
   const idGenerator = vi.fn(() => 'e204b07e-a274-4a4b-9ef4-b9a3c71d81db');
 
-  const setupMocks = () => {
+  const setupMocks = (): void => {
     vi.mock('path', () => ({
       resolve: vi.fn(() => 'templatePath'),
     }));

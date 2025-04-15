@@ -5,7 +5,7 @@ export class CreateUrlDto {
     public userId?: string,
   ) {}
 
-  static create(object: { [key: string]: any }): [string?, CreateUrlDto?] {
+  static create(object: { [key: string]: string }): [string?, CreateUrlDto?] {
     const { name, originalUrl, userId } = object;
     if (!originalUrl) return ['missing original url', undefined];
     return [undefined, new CreateUrlDto(name, originalUrl, userId)];
