@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CustomError, User } from '@/domain';
 import { Messages } from '@/config';
 

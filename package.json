@@ -2,6 +2,7 @@
   "name": "cliplink-rest",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "src/app.ts",
   "scripts": {
     "dev": "tsnd --respawn --clear --require tsconfig-paths/register --env-file=.env src/app.ts",

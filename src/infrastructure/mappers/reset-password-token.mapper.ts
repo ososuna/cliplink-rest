@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CustomError, ResetPasswordToken } from '@/domain';
 import { Messages } from '@/config';
 
