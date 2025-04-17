@@ -33,12 +33,12 @@ export class AuthController {
   };
 
   private setAuthCookies = (res: Response, userToken: UserToken): void => {
-    res.cookie('access_token', userToken.accessToken, CookieAdapter.authCookieOptions());
     res.cookie(
       'refresh_token',
       userToken.refreshToken,
-      CookieAdapter.authCookieOptions(60 * 60 * 24 * 7), // 7 days
+      CookieAdapter.authCookieOptions(60 * 60 * 24 * 7 * 1000),
     );
+    res.cookie('access_token', userToken.accessToken, CookieAdapter.authCookieOptions());
   };
 
   private clearAuthCookies = (res: Response): void => {
@@ -107,6 +107,7 @@ export class AuthController {
     new RefreshToken()
       .execute(user)
       .then((data) => {
+        this.clearAuthCookies(res);
         this.setAuthCookies(res, data);
         res.send(data.user);
       })

@@ -1,10 +1,3 @@
-declare const process: {
-  env: {
-    NODE_ENV: string;
-    [key: string]: string | undefined;
-  };
-};
-
 interface CookieOptions {
   httpOnly: boolean;
   secure: boolean;
@@ -20,7 +13,7 @@ export class CookieAdapter {
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.cliplink.app' : undefined,
-      maxAge: maxAge || 60 * 60, // 1 hour
+      maxAge: maxAge || 60 * 60 * 1000, // 1 hour in milliseconds
     };
   }
   static authClearCookieOptions(): CookieOptions {
