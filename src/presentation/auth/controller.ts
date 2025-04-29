@@ -33,8 +33,8 @@ export class AuthController {
   };
 
   private setAuthCookies = (res: Response, userToken: UserToken): void => {
-    res.cookie('refresh_token', userToken.refreshToken, CookieAdapter.authCookieOptions(60 * 60 * 24 * 7 * 1000));
     res.cookie('access_token', userToken.accessToken, CookieAdapter.authCookieOptions());
+    res.cookie('refresh_token', userToken.refreshToken, CookieAdapter.authCookieOptions(60 * 60 * 24 * 7 * 1000));
   };
 
   private clearAuthCookies = (res: Response): void => {
