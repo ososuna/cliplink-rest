@@ -4,7 +4,6 @@ import { AuthRepositoryImpl, AuthDataSourceImpl } from '@/infrastructure';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('get users use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -18,5 +17,4 @@ describe('get users use case', () => {
     const result = await new GetUsers(authRepository).execute();
     expect(result).toEqual(expectedUsers);
   });
-
 });

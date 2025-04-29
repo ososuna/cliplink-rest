@@ -28,6 +28,7 @@ export * from './use-cases/auth/delete-account.use-case';
 export * from './use-cases/auth/forgot-password.use-case';
 export * from './use-cases/auth/check-password-token.use-case';
 export * from './use-cases/auth/update-password.use-case';
+export * from './use-cases/auth/refresh-token.use-case';
 
 export * from './use-cases/url/create-url.use-case';
 export * from './use-cases/url/get-urls.use-case';
@@ -40,3 +41,4 @@ export * from './use-cases/shortener/redirect-url.use-case';
 export * from './interfaces/page';
 export * from './interfaces/github-user';
 export * from './interfaces/google-user';
+export * from './interfaces/user-token';

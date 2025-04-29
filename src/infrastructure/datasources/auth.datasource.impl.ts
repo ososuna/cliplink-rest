@@ -8,7 +8,8 @@ import {
   type UpdateUserDto,
   type GithubUser,
   type GoogleUser,
-  type ResetPasswordToken } from '@/domain';
+  type ResetPasswordToken,
+} from '@/domain';
 import { BcryptAdapter, DateAdapter, envs, Messages } from '@/config';
 import { UserMapper, UserGithubMapper, UserGoogleMapper, ResetPasswordTokenMapper } from '@/infrastructure';
 import { ResetPasswordTokenModel, UrlModel, UserModel } from '@/data/mongodb';
@@ -17,10 +18,9 @@ type HashFunction = (password: string) => string;
 type CompareFunction = (password: string, hashed: string) => boolean;
 
 export class AuthDataSourceImpl implements AuthDataSource {
-
   constructor(
     private readonly hashPassword: HashFunction = BcryptAdapter.hash,
-    private readonly comparePassword: CompareFunction = BcryptAdapter.compare
+    private readonly comparePassword: CompareFunction = BcryptAdapter.compare,
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
@@ -34,12 +34,11 @@ export class AuthDataSourceImpl implements AuthDataSource {
         name: name,
         lastName: lastName,
         email: email,
-        password: this.hashPassword(password)
+        password: this.hashPassword(password),
       });
 
       await user.save();
       return UserMapper.userEntityFromObject(user);
-
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -53,15 +52,14 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     try {
       const user = await UserModel.findOne({ email, active: true });
-      if ( !user ) throw CustomError.badRequest(Messages.BAD_CREDENTIALS);
-      
-      if ( !user.password ) throw CustomError.badRequest(Messages.INVALID_EMAIL_LOGIN);
-      
+      if (!user) throw CustomError.badRequest(Messages.BAD_CREDENTIALS);
+
+      if (!user.password) throw CustomError.badRequest(Messages.INVALID_EMAIL_LOGIN);
+
       const isValidPassword = this.comparePassword(password, user.password!);
-      if ( !isValidPassword ) throw CustomError.badRequest(Messages.BAD_CREDENTIALS);
+      if (!isValidPassword) throw CustomError.badRequest(Messages.BAD_CREDENTIALS);
 
       return UserMapper.userEntityFromObject(user);
-
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -73,7 +71,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async getUsers(): Promise<User[]> {
     try {
       const users = await UserModel.find();
-      return users.map(user => UserMapper.userEntityFromObject(user));
+      return users.map((user) => UserMapper.userEntityFromObject(user));
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -84,9 +82,9 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
   async getUser(userId: string): Promise<User> {
     try {
-      if ( !isValidObjectId(userId) ) throw CustomError.badRequest(Messages.USER_NOT_FOUND);
+      if (!isValidObjectId(userId)) throw CustomError.badRequest(Messages.USER_NOT_FOUND);
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.badRequest(Messages.USER_NOT_FOUND);
+      if (!user) throw CustomError.badRequest(Messages.USER_NOT_FOUND);
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -130,22 +128,22 @@ export class AuthDataSourceImpl implements AuthDataSource {
           Accept: 'application/json',
         },
       });
-  
+
       if (!tokenResponse.ok) {
         throw CustomError.internalServer(Messages.GITHUB_ACCESS_TOKEN_ERROR);
       }
       const { access_token: accessToken } = await tokenResponse.json();
-  
+
       // Fetch the authenticated user's information
       const userResponse = await fetch('https://api.github.com/user', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-  
+
       if (!userResponse.ok) {
         throw CustomError.internalServer(Messages.GITHUB_USER_DATA_ERROR);
-      }  
+      }
       const githubUser: GithubUser = await userResponse.json();
 
       // check if user is already registered
@@ -160,9 +158,9 @@ export class AuthDataSourceImpl implements AuthDataSource {
         const userToSave = await UserModel.create({
           name: githubUser.name,
           email: githubUser.email,
-          githubId: githubUser.id
+          githubId: githubUser.id,
         });
-  
+
         await userToSave.save();
         return UserGithubMapper.userEntityFromObject(userToSave);
       }
@@ -190,28 +188,28 @@ export class AuthDataSourceImpl implements AuthDataSource {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-  
+
       if (!tokenResponse.ok) {
         const errorDetails = await tokenResponse.text();
         console.error('Google Token Exchange Error:', errorDetails);
         throw CustomError.internalServer(Messages.GOOGLE_ACCESS_TOKEN_ERROR);
       }
-  
+
       const { access_token: accessToken } = await tokenResponse.json();
-  
+
       // Fetch the authenticated user's information
       const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-  
+
       if (!userResponse.ok) {
         throw CustomError.internalServer(Messages.GOOGLE_USER_DATA_ERROR);
       }
-  
+
       const googleUser: GoogleUser = await userResponse.json();
-  
+
       // Check if user is already registered
       const user = await UserModel.findOne({ googleId: googleUser.sub, active: true });
       if (user) {
@@ -227,7 +225,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
           email: googleUser.email,
           googleId: googleUser.sub,
         });
-  
+
         await userToSave.save();
         return UserGoogleMapper.userEntityFromObject(userToSave);
       }
@@ -242,11 +240,11 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async deleteAccount(userId: string): Promise<User> {
     try {
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
-      
+      if (!user) throw CustomError.notFound(Messages.USER_NOT_FOUND);
+
       await UrlModel.updateMany({ user: user._id }, { $set: { active: false } });
       await UserModel.findByIdAndDelete(userId);
-      
+
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
       if (error instanceof CustomError) {
@@ -259,7 +257,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await UserModel.findOne({ email, active: true });
-      if ( !user ) throw CustomError.badRequest(Messages.INVALID_EMAIL);
+      if (!user) throw CustomError.badRequest(Messages.INVALID_EMAIL);
       if (user.googleId || user.githubId) throw CustomError.badRequest(Messages.INVALID_EMAIL);
       return UserMapper.userEntityFromObject(user);
     } catch (error) {
@@ -273,12 +271,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async saveResetPasswordToken(userId: string, token: string): Promise<ResetPasswordToken> {
     try {
       const user = await UserModel.findById(userId);
-      if ( !user ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
-      
+      if (!user) throw CustomError.notFound(Messages.USER_NOT_FOUND);
+
       const resetPasswordToken = await ResetPasswordTokenModel.create({
         user: user._id,
         token: token,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 1) // 1 hour 
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 1), // 1 hour
       });
 
       await resetPasswordToken.save();
@@ -295,13 +293,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async isValidPasswordToken(token: string): Promise<ResetPasswordToken> {
     try {
       const resetPasswordToken = await ResetPasswordTokenModel.findOne({ token, active: true });
-      if ( !resetPasswordToken ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
+      if (!resetPasswordToken) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       const now = DateAdapter.now();
-      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
+      if (resetPasswordToken.expiresAt < now) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       return ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(resetPasswordToken);
-
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -313,13 +310,13 @@ export class AuthDataSourceImpl implements AuthDataSource {
   async updatePassword(token: string, password: string): Promise<User> {
     try {
       const resetPasswordToken = await ResetPasswordTokenModel.findOne({ token, active: true });
-      if ( !resetPasswordToken ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
+      if (!resetPasswordToken) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       const now = DateAdapter.now();
-      if ( resetPasswordToken.expiresAt < now ) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
+      if (resetPasswordToken.expiresAt < now) throw CustomError.badRequest(Messages.INVALID_PASSWORD_TOKEN);
 
       const user = await UserModel.findById(resetPasswordToken.user._id);
-      if ( !user || !user.active ) throw CustomError.notFound(Messages.USER_NOT_FOUND);
+      if (!user || !user.active) throw CustomError.notFound(Messages.USER_NOT_FOUND);
 
       user.password = this.hashPassword(password);
       await user.save();
@@ -328,12 +325,11 @@ export class AuthDataSourceImpl implements AuthDataSource {
       await resetPasswordToken.save();
 
       return UserMapper.userEntityFromObject(user);
-
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
       }
       throw CustomError.internalServer();
-    } 
+    }
   }
 }

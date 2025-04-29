@@ -1,46 +1,21 @@
-import { type AuthRepository, CustomError, type RegisterUserDto } from '@/domain';
-import { JwtAdapter, Messages } from '@/config';
-
-interface UserToken {
-  token: string;
-  user: {
-    id: string;
-    name: string;
-    lastName: string;
-    email: string;
-  }
-}
-
-type SignToken = (payload: Object, duration?: string) => Promise<string | null>;
+import { type AuthRepository, type RegisterUserDto, type UserToken } from '@/domain';
+import { JwtAdapter } from '@/config';
+import { generateAuthTokens } from '@/domain/utils/token.utils';
 
 interface RegisterUserUseCase {
-  execute(registerUserDto: RegisterUserDto): Promise<any>
+  execute(registerUserDto: RegisterUserDto): Promise<UserToken>;
 }
 
-// This use case will allow us to change the repository and the way we are signing tokens
-export class RegisterUser implements RegisterUserUseCase {
+type SignToken = (payload: object, type: 'access' | 'refresh') => Promise<string | null>;
 
+export class RegisterUser implements RegisterUserUseCase {
   constructor(
     private readonly authRepository: AuthRepository,
-    private readonly signToken: SignToken = JwtAdapter.generateToken
+    private readonly signToken: SignToken = JwtAdapter.generateToken,
   ) {}
 
   async execute(registerUserDto: RegisterUserDto): Promise<UserToken> {
-
     const user = await this.authRepository.register(registerUserDto);
-    const token = await this.signToken({ id: user.id });
-
-    if (!token) throw CustomError.internalServer(Messages.TOKEN_GENERATION_ERROR);
-
-    return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        lastName: user.lastName,
-        email: user.email,
-      }
-    }
+    return generateAuthTokens(user, this.signToken);
   }
-
 }

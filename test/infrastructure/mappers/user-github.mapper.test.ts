@@ -12,11 +12,11 @@ describe('UserGithubMapper', () => {
         lastName: 'Freecss',
         email: 'gon.freecss@gmail.com',
         role: ['user'],
-        githubId: 'github-12345'
+        githubId: 'github-12345',
       };
-      
+
       const user = UserGithubMapper.userEntityFromObject(userData);
-      
+
       expect(user).toBeInstanceOf(User);
       expect(user.id).toBe(userData.id);
       expect(user.name).toBe(userData.name);
@@ -32,7 +32,7 @@ describe('UserGithubMapper', () => {
         lastName: 'Zoldyck',
         email: 'killua.zoldyck@gmail.com',
         role: ['user'],
-        githubId: 'github-67890'
+        githubId: 'github-67890',
       };
 
       expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -45,7 +45,7 @@ describe('UserGithubMapper', () => {
         lastName: 'Zoldyck',
         email: 'zoldyck@gmail.com',
         role: ['admin'],
-        githubId: 'github-11223'
+        githubId: 'github-11223',
       };
 
       expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -58,7 +58,7 @@ describe('UserGithubMapper', () => {
         name: 'Kurapika',
         email: 'kurapika@gmail.com',
         role: ['user'],
-        githubId: 'github-33445'
+        githubId: 'github-33445',
       };
 
       expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -71,7 +71,7 @@ describe('UserGithubMapper', () => {
         name: 'Leorio',
         lastName: 'Paradinight',
         email: 'leorio.paradinight@gmail.com',
-        githubId: 'github-55667'
+        githubId: 'github-55667',
       };
 
       expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -84,7 +84,7 @@ describe('UserGithubMapper', () => {
         name: 'Hisoka',
         lastName: 'Morow',
         email: 'hisoka.morow@gmail.com',
-        role: ['admin']
+        role: ['admin'],
       };
 
       expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(CustomError);

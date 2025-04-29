@@ -2,10 +2,10 @@ import { CustomError, type Page, type UrlRepository } from '@/domain';
 import { Messages } from '@/config';
 
 interface Url {
-  id: string,
-  name?: string,
-  originalUrl: string,
-  shortId: string,
+  id: string;
+  name?: string;
+  originalUrl: string;
+  shortId: string;
 }
 
 interface GetUrlsUseCase {
@@ -13,10 +13,7 @@ interface GetUrlsUseCase {
 }
 
 export class GetUrls implements GetUrlsUseCase {
-
-  constructor(
-    private readonly urlRepository: UrlRepository
-  ) {}
+  constructor(private readonly urlRepository: UrlRepository) {}
 
   async execute(userId: string, page: number, limit: number, search: string): Promise<Page<Url>> {
     if (page < 1 || limit < 1) {
@@ -24,5 +21,4 @@ export class GetUrls implements GetUrlsUseCase {
     }
     return await this.urlRepository.getUrls(userId, page, limit, search);
   }
-
 }

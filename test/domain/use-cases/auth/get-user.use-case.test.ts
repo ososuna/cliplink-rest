@@ -4,7 +4,6 @@ import { AuthRepositoryImpl, AuthDataSourceImpl } from '@/infrastructure';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('get user use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -23,5 +22,4 @@ describe('get user use case', () => {
       email: 'email',
     });
   });
-
 });

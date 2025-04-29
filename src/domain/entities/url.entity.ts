@@ -8,5 +8,4 @@ export class Url {
     public user: User,
     public name?: string,
   ) {}
-
 }

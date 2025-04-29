@@ -4,7 +4,6 @@ import { UrlRepositoryImpl, UrlDataSourceImpl } from '@/infrastructure';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('update URL use case', () => {
-
   let urlRepository: UrlRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -21,17 +20,14 @@ describe('update URL use case', () => {
       name: 'newName',
       originalUrl: 'originalUrl',
       shortId: 'shortId',
-      user: AuthDataSourceMocks.user
+      user: AuthDataSourceMocks.user,
     };
 
     vi.spyOn(urlRepository, 'update').mockResolvedValue(expectedUrl);
 
-    const result = await new UpdateUrl(urlRepository)
-      .execute('urlId', 'userId', updateUrlDto!);
-    
+    const result = await new UpdateUrl(urlRepository).execute('urlId', 'userId', updateUrlDto!);
+
     expect(result).toEqual(expectedUrl);
     expect(urlRepository.update).toHaveBeenCalledWith('urlId', 'userId', updateUrlDto);
-
   });
-
 });

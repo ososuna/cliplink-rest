@@ -5,7 +5,6 @@ import { Messages } from '@/config';
 import { AuthDataSourceMocks } from '@test/test-utils';
 
 describe('auth google use case', () => {
-
   let authRepository: AuthRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -19,7 +18,8 @@ describe('auth google use case', () => {
     const signToken = vi.fn(async () => 'token');
     const result = await new AuthGoogle(authRepository, signToken).execute('code');
     expect(result).toEqual({
-      token: 'token',
+      accessToken: 'token',
+      refreshToken: 'token',
       user: {
         id: 'userId',
         name: 'name',
@@ -36,5 +36,4 @@ describe('auth google use case', () => {
     const authgoogle = new AuthGoogle(authRepository, signToken);
     await expect(authgoogle.execute('code')).rejects.toThrow(Messages.TOKEN_GENERATION_ERROR);
   });
-
 });

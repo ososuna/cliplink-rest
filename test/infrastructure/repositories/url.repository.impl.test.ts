@@ -7,7 +7,6 @@ import { UrlModel } from '@/data/mongodb';
 UrlDataSourceMocks.setupMocks();
 
 describe('UrlRepositoryImpl', () => {
-
   let urlRepository: UrlRepository;
   const shortIdGenerator = vi.fn(() => 'shortId');
 
@@ -16,10 +15,10 @@ describe('UrlRepositoryImpl', () => {
   });
 
   it('create', async () => {
-    const [_error, createUrlDto] = CreateUrlDto.create({
+    const [, createUrlDto] = CreateUrlDto.create({
       name: 'name',
       originalUrl: 'originalUrl',
-      userId: 'userId'
+      userId: 'userId',
     });
     const url = await urlRepository.create(createUrlDto!);
     expect(url).instanceOf(Url);
@@ -55,9 +54,9 @@ describe('UrlRepositoryImpl', () => {
 
   it('update', async () => {
     asMock(UrlModel.findOne).mockResolvedValue(null);
-    const [_error, updateUrlDto] = CreateUrlDto.create({
+    const [, updateUrlDto] = CreateUrlDto.create({
       name: 'newName',
-      originalUrl: 'newOriginalUrl'
+      originalUrl: 'newOriginalUrl',
     });
     const url = await urlRepository.update('urlId', 'userId', updateUrlDto!);
     expect(url).instanceOf(Url);
@@ -78,7 +77,7 @@ describe('UrlRepositoryImpl', () => {
       user: 'userId',
       name: 'name',
       save: vi.fn(),
-      active: true
+      active: true,
     });
     const url = await urlRepository.getUrlByShortId('shortId');
     expect(url).instanceOf(Url);
@@ -87,8 +86,7 @@ describe('UrlRepositoryImpl', () => {
       shortId: 'shortId',
       originalUrl: 'originalUrl',
       user: 'userId',
-      name: 'name'
+      name: 'name',
     });
   });
-
 });

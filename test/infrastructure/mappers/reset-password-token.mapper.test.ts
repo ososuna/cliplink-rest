@@ -10,11 +10,11 @@ describe('ResetPasswordTokenMapper', () => {
         id: '12345678-90ab-cdef-1234-567890abcdef',
         token: 'reset-token-123',
         expiresAt: new Date(),
-        user: 'user-123'
+        user: 'user-123',
       };
-      
+
       const resetToken = ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData);
-      
+
       expect(resetToken).toBeInstanceOf(ResetPasswordToken);
       expect(resetToken.id).toBe(tokenData.id);
       expect(resetToken.token).toBe(tokenData.token);
@@ -26,7 +26,7 @@ describe('ResetPasswordTokenMapper', () => {
       const tokenData = {
         token: 'reset-token-123',
         expiresAt: new Date(),
-        user: 'user-123'
+        user: 'user-123',
       };
 
       expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(CustomError);
@@ -37,22 +37,26 @@ describe('ResetPasswordTokenMapper', () => {
       const tokenData = {
         id: 'abcdef12-3456-7890-abcd-ef1234567890',
         expiresAt: new Date(),
-        user: 'user-123'
+        user: 'user-123',
       };
 
       expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(CustomError);
-      expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(Messages.REQUIRED_FIELD('token'));
+      expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(
+        Messages.REQUIRED_FIELD('token'),
+      );
     });
 
     it('should throw an error if expiresAt is missing', () => {
       const tokenData = {
         id: 'fedcba98-7654-3210-abcdefabcdef',
         token: 'reset-token-123',
-        user: 'user-123'
+        user: 'user-123',
       };
 
       expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(CustomError);
-      expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(Messages.REQUIRED_FIELD('expires at'));
+      expect(() => ResetPasswordTokenMapper.resetPasswordTokenEntityFromObject(tokenData)).toThrow(
+        Messages.REQUIRED_FIELD('expires at'),
+      );
     });
   });
 });

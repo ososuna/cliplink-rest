@@ -1,12 +1,5 @@
 import { Types } from 'mongoose';
-import {
-  type CreateUrlDto,
-  CustomError,
-  type Page,
-  type UpdateUrlDto,
-  type Url,
-  type UrlDataSource
-} from '@/domain';
+import { type CreateUrlDto, CustomError, type Page, type UpdateUrlDto, type Url, type UrlDataSource } from '@/domain';
 import { Messages, ShortIdAdapter } from '@/config';
 import { UrlMapper } from '@/infrastructure';
 import { UrlModel, UserModel } from '@/data/mongodb';
@@ -14,10 +7,7 @@ import { UrlModel, UserModel } from '@/data/mongodb';
 type ShortIdGenerator = () => string;
 
 export class UrlDataSourceImpl implements UrlDataSource {
-
-  constructor(
-    private readonly shortIdGenerator: ShortIdGenerator = ShortIdAdapter.generateShortId
-  ) {}
+  constructor(private readonly shortIdGenerator: ShortIdGenerator = ShortIdAdapter.generateShortId) {}
 
   private async getUniqueName(baseName: string, userId?: string, urlId?: string): Promise<string> {
     let name = baseName;
@@ -84,20 +74,16 @@ export class UrlDataSourceImpl implements UrlDataSource {
         active: true,
         $or: search
           ? [
-              { name: { $regex: search, $options: "i" } },
-              { shortId: { $regex: search, $options: "i" } },
-              { originalUrl: { $regex: search, $options: "i" } },
+              { name: { $regex: search, $options: 'i' } },
+              { shortId: { $regex: search, $options: 'i' } },
+              { originalUrl: { $regex: search, $options: 'i' } },
             ]
           : [],
       };
 
       // Fetch items and total count
       const [urls, total] = await Promise.all([
-        UrlModel
-          .find(query)
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit),
+        UrlModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
         UrlModel.countDocuments(query),
       ]);
 

@@ -12,11 +12,11 @@ describe('UserGoogleMapper', () => {
         lastName: 'Yeager',
         email: 'eren.yeager@gmail.com',
         role: ['user'],
-        googleId: 'google-12345'
+        googleId: 'google-12345',
       };
-      
+
       const user = UserGoogleMapper.userEntityFromObject(userData);
-      
+
       expect(user).toBeInstanceOf(User);
       expect(user.id).toBe(userData.id);
       expect(user.name).toBe(userData.name);
@@ -32,7 +32,7 @@ describe('UserGoogleMapper', () => {
         lastName: 'Ackerman',
         email: 'mikasa.ackerman@gmail.com',
         role: ['user'],
-        googleId: 'google-67890'
+        googleId: 'google-67890',
       };
 
       expect(() => UserGoogleMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -45,7 +45,7 @@ describe('UserGoogleMapper', () => {
         lastName: 'Armin',
         email: 'armin.arlet@gmail.com',
         role: ['admin'],
-        googleId: 'google-11223'
+        googleId: 'google-11223',
       };
 
       expect(() => UserGoogleMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -58,7 +58,7 @@ describe('UserGoogleMapper', () => {
         name: 'Levi',
         email: 'levi.ackerman@gmail.com',
         role: ['user'],
-        googleId: 'google-33445'
+        googleId: 'google-33445',
       };
 
       expect(() => UserGoogleMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -71,7 +71,7 @@ describe('UserGoogleMapper', () => {
         name: 'Hange',
         lastName: 'Zoë',
         email: 'hange.zoe@gmail.com',
-        googleId: 'google-55667'
+        googleId: 'google-55667',
       };
 
       expect(() => UserGoogleMapper.userEntityFromObject(userData)).toThrow(CustomError);
@@ -84,7 +84,7 @@ describe('UserGoogleMapper', () => {
         name: 'Erwin',
         lastName: 'Smith',
         email: 'erwin.smith@gmail.com',
-        role: ['admin']
+        role: ['admin'],
       };
 
       expect(() => UserGoogleMapper.userEntityFromObject(userData)).toThrow(CustomError);

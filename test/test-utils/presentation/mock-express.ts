@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { vi } from 'vitest';
 
@@ -11,7 +12,7 @@ export const createMockRequest = (overrides: Partial<Request> = {}): Partial<Req
   route: {},
   signedCookies: {},
   url: '/',
-  ...overrides
+  ...overrides,
 });
 
 export const createMockResponse = (overrides: Partial<Response> = {}): Partial<Response> => ({
@@ -20,7 +21,7 @@ export const createMockResponse = (overrides: Partial<Response> = {}): Partial<R
   send: vi.fn(),
   sendStatus: vi.fn(),
   cookie: vi.fn().mockReturnValue({
-    send: vi.fn()
+    send: vi.fn(),
   }),
   clearCookie: vi.fn(),
   redirect: vi.fn(),
@@ -45,5 +46,5 @@ export const createMockResponse = (overrides: Partial<Response> = {}): Partial<R
   headersSent: false,
   statusCode: 200,
   statusMessage: 'OK',
-  ...overrides
-}); 
+  ...overrides,
+});
