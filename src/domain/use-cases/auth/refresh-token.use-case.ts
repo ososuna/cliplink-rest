@@ -12,6 +12,6 @@ export class RefreshToken implements RefreshTokenUseCase {
   constructor(private readonly signToken: SignToken = JwtAdapter.generateToken) {}
 
   async execute(user: User): Promise<UserToken> {
-    return generateAuthTokens(user, this.signToken);
+    return await generateAuthTokens(user, this.signToken);
   }
 }
