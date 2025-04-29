@@ -52,7 +52,6 @@ export class AuthController {
       res.status(400).json({ error });
       return;
     }
-    // create use case instance
     new RegisterUser(this.authRepository)
       .execute(registerUserDto!)
       .then((data) => {
@@ -107,9 +106,8 @@ export class AuthController {
     new RefreshToken()
       .execute(user)
       .then((data) => {
-        this.clearAuthCookies(res);
         this.setAuthCookies(res, data);
-        res.send(data.user);
+        res.send(data);
       })
       .catch((error) => this.handleError(error, res));
   };
