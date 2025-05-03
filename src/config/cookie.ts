@@ -6,7 +6,7 @@ interface CookieOptions {
   maxAge?: number;
 }
 
-export class CookieAdapter {
+export class CookieConfig {
   static authCookieOptions(maxAge?: number): CookieOptions {
     return {
       httpOnly: true,

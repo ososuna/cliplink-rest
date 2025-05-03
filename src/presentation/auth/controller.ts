@@ -19,9 +19,8 @@ import {
   UpdateUserDto,
   type UserToken,
 } from '@/domain';
-import { CookieAdapter, Messages, envs } from '@/config';
+import { CookieConfig, Messages, envs } from '@/config';
 export class AuthController {
-  // dependency injection 💉
   constructor(private readonly authRepository: AuthRepository) {}
 
   private handleError = (error: unknown, res: Response): Response => {
@@ -33,13 +32,13 @@ export class AuthController {
   };
 
   private setAuthCookies = (res: Response, userToken: UserToken): void => {
-    res.cookie('access_token', userToken.accessToken, CookieAdapter.authCookieOptions());
-    res.cookie('refresh_token', userToken.refreshToken, CookieAdapter.authCookieOptions(60 * 60 * 24 * 7 * 1000)); // 7 days in milliseconds
+    res.cookie('access_token', userToken.accessToken, CookieConfig.authCookieOptions());
+    res.cookie('refresh_token', userToken.refreshToken, CookieConfig.authCookieOptions(60 * 60 * 24 * 7 * 1000)); // 7 days in milliseconds
   };
 
   private clearAuthCookies = (res: Response): void => {
-    res.clearCookie('access_token', CookieAdapter.authClearCookieOptions());
-    res.clearCookie('refresh_token', CookieAdapter.authClearCookieOptions());
+    res.clearCookie('access_token', CookieConfig.authClearCookieOptions());
+    res.clearCookie('refresh_token', CookieConfig.authClearCookieOptions());
   };
 
   registerUser = (req: Request, res: Response): void => {
