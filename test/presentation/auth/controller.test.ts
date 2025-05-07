@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
-import { GetUsers, LoginUser, RegisterUser } from '@/domain';
+import { GetUser, GetUsers, LoginUser, RegisterUser } from '@/domain';
 import { AuthDataSourceImpl } from '@/infrastructure';
 import { AuthController } from '@/presentation/auth/controller';
 import { AuthDataSourceMocks, createMockRequest, createMockResponse } from '@test/test-utils';
@@ -166,4 +166,30 @@ describe('auth controller', () => {
       });
     });
   });
+
+  describe('get user', () => {
+
+    let getUserSpy: MockInstance;
+
+    beforeEach(() => {
+      getUserSpy?.mockRestore();
+    });
+
+    it('should get user', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      getUserSpy = vi.spyOn(GetUser.prototype, 'execute').mockResolvedValue(mockUser);
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/user',
+      });
+      const res = createMockResponse();
+      authController.getUser(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUser);
+    });
+
+  });
+
 });
