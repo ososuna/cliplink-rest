@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
-import { GetUser, GetUsers, LoginUser, RegisterUser } from '@/domain';
+import { GetUser, GetUsers, LoginUser, RefreshToken, RegisterUser } from '@/domain';
 import { AuthDataSourceImpl } from '@/infrastructure';
 import { AuthController } from '@/presentation/auth/controller';
 import { AuthDataSourceMocks, createMockRequest, createMockResponse } from '@test/test-utils';
@@ -168,7 +168,6 @@ describe('auth controller', () => {
   });
 
   describe('get user', () => {
-
     let getUserSpy: MockInstance;
 
     beforeEach(() => {
@@ -189,7 +188,76 @@ describe('auth controller', () => {
 
       expect(res.json).toHaveBeenCalledWith(mockUser);
     });
-
   });
 
+  describe('logout user', () => {
+    it('should logout user', async () => {
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/logout',
+      });
+      const res = createMockResponse();
+      authController.logout(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith({ message: Messages.LOGOUT_SUCCESSFUL });
+    });
+  });
+
+  describe('check token', () => {
+    it('should check token', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/check-token',
+        body: {
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      authController.checkToken(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith({
+        id: mockUser.id,
+        name: mockUser.name,
+        lastName: mockUser.lastName,
+        email: mockUser.email,
+        githubId: mockUser.githubId,
+        googleId: mockUser.googleId,
+      });
+    });
+  });
+
+  describe('refresh token', () => {
+    let refreshTokenSpy: MockInstance;
+
+    beforeEach(() => {
+      refreshTokenSpy?.mockRestore();
+    });
+
+    it('should refresh token', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      refreshTokenSpy = vi.spyOn(RefreshToken.prototype, 'execute').mockResolvedValue({
+        accessToken: 'token',
+        refreshToken: 'token',
+        user: mockUser,
+      });
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/refresh-token',
+        body: {
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      authController.refreshToken(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.send).toHaveBeenCalledWith(mockUser);
+    });
+  });
 });
