@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
-import { GetUser, GetUsers, LoginUser, RefreshToken, RegisterUser } from '@/domain';
+import { GetUser, GetUsers, LoginUser, RefreshToken, RegisterUser, UpdateUser, UpdateUserDto } from '@/domain';
 import { AuthDataSourceImpl } from '@/infrastructure';
 import { AuthController } from '@/presentation/auth/controller';
 import { AuthDataSourceMocks, createMockRequest, createMockResponse } from '@test/test-utils';
@@ -258,6 +258,68 @@ describe('auth controller', () => {
       await new Promise(process.nextTick);
 
       expect(res.send).toHaveBeenCalledWith(mockUser);
+    });
+  });
+
+  describe('update user', () => {
+    let updateUserSpy: MockInstance;
+
+    beforeEach(() => {
+      updateUserSpy?.mockRestore();
+    });
+
+    it('should update user', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      updateUserSpy = vi.spyOn(UpdateUser.prototype, 'execute').mockResolvedValue(mockUser);
+      const req = createMockRequest({
+        method: 'PUT',
+        url: '/auth/user',
+        body: {
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      authController.updateUser(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUser);
+    });
+
+    it('should return error 400 if dto is invalid', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      vi.spyOn(UpdateUserDto, 'create').mockReturnValue(['invalid dto', undefined]);
+      const req = createMockRequest({
+        method: 'PUT',
+        url: '/auth/user',
+        body: {
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      authController.updateUser(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'invalid dto' });
+    });
+  });
+
+  describe('login github', () => {
+    it('should login github', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/login/github',
+      });
+      const res = createMockResponse();
+      authController.loginGithub(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        'https://github.com/login/oauth/authorize?client_id=dummy-value&redirect_uri=dummy-value',
+      );
     });
   });
 });
