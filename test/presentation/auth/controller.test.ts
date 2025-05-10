@@ -1,10 +1,20 @@
 import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
-import { GetUser, GetUsers, LoginUser, RefreshToken, RegisterUser, UpdateUser, UpdateUserDto } from '@/domain';
+import {
+  AuthGithub,
+  CustomError,
+  GetUser,
+  GetUsers,
+  LoginUser,
+  RefreshToken,
+  RegisterUser,
+  UpdateUser,
+  UpdateUserDto,
+} from '@/domain';
+import { envs, Messages } from '@/config';
 import { AuthDataSourceImpl } from '@/infrastructure';
 import { AuthController } from '@/presentation/auth/controller';
 import { AuthDataSourceMocks, createMockRequest, createMockResponse } from '@test/test-utils';
-import { Messages } from '@/config';
 
 describe('auth controller', () => {
   let authController: AuthController;
@@ -310,7 +320,7 @@ describe('auth controller', () => {
     it('should login github', async () => {
       const req = createMockRequest({
         method: 'GET',
-        url: '/auth/login/github',
+        url: '/auth/github',
       });
       const res = createMockResponse();
       authController.loginGithub(req as Request, res as Response);
@@ -320,6 +330,85 @@ describe('auth controller', () => {
       expect(res.redirect).toHaveBeenCalledWith(
         'https://github.com/login/oauth/authorize?client_id=dummy-value&redirect_uri=dummy-value',
       );
+    });
+  });
+
+  describe('login github callback', () => {
+    let loginGithubCallbackSpy: MockInstance;
+
+    beforeEach(() => {
+      loginGithubCallbackSpy?.mockRestore();
+    });
+
+    it('should login github', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/github/callback',
+        query: {
+          code: 'dummy-code',
+        },
+      });
+      const res = createMockResponse();
+      loginGithubCallbackSpy = vi.spyOn(AuthGithub.prototype, 'execute').mockResolvedValue({
+        accessToken: 'token',
+        refreshToken: 'token',
+        user: mockUser,
+      });
+      authController.loginGithubCallback(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.redirect).toHaveBeenCalledWith(`${envs.WEB_APP_URL}/dashboard`);
+    });
+
+    it('should return error 400 if code is not provided', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/github/callback',
+      });
+      const res = createMockResponse();
+      expect(() => authController.loginGithubCallback(req as Request, res as Response)).toThrow(
+        CustomError.badRequest(Messages.REQUIRED_FIELD('Github auth code')),
+      );
+    });
+
+    it('should return error 500 if there is an error', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/github/callback',
+        query: {
+          code: 'dummy-code',
+        },
+      });
+      const res = createMockResponse();
+      loginGithubCallbackSpy = vi.spyOn(AuthGithub.prototype, 'execute').mockRejectedValue(new Error('Database error'));
+      authController.loginGithubCallback(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      const expectedUrl = 'https://www.cliplink.app/auth/login?error=Something+went+wrong+on+our+end.+Please+try+again+later.';
+      expect(res.redirect).toHaveBeenCalledWith(expectedUrl);
+    });
+
+    it('should return custom error', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/github/callback',
+        query: {
+          code: 'dummy-code',
+        },
+      });
+      const res = createMockResponse();
+      loginGithubCallbackSpy = vi
+        .spyOn(AuthGithub.prototype, 'execute')
+        .mockRejectedValue(CustomError.forbidden('Forbidden error'));
+      authController.loginGithubCallback(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      const expectedUrl = 'https://www.cliplink.app/auth/login?error=Forbidden+error';
+      expect(res.redirect).toHaveBeenCalledWith(expectedUrl);
     });
   });
 });

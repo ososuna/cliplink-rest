@@ -127,7 +127,7 @@ export class AuthController {
 
   loginGithubCallback = (req: Request, res: Response): void => {
     const code = req.query.code as string;
-    if (!code) CustomError.badRequest(Messages.REQUIRED_FIELD('Github auth code'));
+    if (!code) throw CustomError.badRequest(Messages.REQUIRED_FIELD('Github auth code'));
     new AuthGithub(this.authRepository)
       .execute(code)
       .then((data) => {
