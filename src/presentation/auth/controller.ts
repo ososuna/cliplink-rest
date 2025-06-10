@@ -152,7 +152,7 @@ export class AuthController {
 
   loginGoogleCallback = (req: Request, res: Response): void => {
     const code = req.query.code as string;
-    if (!code) CustomError.badRequest(Messages.REQUIRED_FIELD('Google auth code'));
+    if (!code) throw CustomError.badRequest(Messages.REQUIRED_FIELD('Google auth code'));
     new AuthGoogle(this.authRepository)
       .execute(code)
       .then((data) => {

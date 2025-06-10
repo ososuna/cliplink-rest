@@ -2,6 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'v
 import { Request, Response } from 'express';
 import {
   AuthGithub,
+  AuthGoogle,
   CustomError,
   GetUser,
   GetUsers,
@@ -404,6 +405,102 @@ describe('auth controller', () => {
         .spyOn(AuthGithub.prototype, 'execute')
         .mockRejectedValue(CustomError.forbidden('Forbidden error'));
       authController.loginGithubCallback(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      const expectedUrl = 'https://www.cliplink.app/auth/login?error=Forbidden+error';
+      expect(res.redirect).toHaveBeenCalledWith(expectedUrl);
+    });
+  });
+
+  describe('login google', () => {
+    it('should login google', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/google',
+      });
+      const res = createMockResponse();
+      authController.loginGoogle(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        'https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=dummy-value&redirect_uri=dummy-value&scope=openid%20email%20profile',
+      );
+    });
+  });
+
+  describe('login google callback', () => {
+    let loginGoogleCallbackSpy: MockInstance;
+
+    beforeEach(() => {
+      loginGoogleCallbackSpy?.mockRestore();
+    });
+
+    it('should login google', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/google/callback',
+        query: {
+          code: 'dummy-code',
+        },
+      });
+      const res = createMockResponse();
+      loginGoogleCallbackSpy = vi.spyOn(AuthGoogle.prototype, 'execute').mockResolvedValue({
+        accessToken: 'token',
+        refreshToken: 'token',
+        user: mockUser,
+      });
+      authController.loginGoogleCallback(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.redirect).toHaveBeenCalledWith(`${envs.WEB_APP_URL}/dashboard`);
+    });
+
+    it('should return error 400 if code is not provided', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/google/callback',
+      });
+      const res = createMockResponse();
+      expect(() => authController.loginGoogleCallback(req as Request, res as Response)).toThrow(
+        CustomError.badRequest(Messages.REQUIRED_FIELD('Google auth code')),
+      );
+    });
+
+    it('should return error 500 if there is an error', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/google/callback',
+        query: {
+          code: 'dummy-code',
+        },
+      });
+      const res = createMockResponse();
+      loginGoogleCallbackSpy = vi.spyOn(AuthGoogle.prototype, 'execute').mockRejectedValue(new Error('Database error'));
+      authController.loginGoogleCallback(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      const expectedUrl = 'https://www.cliplink.app/auth/login?error=Something+went+wrong+on+our+end.+Please+try+again+later.';
+      expect(res.redirect).toHaveBeenCalledWith(expectedUrl);
+    });
+
+    it('should return custom error', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/google/callback',
+        query: {
+          code: 'dummy-code',
+        },
+      });
+      const res = createMockResponse();
+      loginGoogleCallbackSpy = vi
+        .spyOn(AuthGoogle.prototype, 'execute')
+        .mockRejectedValue(CustomError.forbidden('Forbidden error'));
+      authController.loginGoogleCallback(req as Request, res as Response);
 
       await new Promise(process.nextTick);
 
