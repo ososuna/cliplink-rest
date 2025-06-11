@@ -1,5 +1,5 @@
 import { type Mock, vi } from 'vitest';
-import { ResetPasswordToken, User } from '@/domain';
+import { ResetPasswordToken, User, UserToken } from '@/domain';
 
 export class AuthDataSourceMocks {
   static readonly user: User = {
@@ -102,6 +102,17 @@ export class AuthDataSourceMocks {
     user: AuthDataSourceMocks.user,
     token: 'token',
     expiresAt: new Date(new Date().getTime() - 60 * 60 * 1000),
+  };
+
+  static readonly userToken: UserToken = {
+    accessToken: 'accessToken',
+    refreshToken: 'refreshToken',
+    user: {
+      id: 'userId',
+      name: 'name',
+      lastName: 'lastName',
+      email: 'email',
+    },
   };
 
   static buildFetchResolvedPromise(

@@ -3,12 +3,16 @@ import { Request, Response } from 'express';
 import {
   AuthGithub,
   AuthGoogle,
+  CheckPasswordToken,
   CustomError,
+  DeleteAccount,
+  ForgotPassword,
   GetUser,
   GetUsers,
   LoginUser,
   RefreshToken,
   RegisterUser,
+  UpdatePassword,
   UpdateUser,
   UpdateUserDto,
 } from '@/domain';
@@ -506,6 +510,210 @@ describe('auth controller', () => {
 
       const expectedUrl = 'https://www.cliplink.app/auth/login?error=Forbidden+error';
       expect(res.redirect).toHaveBeenCalledWith(expectedUrl);
+    });
+  });
+
+  describe('delete account', () => {
+    let deleteAccount: MockInstance;
+
+    beforeEach(() => {
+      deleteAccount?.mockRestore();
+    });
+
+    it('should delete account', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      deleteAccount = vi.spyOn(DeleteAccount.prototype, 'execute').mockResolvedValue(mockUser);
+      const req = createMockRequest({
+        method: 'DELETE',
+        url: '/auth',
+        body: {
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      authController.deleteAccount(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUser);
+    });
+
+    it('should return error 500 if there is an error', async () => {
+      const mockUser = AuthDataSourceMocks.user;
+      deleteAccount = vi.spyOn(DeleteAccount.prototype, 'execute').mockRejectedValue(new Error('Database error'));
+      const req = createMockRequest({
+        method: 'DELETE',
+        url: '/auth',
+        body: {
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      authController.deleteAccount(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: Messages.INTERNAL_SERVER_ERROR,
+      });
+    });
+  });
+
+  describe('forgot password', () => {
+    let forgotPassword: MockInstance;
+
+    beforeEach(() => {
+      forgotPassword?.mockRestore();
+    });
+
+    it('should forgot password', async () => {
+      forgotPassword = vi.spyOn(ForgotPassword.prototype, 'execute').mockResolvedValue(undefined);
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/forgot-password',
+        body: {
+          email: 'john@test.com',
+        },
+      });
+      const res = createMockResponse();
+      authController.forgotPassword(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith({ message: Messages.EMAIL_SUCCESSFUL });
+    });
+
+    it('should return error 400 if email is not provided', async () => {
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/forgot-password',
+      });
+      const res = createMockResponse();
+      authController.forgotPassword(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: Messages.REQUIRED_FIELD('email') });
+    });
+
+    it('should return error 500 if there is an error', async () => {
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/forgot-password',
+        body: { email: 'john@test.com' },
+      });
+      const res = createMockResponse();
+      forgotPassword = vi
+        .spyOn(ForgotPassword.prototype, 'execute')
+        .mockRejectedValue(CustomError.internalServer(Messages.INTERNAL_SERVER_ERROR));
+      authController.forgotPassword(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: Messages.INTERNAL_SERVER_ERROR,
+      });
+    });
+  });
+
+  describe('check reset password token', () => {
+    let checkResetPasswordToken: MockInstance;
+
+    beforeEach(() => {
+      checkResetPasswordToken?.mockRestore();
+    });
+
+    it('should check reset password token', async () => {
+      const mockResetPasswordToken = AuthDataSourceMocks.resetPasswordToken;
+      checkResetPasswordToken = vi.spyOn(CheckPasswordToken.prototype, 'execute').mockResolvedValue(mockResetPasswordToken);
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/password-token/dummy-token',
+        params: {
+          token: 'dummy-token',
+        },
+      });
+      const res = createMockResponse();
+      authController.checkResetPasswordToken(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockResetPasswordToken);
+    });
+
+    it('should return error 400 if token is not provided', async () => {
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/auth/password-token',
+      });
+      const res = createMockResponse();
+      authController.checkResetPasswordToken(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: Messages.MISSING_TOKEN });
+    });
+  });
+
+  describe('update password', () => {
+    let updatePassword: MockInstance;
+
+    beforeEach(() => {
+      updatePassword?.mockRestore();
+    });
+
+    it('should update password', async () => {
+      const mockUserToken = AuthDataSourceMocks.userToken;
+      updatePassword = vi.spyOn(UpdatePassword.prototype, 'execute').mockResolvedValue(mockUserToken);
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/update-password',
+        body: {
+          token: 'dummy-token',
+          password: 'password',
+        },
+      });
+      const res = createMockResponse();
+      authController.updatePassword(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.send).toHaveBeenCalledWith(mockUserToken.user);
+    });
+
+    it('should return error 400 if token is not provided', async () => {
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/update-password',
+      });
+      const res = createMockResponse();
+      authController.updatePassword(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: Messages.MISSING_TOKEN });
+    });
+
+    it('should return error 400 if password is not provided', async () => {
+      const req = createMockRequest({
+        method: 'POST',
+        url: '/auth/update-password',
+        body: {
+          token: 'dummy-token',
+        },
+      });
+      const res = createMockResponse();
+      authController.updatePassword(req as Request, res as Response);
+
+      await new Promise(process.nextTick);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: Messages.MISSING_PASSWORD });
     });
   });
 });
