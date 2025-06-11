@@ -196,7 +196,7 @@ export class AuthController {
   checkResetPasswordToken = (req: Request, res: Response): void => {
     const token = req.params.token;
     if (!token) {
-      res.status(400).json({ error: 'missing token' });
+      res.status(400).json({ error: Messages.MISSING_TOKEN });
       return;
     }
     new CheckPasswordToken(this.authRepository)
@@ -209,11 +209,11 @@ export class AuthController {
     const token = req.body.token;
     const password = req.body.password;
     if (!token) {
-      res.status(400).json({ error: 'missing token' });
+      res.status(400).json({ error: Messages.MISSING_TOKEN });
       return;
     }
     if (!password) {
-      res.status(400).json({ error: 'missing password' });
+      res.status(400).json({ error: Messages.MISSING_PASSWORD });
       return;
     }
     new UpdatePassword(this.authRepository)

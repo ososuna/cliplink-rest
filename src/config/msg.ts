@@ -18,4 +18,6 @@ export const Messages = {
   LOGOUT_SUCCESSFUL: 'You have been successfully logged out.',
   EMAIL_SUCCESSFUL: 'The email was sent successfully. Please check your inbox.',
   TOO_MANY_REQUESTS: 'Too many requests, please try again later',
+  MISSING_TOKEN: 'Token is missing',
+  MISSING_PASSWORD: 'Password is missing',
 };
