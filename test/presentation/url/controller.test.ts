@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { Request, Response } from 'express';
-import { CreateUrl, CustomError, GetUrls } from '@/domain';
+import { CreateUrl, CustomError, DeleteUrl, GetUrl, GetUrls, UpdateUrl } from '@/domain';
 import { UrlDataSourceImpl } from '@/infrastructure';
 import { UrlController } from '@/presentation/url/controller';
 import { AuthDataSourceMocks, createMockRequest, createMockResponse, UrlDataSourceMocks } from '@test/test-utils';
@@ -14,8 +14,7 @@ describe('url controller', () => {
   });
 
   describe('create url', () => {
-    
-  let createUrlSpy: MockInstance;
+    let createUrlSpy: MockInstance;
 
     beforeEach(() => {
       createUrlSpy?.mockRestore();
@@ -160,6 +159,99 @@ describe('url controller', () => {
       await new Promise(process.nextTick);
 
       expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe('delete url', () => {
+    let deleteUrlSpy: MockInstance;
+
+    beforeEach(() => {
+      deleteUrlSpy?.mockRestore();
+    });
+
+    it('should delete url', async () => {
+      const mockUrl = UrlDataSourceMocks.url;
+      deleteUrlSpy = vi.spyOn(DeleteUrl.prototype, 'execute').mockResolvedValue(mockUrl);
+      const req = createMockRequest({
+        method: 'DELETE',
+        url: '/url',
+        params: {
+          id: mockUrl.id,
+        },
+      });
+      const res = createMockResponse();
+      urlController.deleteUrl(req as Request, res as Response);
+
+      expect(deleteUrlSpy).toHaveBeenCalledWith(mockUrl.id);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUrl);
+    });
+  });
+
+  describe('get url', () => {
+    let getUrlSpy: MockInstance;
+
+    beforeEach(() => {
+      getUrlSpy?.mockRestore();
+    });
+
+    it('should get url', async () => {
+      const mockUrl = UrlDataSourceMocks.url;
+      getUrlSpy = vi.spyOn(GetUrl.prototype, 'execute').mockResolvedValue(mockUrl);
+      const req = createMockRequest({
+        method: 'GET',
+        url: '/url',
+        params: {
+          id: mockUrl.id,
+        },
+      });
+      const res = createMockResponse();
+      urlController.getUrl(req as Request, res as Response);
+
+      expect(getUrlSpy).toHaveBeenCalledWith(mockUrl.id);
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUrl);
+    });
+  });
+
+  describe('update url', () => {
+    let updateUrlSpy: MockInstance;
+
+    beforeEach(() => {
+      updateUrlSpy?.mockRestore();
+    });
+
+    it('should update url', async () => {
+      const mockUrl = UrlDataSourceMocks.url;
+      const mockUser = AuthDataSourceMocks.user;
+      updateUrlSpy = vi.spyOn(UpdateUrl.prototype, 'execute').mockResolvedValue(mockUrl);
+      const req = createMockRequest({
+        method: 'PUT',
+        url: '/url',
+        params: {
+          id: mockUrl.id,
+        },
+        body: {
+          name: 'test',
+          originalUrl: 'https://test.com',
+          user: mockUser,
+        },
+      });
+      const res = createMockResponse();
+      urlController.updateUrl(req as Request, res as Response);
+
+      expect(updateUrlSpy).toHaveBeenCalledWith(mockUrl.id, mockUser.id, {
+        name: 'test',
+        originalUrl: 'https://test.com',
+      });
+
+      await new Promise(process.nextTick);
+
+      expect(res.json).toHaveBeenCalledWith(mockUrl);
     });
   });
 });
