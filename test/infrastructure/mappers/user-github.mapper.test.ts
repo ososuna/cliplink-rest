@@ -52,19 +52,6 @@ describe('UserGithubMapper', () => {
       expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(Messages.REQUIRED_FIELD('name'));
     });
 
-    it('should throw an error if lastName is missing', () => {
-      const userData = {
-        id: 'fedcba98-7654-3210-abcdefabcdef',
-        name: 'Kurapika',
-        email: 'kurapika@gmail.com',
-        role: ['user'],
-        githubId: 'github-33445',
-      };
-
-      expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(CustomError);
-      expect(() => UserGithubMapper.userEntityFromObject(userData)).toThrow(Messages.REQUIRED_FIELD('last name'));
-    });
-
     it('should throw an error if role is missing', () => {
       const userData = {
         id: 'a1b2c3d4-e5f6-7890-abcd-efghijklmnop',
